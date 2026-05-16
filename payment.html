@@ -3,313 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PPG Solutions | Membership Fee</title>
+    <title>PPG Solutions | Subscription Payment</title>
     <style>
-        :root {
-            --bg-deep: #090B0E;
-            --bg-card: #12161A;
-            --accent-blue: #0066FF;
-            --accent-gold: #E5B842;
-            --text-main: #F5F7FA;
-            --text-muted: #8A94A6;
-            --border-color: #1F262E;
-            --success-green: #22C55E;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Step Progress Header */
-        .progress-header {
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .progress-title {
-            font-size: 12px;
-            color: var(--accent-gold);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 4px;
-            background-color: var(--border-color);
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .progress-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 60%; /* Step 3 of 5 */
-            background-color: var(--accent-blue);
-            border-radius: 2px;
-        }
-
-        /* Cost Summary Header */
-        .cost-banner {
-            text-align: center;
-            padding: 24px 0;
-            background: linear-gradient(135deg, rgba(0, 102, 255, 0.1), rgba(229, 184, 66, 0.05));
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 24px;
-        }
-
-        .cost-label {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .cost-amount {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 4px 0;
-        }
-
-        .cost-note {
-            font-size: 13px;
-            color: var(--accent-gold);
-        }
-
-        /* Gateways Header Layout */
-        h3.gateway-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-        }
-
-        /* Payment Channel Selection Cards */
-        .payment-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .account-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .account-row:last-child {
-            border-bottom: none;
-        }
-
-        .label {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .value {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            text-align: right;
-        }
-
-        /* Copy Interactive Elements */
-        .copy-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-        }
-
-        .crypto-address {
-            font-family: monospace;
-            font-size: 12px;
-            color: var(--text-main);
-            word-break: break-all;
-            max-width: 80%;
-        }
-
-        .copy-btn {
-            background-color: var(--accent-blue);
-            color: #FFFFFF;
-            border: none;
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .copy-btn:active {
-            background-color: var(--success-green);
-        }
-
-        /* Forward Trigger Button */
-        .next-btn {
-            display: block;
-            width: 100%;
-            background-color: var(--accent-blue);
-            color: #FFFFFF;
-            text-align: center;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            margin-top: 24px;
-            border: none;
-        }
+        :root { --bg: #090B0E; --card: #12161A; --blue: #0066FF; --gold: #E5B842; --text: #F5F7FA; --muted: #8A94A6; --border: #1F262E; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background-color: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .price { font-size: 20px; color: var(--gold); font-weight: 700; margin-bottom: 16px; }
+        .payment-row { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 12px; font-size: 13px; }
+        .copy-trigger { color: var(--blue); float: right; cursor: pointer; font-weight: 600; }
+        .btn { display: block; width: 100%; background-color: var(--blue); color: #FFF; text-align: center; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        
-        <div class="progress-header">
-            <div class="progress-title">Step 3 of 5: Club Membership Fee</div>
-            <div class="progress-track">
-                <div class="progress-fill"></div>
+        <div class="card">
+            <h2>Active Monthly Commitment Allocation</h2>
+            <div class="price">$3.99 USD <span style="font-size:12px; color:var(--muted);">Every 30 Days</span></div>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Remit payment to any corporate channel address option below to renew your monthly license validation tracker.</p>
+            
+            <div class="payment-row">
+                <strong>OPAY Bank Account:</strong><br>8130500659 (Godwin)
+                <span class="copy-trigger" onclick="navigator.clipboard.writeText('8130500659')">Copy</span>
+            </div>
+            <div class="payment-row">
+                <strong>USDT Tether (TRC20):</strong><br>TR7NHqjeKQxGTCi8q8DE4p1nR...
+                <span class="copy-trigger" onclick="navigator.clipboard.writeText('TR7NHqjeKQxGTCi8q8DE4p1nR')">Copy</span>
             </div>
         </div>
-
-        <div class="cost-banner">
-            <div class="cost-label">Registration Allocation</div>
-            <div class="cost-amount">$3.99</div>
-            <div class="cost-note">Strictly Non-Refundable Club Policy</div>
-        </div>
-
-        <h3 class="gateway-title">Local Bank Transfer Channels</h3>
-        
-        <div class="payment-card">
-            <div class="account-row">
-                <span class="label">Bank Name</span>
-                <span class="value">OPay</span>
-            </div>
-            <div class="account-row">
-                <span class="label">Account Name</span>
-                <span class="value">PPG SOLUTIONS</span>
-            </div>
-            <div class="account-row">
-                <span class="label">Account Number</span>
-                <div class="copy-wrapper">
-                    <span class="value" id="opay-num">6141207300</span>
-                    <button class="copy-btn" onclick="copyData('6141207300', this)">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="payment-card">
-            <div class="account-row">
-                <span class="label">Bank Name</span>
-                <span class="value">Zenith Bank</span>
-            </div>
-            <div class="account-row">
-                <span class="label">Account Name</span>
-                <span class="value">PPG SOLUTIONS</span>
-            </div>
-            <div class="account-row">
-                <span class="label">Account Number</span>
-                <div class="copy-wrapper">
-                    <span class="value" id="zenith-num">1310449275</span>
-                    <button class="copy-btn" onclick="copyData('1310449275', this)">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="gateway-title">Cryptocurrency Digital Nodes</h3>
-
-        <div class="payment-card">
-            <div class="account-row">
-                <span class="label">Asset Network</span>
-                <span class="value">Bitcoin (BTC)</span>
-            </div>
-            <div class="account-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <span class="label">Wallet Address</span>
-                <div class="copy-wrapper" style="width: 100%; justify-content: space-between;">
-                    <span class="crypto-address">1Lv296LMmLSbYCcRZWKctNPZ1MXHs44b36</span>
-                    <button class="copy-btn" onclick="copyData('1Lv296LMmLSbYCcRZWKctNPZ1MXHs44b36', this)">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="payment-card">
-            <div class="account-row">
-                <span class="label">Asset Network</span>
-                <span class="value">Ethereum (ETH)</span>
-            </div>
-            <div class="account-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <span class="label">Wallet Address</span>
-                <div class="copy-wrapper" style="width: 100%; justify-content: space-between;">
-                    <span class="crypto-address">0xe02c6c335a2883aefe3df9d6d6fe295f4b6f5a1d</span>
-                    <button class="copy-btn" onclick="copyData('0xe02c6c335a2883aefe3df9d6d6fe295f4b6f5a1d', this)">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="payment-card">
-            <div class="account-row">
-                <span class="label">Asset Network</span>
-                <span class="value">USDT (TRC20)</span>
-            </div>
-            <div class="account-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <span class="label">Wallet Address</span>
-                <div class="copy-wrapper" style="width: 100%; justify-content: space-between;">
-                    <span class="crypto-address">TWQXaZyrZhdFB8xG5JHD6wF272iQLAvbUq</span>
-                    <button class="copy-btn" onclick="copyData('TWQXaZyrZhdFB8xG5JHD6wF272iQLAvbUq', this)">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <a href="consent.html" class="next-btn">I Have Made My Payment</a>
-
+        <a href="consent.html" class="btn">Confirm Payment Submission</a>
     </div>
-
-    <script>
-        function copyData(textToCopy, buttonElement) {
-            navigator.clipboard.writeText(textToCopy).then(function() {
-                var originalText = buttonElement.innerText;
-                buttonElement.innerText = "Copied!";
-                buttonElement.style.backgroundColor = "#22C55E";
-                
-                setTimeout(function() {
-                    buttonElement.innerText = originalText;
-                    buttonElement.style.backgroundColor = "#0066FF";
-                }, 1500);
-            }).catch(function(err) {
-                console.error('Could not copy text: ', err);
-            });
-        }
-    </script>
-
 </body>
 </html>
