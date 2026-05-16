@@ -13,7 +13,6 @@
             --text-main: #F5F7FA;
             --text-muted: #8A94A6;
             --border-color: #1F262E;
-            --success-green: #22C55E;
         }
 
         * {
@@ -21,7 +20,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -69,13 +67,13 @@
             border-radius: 2px;
         }
 
-        /* Information Notice Card */
+        /* Information Notice Banner */
         .info-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .info-card h2 {
@@ -95,72 +93,25 @@
             font-weight: 600;
         }
 
-        /* Interactive Form Link Card */
-        .form-link-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--accent-blue);
+        /* Mobile-Optimized Google Form Iframe Wrapper */
+        .form-container {
+            background-color: #FFFFFF;
             border-radius: 12px;
-            padding: 24px;
-            text-align: center;
+            overflow: hidden;
+            width: 100%;
+            height: 600px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.1);
-        }
-
-        .form-link-card h3 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .form-link-card p {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 18px;
-        }
-
-        .open-form-btn {
-            display: inline-block;
-            background-color: transparent;
-            color: var(--accent-blue);
-            border: 2px solid var(--accent-blue);
-            text-align: center;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .open-form-btn:active {
-            background-color: var(--accent-blue);
-            color: #FFFFFF;
-        }
-
-        /* Toggle Checkbox Interface */
-        .toggle-box {
-            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .toggle-box input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--accent-blue);
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
-        .toggle-label {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Next Step Action Button */
+        /* Navigation Action Button */
         .submit-btn {
             display: block;
             width: 100%;
@@ -172,14 +123,7 @@
             font-size: 16px;
             font-weight: 600;
             text-decoration: none;
-            opacity: 0.5;
-            pointer-events: none;
-            transition: all 0.2s ease;
-        }
-
-        .submit-btn.active {
-            opacity: 1;
-            pointer-events: auto;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
         }
     </style>
 </head>
@@ -195,40 +139,18 @@
         </div>
 
         <div class="info-card">
-            <h2>Club Onboarding Queue</h2>
-            <p>Please launch the formal network directory questionnaire below to log your profile data details securely into our records.</p>
+            <h2>Club Verification Guidelines</h2>
+            <p>Please complete the official onboarding questionnaire below. Your inputs are registered directly to our secure member validation database.</p>
             <p class="alert-text">⚠️ Note: You must register 1 member under you as a referral before your identity verification profile can be cleared for full manual club approval.</p>
         </div>
 
-        <div class="form-link-card">
-            <h3>PPG Questionnaire Directory</h3>
-            <p>Tap the button below to open your secure registration form in a clean browser window.</p>
-            <a href="https://forms.gle/NG3KE9oiEQTn4LuRA" target="_blank" class="open-form-btn">Open Official Google Form</a>
+        <div class="form-container">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSesltKPVeKHpk1fRb7g7I9J7IWnOogpnFfl7ss0Bh3OiPRQzQ/viewform?embedded=true">Loading onboarding form...</iframe>
         </div>
 
-        <div class="toggle-box">
-            <input type="checkbox" id="form_complete" onchange="toggleFlowButton()">
-            <div class="toggle-label">
-                I have successfully filled and submitted my details via the Google Form.
-            </div>
-        </div>
-
-        <a href="payment.html" id="nextStepBtn" class="submit-btn">Continue to Membership Payment</a>
+        <a href="payment.html" class="submit-btn">Continue to Membership Payment</a>
 
     </div>
-
-    <script>
-        function toggleFlowButton() {
-            var checkbox = document.getElementById("form_complete");
-            var nextBtn = document.getElementById("nextStepBtn");
-            
-            if(checkbox.checked) {
-                nextBtn.classList.add("active");
-            } else {
-                nextBtn.classList.remove("active");
-            }
-        }
-    </script>
 
 </body>
 </html>
