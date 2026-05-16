@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPG Solutions | Club Registration</title>
+    <style>
+        :root {
+            --bg-deep: #090B0E;
+            --bg-card: #12161A;
+            --accent-blue: #0066FF;
+            --accent-gold: #E5B842;
+            --text-main: #F5F7FA;
+            --text-muted: #8A94A6;
+            --border-color: #1F262E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Step Progress Header */
+        .progress-header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .progress-title {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 4px;
+            background-color: var(--border-color);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 40%; /* Step 2 of 5 */
+            background-color: var(--accent-blue);
+            border-radius: 2px;
+        }
+
+        /* Information Notice Banner */
+        .info-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .alert-text {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* Safe Responsive Iframe Container */
+        .form-wrapper {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+            height: 650px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Navigation Action Button */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            text-align: center;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Step Indicator -->
+        <div class="progress-header">
+            <div class="progress-title">Step 2 of 5: KYC Onboarding Form</div>
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Requirements Notice -->
+        <div class="info-card">
+            <h2>Club Verification Guidelines</h2>
+            <p>Please provide accurate details in the registration questionnaire below. This data updates our secure member network tracking system directly.</p>
+            <p class="alert-text">⚠️ Note: You must register 1 member under you as a referral before your identity verification profile can be cleared for full manual club approval.</p>
+        </div>
+
+        <!-- Secure Form Frame Instance -->
+        <div class="form-wrapper">
+            <!-- IMPORTANT: Replace the URL inside src="" below with your long Google Form Embed URL -->
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfD_gM3bVshh90wWvE68gD_j6-EXAMPLE/viewform?embedded=true">Loading questionnaire...</iframe>
+        </div>
+
+        <!-- Links to the next payment sequence file -->
+        <a href="payment.html" class="submit-btn">Continue to Membership Payment</a>
+
+    </div>
+
+</body>
+</html>
