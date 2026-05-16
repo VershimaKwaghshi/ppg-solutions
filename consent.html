@@ -21,7 +21,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -36,7 +35,6 @@
             margin: 0 auto;
         }
 
-        /* Step Progress Header */
         .progress-header {
             margin-bottom: 25px;
             text-align: center;
@@ -64,12 +62,11 @@
             top: 0;
             left: 0;
             height: 100%;
-            width: 80%; /* Step 4 of 5 */
+            width: 80%;
             background-color: var(--accent-blue);
             border-radius: 2px;
         }
 
-        /* Legal Notice Card */
         .warning-card {
             background-color: rgba(239, 68, 68, 0.05);
             border: 1px solid rgba(239, 68, 68, 0.2);
@@ -83,18 +80,8 @@
             font-weight: 700;
             color: var(--danger-red);
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .warning-card p {
-            font-size: 14px;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-
-        /* Interactive Selection Matrix */
         .matrix-title {
             font-size: 14px;
             color: var(--text-muted);
@@ -136,18 +123,10 @@
             justify-content: space-between;
             font-weight: 700;
             font-size: 15px;
-            margin-bottom: 4px;
         }
 
         .opt-risk { color: var(--accent-gold); }
-        .opt-gain { color: var(--text-main); }
 
-        .option-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* Explicit Consent Checkbox Area */
         .consent-box {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -169,14 +148,8 @@
         .consent-label {
             font-size: 13px;
             color: var(--text-muted);
-            line-height: 1.5;
         }
 
-        .consent-label strong {
-            color: var(--text-main);
-        }
-
-        /* Forward Action Controller */
         .whatsapp-btn {
             display: block;
             width: 100%;
@@ -190,7 +163,7 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.4;
             pointer-events: none;
             transition: all 0.2s ease;
         }
@@ -214,90 +187,51 @@
 
         <div class="warning-card">
             <h2>⚠️ Capital Risk Declaration</h2>
-            <p>Financial market trading carries high inherent exposure strings. You must consciously acknowledge that past target performance yields do not guarantee future execution returns.</p>
+            <p>Financial market trading carries high inherent exposure strings. You must consciously acknowledge that past performance yields do not guarantee future returns.</p>
         </div>
 
         <h3 class="matrix-title">Confirm Your Execution Risk Allocation:</h3>
 
         <form id="consentForm">
             <div class="selection-grid">
-                
                 <label class="matrix-option">
-                    <input type="radio" name="risk_tier" value="1% Risk Tier (Potential 1% Daily Gain)" checked>
+                    <input type="radio" name="risk_tier" value="1% Risk Tier" checked>
                     <div class="option-details">
-                        <div class="option-header">
-                            <span class="opt-risk">1% Risk Preference</span>
-                            <span class="opt-gain">Target 1% Daily</span>
-                        </div>
-                        <p class="option-desc">Low risk structure parameters. Maximizes preservation profiles.</p>
+                        <div class="option-header"><span class="opt-risk">1% Risk Preference</span></div>
                     </div>
                 </label>
-
                 <label class="matrix-option">
-                    <input type="radio" name="risk_tier" value="5% Risk Tier (Potential 5% Daily Gain)">
+                    <input type="radio" name="risk_tier" value="5% Risk Tier">
                     <div class="option-details">
-                        <div class="option-header">
-                            <span class="opt-risk">5% Risk Preference</span>
-                            <span class="opt-gain">Target 5% Daily</span>
-                        </div>
-                        <p class="option-desc">Balanced corporate allocation framework options.</p>
+                        <div class="option-header"><span class="opt-risk">5% Risk Preference</span></div>
                     </div>
                 </label>
-
                 <label class="matrix-option">
-                    <input type="radio" name="risk_tier" value="10% Risk Tier (Potential 10% Daily Gain)">
+                    <input type="radio" name="risk_tier" value="10% Risk Tier">
                     <div class="option-details">
-                        <div class="option-header">
-                            <span class="opt-risk">10% Risk Preference</span>
-                            <span class="opt-gain">Target 10% Daily</span>
-                        </div>
-                        <p class="option-desc">High volatility exposure boundaries.</p>
+                        <div class="option-header"><span class="opt-risk">10% Risk Preference</span></div>
                     </div>
                 </label>
-
-                <label class="matrix-option">
-                    <input type="radio" name="risk_tier" value="15% Risk Tier (Potential 15% Daily Gain)">
-                    <div class="option-details">
-                        <div class="option-header">
-                            <span class="opt-risk">15% Risk Preference</span>
-                            <span class="opt-gain">Target 15% Daily</span>
-                        </div>
-                        <p class="option-desc">Aggressive configuration layout setups.</p>
-                    </div>
-                </label>
-
-                <label class="matrix-option">
-                    <input type="radio" name="risk_tier" value="20% Risk Tier (Potential 20% Daily Gain)">
-                    <div class="option-details">
-                        <div class="option-header">
-                            <span class="opt-risk">20% Risk Preference</span>
-                            <span class="opt-gain">Target 20% Daily</span>
-                        </div>
-                        <p class="option-desc">Extreme performance parameters. High drawdown exposure lines.</p>
-                    </div>
-                </label>
-
             </div>
 
             <div class="consent-box">
-                <input type="checkbox" id="legal_agree" onchange="toggleVerificationButton()">
+                <input type="checkbox" id="legal_agree" onchange="toggleBtn()">
                 <div class="consent-label">
-                    <strong>I consciously agree and confirm that this is a highly volatile investment space.</strong> I accept the non-refundable registration fee policy, acknowledge that I could lose all my trading capital, and explicitly authorize PPG Solutions to manage my MT5 execution based on my selection above.
+                    I consciously agree and confirm that this is a highly volatile space. I authorize PPG Solutions to manage my MT5 execution based on my selection above.
                 </div>
             </div>
 
-            <button type="button" id="submitAction" class="whatsapp-btn" onclick="sendWhatsAppPayload()">
-                Submit Consent &amp; Open Support Chat
+            <button type="button" id="submitAction" class="whatsapp-btn" onclick="executeDualAction()">
+                Submit Consent &amp; Open Dashboard
             </button>
         </form>
 
     </div>
 
     <script>
-        function toggleVerificationButton() {
+        function toggleBtn() {
             var checkbox = document.getElementById("legal_agree");
             var actionBtn = document.getElementById("submitAction");
-            
             if(checkbox.checked) {
                 actionBtn.classList.add("active");
             } else {
@@ -305,17 +239,18 @@
             }
         }
 
-        function sendWhatsAppPayload() {
+        function executeDualAction() {
             var selectedTier = document.querySelector('input[name="risk_tier"]:checked').value;
             var phoneDestination = "2348130500659";
             
-            var textPayload = "Hello PPG Solutions Support, I have completed my registration and submitted my membership fee transfer details. I am sharing my execution selection table parameters:\n\n" + 
-                              "Selected Parameter: " + selectedTier + "\n" +
-                              "Risk Policy Status: Explicitly Read, Agreed, and Authorized.\n\n" +
-                              "Please verify my records and provide access parameters to the club dashboard tracking systems.";
+            var textPayload = "Hello PPG Solutions Support, I have completed my registration and submitted my membership fee transfer details. Selected Parameter: " + selectedTier;
+            var whatsappURL = "https://wa.me/" + phoneDestination + "?text=" + encodeURIComponent(textPayload);
             
-            var encodedURL = "https://wa.me/" + phoneDestination + "?text=" + encodeURIComponent(textPayload);
-            window.location.href = encodedURL;
+            // Step 1: Open WhatsApp chat line in a new tab
+            window.open(whatsappURL, '_blank');
+            
+            // Step 2: Instantly forward main screen to Dashboard Page
+            window.location.href = "dashboard.html";
         }
     </script>
 
