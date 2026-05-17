@@ -6,7 +6,7 @@
 <title>Application Submitted — PPG Trading Club</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--green:#22c55e;--red:#ef4444;}
+:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--green:#22c55e;--red:#ef4444;--accent-blue:#0066FF;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;}
@@ -73,6 +73,8 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
 
 /* ACTIONS */
 .actions{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.btn-dash{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent-blue);color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;border:none;cursor:pointer;width:100%;}
+.btn-dash:hover{background:#0052cc;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,0.3);}
 .btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;}
 .btn-wa:hover{background:#1da851;transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,0.3);}
 .btn-home{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--grey);padding:15px 32px;border-radius:10px;font-weight:500;font-size:0.9rem;text-decoration:none;border:1px solid rgba(255,255,255,0.1);transition:all 0.25s;}
@@ -110,25 +112,13 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
 <div class="progress-wrap">
   <div class="progress-inner">
     <div class="progress-steps">
-      <div class="ps">
-        <div class="ps-circle">✓</div>
-        <div class="ps-label">Register</div>
-      </div>
+      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Register</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">✓</div>
-        <div class="ps-label">Payment</div>
-      </div>
+      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Payment</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">✓</div>
-        <div class="ps-label">Consent</div>
-      </div>
+      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Consent</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">✓</div>
-        <div class="ps-label">Complete</div>
-      </div>
+      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Complete</div></div>
     </div>
     <div class="progress-bar-wrap">
       <div class="progress-bar" style="width:100%"></div>
@@ -154,38 +144,14 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
 
     <div class="summary-card">
       <div class="summary-title">Application Summary</div>
-      <div class="summary-row">
-        <div class="sr-label">Full Name</div>
-        <div class="sr-value" id="sum-name">—</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Email</div>
-        <div class="sr-value" id="sum-email">—</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Risk Tier Selected</div>
-        <div class="sr-value gold" id="sum-risk">—</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Referral ID Provided</div>
-        <div class="sr-value" id="sum-referral">—</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Payment Method</div>
-        <div class="sr-value" id="sum-payment">—</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Registration Fee</div>
-        <div class="sr-value green">$3.99 Paid</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Risk Consent</div>
-        <div class="sr-value green">✓ Signed & Confirmed</div>
-      </div>
-      <div class="summary-row">
-        <div class="sr-label">Status</div>
-        <div class="sr-value gold">Pending KYC Review</div>
-      </div>
+      <div class="summary-row"><div class="sr-label">Full Name</div><div class="sr-value" id="sum-name">—</div></div>
+      <div class="summary-row"><div class="sr-label">Email</div><div class="sr-value" id="sum-email">—</div></div>
+      <div class="summary-row"><div class="sr-label">Risk Tier Selected</div><div class="sr-value gold" id="sum-risk">—</div></div>
+      <div class="summary-row"><div class="sr-label">Referral ID Provided</div><div class="sr-value" id="sum-referral">—</div></div>
+      <div class="summary-row"><div class="sr-label">Payment Method</div><div class="sr-value" id="sum-payment">—</div></div>
+      <div class="summary-row"><div class="sr-label">Registration Fee</div><div class="sr-value green">$3.99 Paid</div></div>
+      <div class="summary-row"><div class="sr-label">Risk Consent</div><div class="sr-value green">✓ Signed & Confirmed</div></div>
+      <div class="summary-row"><div class="sr-label">Status</div><div class="sr-value gold">Pending KYC Review</div></div>
     </div>
 
     <div class="next-card">
@@ -193,8 +159,8 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
       <div class="next-item">
         <div class="next-num">1</div>
         <div class="next-body">
-          <h5>WhatsApp Confirmation</h5>
-          <p>If you haven't already, send your consent message to our WhatsApp support. Our team will acknowledge receipt within a few hours.</p>
+          <h5>Access Member Dashboard</h5>
+          <p>You can now log straight into your partner room. Copy your referral trace links immediately to start tracking downline metrics while verification undergoes administration clearance.</p>
         </div>
       </div>
       <div class="next-item">
@@ -204,30 +170,12 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
           <p>Our team verifies your <strong>payment receipt</strong> and reviews your ID documents. This takes <strong>24–48 business hours</strong>.</p>
         </div>
       </div>
-      <div class="next-item">
-        <div class="next-num">3</div>
-        <div class="next-body">
-          <h5>Approval & Member ID</h5>
-          <p>Once approved, you receive your <strong>unique PPG Member ID</strong> via WhatsApp. Share this ID with people you refer.</p>
-        </div>
-      </div>
-      <div class="next-item">
-        <div class="next-num">4</div>
-        <div class="next-body">
-          <h5>Open Your Broker Account</h5>
-          <p>You'll receive a link to register your personal trading account with our recommended licensed broker. Deposit a <strong>minimum of $100</strong>.</p>
-        </div>
-      </div>
-      <div class="next-item">
-        <div class="next-num">5</div>
-        <div class="next-body">
-          <h5>Trading Begins</h5>
-          <p>You receive your <strong>view-only MT5 password</strong> to watch every trade live. Your chosen risk tier is activated and trading begins.</p>
-        </div>
-      </div>
     </div>
 
     <div class="actions">
+      <button onclick="commitToStateAndRoute()" class="btn-dash">
+        🚀 Open Member Dashboard
+      </button>
       <a href="https://wa.me/2348130500659" target="_blank" class="btn-wa">
         💬 Open WhatsApp Support
       </a>
@@ -244,7 +192,7 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
 
 <div class="footer-note">
   <p>Questions? Contact us on <a href="https://wa.me/2348130500659" target="_blank">WhatsApp</a> or email <a href="mailto:contact.ppgsolutions@gmail.com">contact.ppgsolutions@gmail.com</a><br>
-  © 2025 Penny Partners Group (PPG Solutions). CAC Registered.</p>
+  © 2026 Penny Partners Group (PPG Solutions). CAC Registered.</p>
 </div>
 
 <script>
@@ -260,6 +208,28 @@ window.addEventListener('load',function(){
     }
   }catch(e){}
 });
+
+function commitToStateAndRoute() {
+  try {
+    const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
+    
+    // Initialize standard state values inside localStorage
+    localStorage.setItem('ppg_kyc_status', 'pending'); 
+    localStorage.setItem('ppg_user_email', d.email || 'partner@ppg.club');
+    localStorage.setItem('ppg_user_name', d.name || 'Club Partner');
+    
+    // Set fallback display parameters for a clean layout experience
+    if(!localStorage.getItem('ppg_balance_val')) {
+      localStorage.setItem('ppg_balance_val', '0.00');
+    }
+    if(!localStorage.getItem('ppg_referrals_count')) {
+      localStorage.setItem('ppg_referrals_count', '0');
+    }
+  } catch(err) {}
+
+  // Route to the dashboard file
+  window.location.href = "dashboard.html";
+}
 </script>
 </body>
 </html>
