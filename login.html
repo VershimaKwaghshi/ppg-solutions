@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — PPG Trading Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--red:#ef4444;--green:#22c55e;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;}
+.page{flex:1;display:flex;flex-direction:column;}
+
+/* BACKGROUND */
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 60% 30%,rgba(22,64,214,0.15) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(201,168,76,0.05) 0%,transparent 50%);pointer-events:none;}
+.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(22,64,214,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(22,64,214,0.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+
+/* NAV */
+.nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
+.logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.nav-link{color:var(--grey);text-decoration:none;font-size:0.85rem;transition:color 0.2s;}
+.nav-link:hover{color:var(--white);}
+
+/* LOGIN CONTAINER */
+.login-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 5%;position:relative;z-index:5;}
+.login-box{width:100%;max-width:420px;}
+
+/* HEADER */
+.login-header{text-align:center;margin-bottom:36px;}
+.login-icon{width:64px;height:64px;border-radius:16px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.8rem;}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;margin-bottom:8px;}
+.login-title em{font-style:italic;color:var(--gold);}
+.login-sub{color:var(--grey);font-size:0.85rem;font-weight:300;line-height:1.6;}
+
+/* CARD */
+.login-card{background:rgba(7,20,40,0.9);border:1px solid var(--border);border-radius:18px;padding:36px;backdrop-filter:blur(20px);}
+
+/* ERROR / SUCCESS */
+.msg-box{border-radius:10px;padding:12px 16px;font-size:0.82rem;margin-bottom:20px;display:none;line-height:1.5;}
+.msg-box.show{display:block;}
+.msg-box.err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);}
+.msg-box.suc{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:var(--green);}
+
+/* FIELDS */
+.f{margin-bottom:20px;}
+.f label{display:block;font-size:0.78rem;font-weight:500;color:var(--grey);margin-bottom:7px;}
+.iw{position:relative;}
+.f input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;color:var(--white);font-size:0.92rem;font-family:'Outfit',sans-serif;transition:all 0.2s;outline:none;}
+.f input.pt{padding-right:48px;}
+.f input::placeholder{color:var(--grey2);}
+.f input:focus{border-color:var(--gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+.f input.err{border-color:var(--red);}
+.tpw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--grey2);cursor:pointer;font-size:1rem;padding:4px;transition:color 0.2s;}
+.tpw:hover{color:var(--white);}
+
+/* FORGOT */
+.forgot-row{display:flex;justify-content:flex-end;margin-top:-12px;margin-bottom:20px;}
+.forgot-link{color:var(--gold);font-size:0.78rem;text-decoration:none;transition:color 0.2s;}
+.forgot-link:hover{color:var(--gold-light);}
+
+/* SUBMIT */
+.sbtn{width:100%;background:var(--gold);color:#0a0a0a;border:none;border-radius:10px;padding:15px;font-size:0.98rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;}
+.sbtn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
+.sbtn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.72rem;color:var(--grey2);}
+
+/* REGISTER LINK */
+.reg-link{text-align:center;font-size:0.83rem;color:var(--grey);}
+.reg-link a{color:var(--gold);text-decoration:none;font-weight:500;}
+.reg-link a:hover{color:var(--gold-light);}
+
+/* SECURITY NOTE */
+.security{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;font-size:0.72rem;color:var(--grey2);}
+
+/* PENDING NOTICE */
+.pending-notice{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px;margin-bottom:20px;display:none;}
+.pending-notice.show{display:block;}
+.pending-notice p{font-size:0.8rem;color:#fbbf24;line-height:1.6;}
+.pending-notice p strong{color:#f59e0b;}
+
+@media(max-width:480px){.login-card{padding:24px;}.login-wrap{padding:24px 5%;}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bg"></div>
+  <div class="bg-grid"></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+      <div class="logo-text"><span>PPG Trading Club</span><span>Penny Partners Group</span></div>
+    </a>
+    <a href="index.html" class="nav-link">← Back to Home</a>
+  </nav>
+
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-header">
+        <div class="login-icon">🔐</div>
+        <h1 class="login-title">Welcome <em>Back</em></h1>
+        <p class="login-sub">Log in to your PPG Trading Club member dashboard</p>
+      </div>
+
+      <div class="login-card">
+        <div class="msg-box err" id="errMsg"></div>
+        <div class="msg-box suc" id="sucMsg"></div>
+
+        <div class="pending-notice" id="pendingNotice">
+          <p><strong>Application Pending:</strong> Your account is currently under review. Our team will approve your membership within 24–48 hours after verifying your payment and KYC documents. Please check back soon or contact us on WhatsApp.</p>
+        </div>
+
+        <div class="f">
+          <label>Email Address</label>
+          <input type="email" id="em" placeholder="your@email.com" autocomplete="email">
+        </div>
+
+        <div class="f">
+          <label>Password</label>
+          <div class="iw">
+            <input type="password" id="pw" placeholder="Enter your password" class="pt" autocomplete="current-password">
+            <button class="tpw" type="button" onclick="togglePw()">👁</button>
+          </div>
+        </div>
+
+        <div class="forgot-row">
+          <a href="#" class="forgot-link" onclick="forgotPw(event)">Forgot password?</a>
+        </div>
+
+        <button class="sbtn" id="sbtn" onclick="handleLogin()">Log In to Dashboard</button>
+
+        <div class="divider"><span>New to PPG Trading Club?</span></div>
+        <div class="reg-link"><a href="register.html">Create your account →</a></div>
+      </div>
+
+      <div class="security">🔒 Secured · PPG Solutions · CAC Registered</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient('https://adkptfexitqutwjdexmf.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFka3B0ZmV4aXRxdXR3amRleG1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTczODYsImV4cCI6MjA5NDU5MzM4Nn0.8Zd4QLZb8aImw8ea9RzWkxMVCW5aydpeRaHd7mqJW44');
+
+function togglePw(){const f=document.getElementById('pw');f.type=f.type==='password'?'text':'password';}
+
+async function hashPw(pw){
+  const enc=new TextEncoder();const data=enc.encode(pw+'ppg_salt_2025');
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function showErr(msg){const el=document.getElementById('errMsg');el.textContent=msg;el.className='msg-box err show';document.getElementById('sucMsg').className='msg-box suc';}
+function showSuc(msg){const el=document.getElementById('sucMsg');el.textContent=msg;el.className='msg-box suc show';document.getElementById('errMsg').className='msg-box err';}
+function clearMsgs(){document.getElementById('errMsg').className='msg-box err';document.getElementById('sucMsg').className='msg-box suc';}
+
+async function handleLogin(){
+  clearMsgs();
+  const em=document.getElementById('em').value.trim().toLowerCase();
+  const pw=document.getElementById('pw').value;
+  if(!em||!pw){showErr('Please enter your email and password.');return;}
+  const btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.textContent='Logging in...';
+
+  const pwHash=await hashPw(pw);
+
+  const{data,error}=await sb.from('members')
+    .select('*')
+    .eq('email',em)
+    .eq('password_hash',pwHash)
+    .single();
+
+  if(error||!data){
+    showErr('Incorrect email or password. Please try again.');
+    btn.disabled=false;btn.textContent='Log In to Dashboard';
+    return;
+  }
+
+  // Check status
+  if(data.status==='pending'){
+    document.getElementById('pendingNotice').classList.add('show');
+    showErr('Your account is pending approval. Please check back within 24–48 hours.');
+    btn.disabled=false;btn.textContent='Log In to Dashboard';
+    return;
+  }
+
+  if(data.status==='rejected'){
+    showErr('Your application was not approved. Please contact us on WhatsApp for assistance.');
+    btn.disabled=false;btn.textContent='Log In to Dashboard';
+    return;
+  }
+
+  // Success — save session
+  sessionStorage.setItem('ppg_member',JSON.stringify(data));
+  showSuc('Login successful! Redirecting to your dashboard...');
+  setTimeout(()=>window.location.href='dashboard.html',1200);
+}
+
+async function forgotPw(e){
+  e.preventDefault();
+  const em=document.getElementById('em').value.trim();
+  if(!em){showErr('Please enter your email address first, then tap "Forgot password?"');return;}
+  showSuc('If this email is registered, our team will contact you via WhatsApp to reset your password. Please reach out to us directly at +234 813 050 0659.');
+}
+
+// Enter key support
+document.addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
+
+// Check if already logged in
+window.addEventListener('load',function(){
+  const m=sessionStorage.getItem('ppg_member');
+  if(m){try{const d=JSON.parse(m);if(d&&d.status==='approved')window.location.href='dashboard.html';}catch(e){}}
+});
+</script>
+</body>
+</html>
