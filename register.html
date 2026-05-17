@@ -5,211 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register — PPG Trading Club</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#040d1c;--navy2:#071428;--navy3:#0a1a35;--blue:#1640d6;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--border2:rgba(22,64,214,0.25);--red:#ef4444;--green:#22c55e;}
+:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--red:#ef4444;--green:#22c55e;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;line-height:1.6;}
-
-/* NAV */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
 .logo-text{display:flex;flex-direction:column;line-height:1.1;}
 .logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
 .logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.nav-back{color:var(--grey);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+.nav-back{color:var(--grey);text-decoration:none;font-size:0.85rem;transition:color 0.2s;}
 .nav-back:hover{color:var(--white);}
-
-/* PROGRESS */
-.progress-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
-.progress-inner{max-width:680px;margin:0 auto;}
-.progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.prog-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
+.prog-inner{max-width:680px;margin:0 auto;}
+.prog-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--border);color:var(--grey2);background:var(--navy);transition:all 0.3s;position:relative;z-index:2;}
-.ps.active .ps-circle{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
-.ps.done .ps-circle{border-color:var(--green);color:var(--white);background:var(--green);}
-.ps-label{font-size:0.65rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
-.ps.active .ps-label{color:var(--gold);}
-.ps.done .ps-label{color:var(--green);}
+.ps-c{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--border);color:var(--grey2);background:var(--navy);}
+.ps.active .ps-c{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
+.ps.done .ps-c{border-color:var(--green);color:var(--white);background:var(--green);}
+.ps-l{font-size:0.65rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
+.ps.active .ps-l{color:var(--gold);}
+.ps.done .ps-l{color:var(--green);}
 .ps-line{flex:1;height:1px;background:var(--border);margin:0 -6px;margin-bottom:18px;}
-.ps-line.done{background:var(--green);}
-.progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
-.progress-bar{height:100%;width:25%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;transition:width 0.4s ease;}
-
-/* MAIN */
+.pb-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.pb{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;}
 .main{padding:48px 5% 80px;}
-.form-wrap{max-width:680px;margin:0 auto;}
-.form-header{margin-bottom:40px;}
-.form-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.form-tag::before{content:'';width:20px;height:1px;background:var(--gold);}
-.form-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:10px;}
-.form-title em{font-style:italic;color:var(--gold);}
-.form-sub{color:var(--grey);font-size:0.88rem;line-height:1.7;font-weight:300;}
-
-/* FORM CARD */
-.form-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:20px;}
-.form-section-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-
-/* FIELDS */
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-.field{margin-bottom:16px;}
-.field:last-child{margin-bottom:0;}
-.field label{display:block;font-size:0.78rem;font-weight:500;color:var(--grey);margin-bottom:6px;letter-spacing:0.3px;}
-.field label span{color:var(--red);}
-.field input,.field select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(--white);font-size:0.9rem;font-family:'Outfit',sans-serif;transition:all 0.2s;outline:none;}
-.field input::placeholder{color:var(--grey2);}
-.field input:focus,.field select:focus{border-color:var(--gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
-.field input.error{border-color:var(--red);}
-.field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
-.field select option{background:var(--navy2);color:var(--white);}
-.field-hint{font-size:0.72rem;color:var(--grey2);margin-top:5px;line-height:1.5;}
-.field-error{font-size:0.72rem;color:var(--red);margin-top:5px;display:none;}
-.field.has-error .field-error{display:block;}
-.field.has-error input{border-color:var(--red);}
-
-/* REFERRAL HIGHLIGHT */
-.ref-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:20px;margin-bottom:16px;}
-.ref-box h4{font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:6px;}
+.fw{max-width:680px;margin:0 auto;}
+.fh{margin-bottom:40px;}
+.ftag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.ftag::before{content:'';width:20px;height:1px;background:var(--gold);}
+.ftitle{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:10px;}
+.ftitle em{font-style:italic;color:var(--gold);}
+.fsub{color:var(--grey);font-size:0.88rem;line-height:1.7;font-weight:300;}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:20px;}
+.card-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.f{margin-bottom:16px;}
+.f:last-child{margin-bottom:0;}
+.f label{display:block;font-size:0.78rem;font-weight:500;color:var(--grey);margin-bottom:6px;}
+.f label .req{color:var(--red);}
+.iw{position:relative;}
+.f input,.f select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(--white);font-size:0.9rem;font-family:'Outfit',sans-serif;transition:all 0.2s;outline:none;}
+.f input.pt{padding-right:44px;}
+.f input::placeholder{color:var(--grey2);}
+.f input:focus,.f select:focus{border-color:var(--gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+.f input.ok{border-color:var(--green);}
+.f input.err{border-color:var(--red);}
+.f select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.f select option{background:var(--navy2);}
+.hint{font-size:0.72rem;color:var(--grey2);margin-top:5px;line-height:1.5;}
+.ferr{font-size:0.72rem;color:var(--red);margin-top:5px;display:none;}
+.f.he .ferr{display:block;}
+.f.he input,.f.he select{border-color:var(--red);}
+.tpw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--grey2);cursor:pointer;font-size:1rem;padding:4px;}
+.pw-bar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px;margin-bottom:4px;}
+.pw-fill{height:100%;width:0%;border-radius:3px;transition:all 0.3s;}
+.pw-lbl{font-size:0.7rem;color:var(--grey2);}
+.pw-match{font-size:0.72rem;margin-top:5px;display:none;}
+.pw-match.show{display:block;}
+.pw-match.ok{color:var(--green);}
+.pw-match.bad{color:var(--red);}
+.ref-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:18px;margin-bottom:16px;}
+.ref-box h4{font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:5px;}
 .ref-box p{font-size:0.78rem;color:var(--grey);line-height:1.6;}
-
-/* RISK TIERS */
-.tiers-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px;}
-.tier-opt{position:relative;cursor:pointer;}
-.tier-opt input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
-.tier-card{background:var(--navy);border:2px solid var(--border);border-radius:12px;padding:16px 10px;text-align:center;transition:all 0.25s;user-select:none;}
-.tier-opt input:checked + .tier-card{border-color:var(--gold);background:rgba(201,168,76,0.06);}
-.tier-bar{height:3px;border-radius:3px;margin-bottom:12px;}
-.t1 .tier-bar{background:linear-gradient(90deg,#00d2ff,#00a8e8);}
-.t2 .tier-bar{background:linear-gradient(90deg,#00c853,#69f0ae);}
-.t3 .tier-bar{background:linear-gradient(90deg,#ffd600,#ffab00);}
-.t4 .tier-bar{background:linear-gradient(90deg,#ff6d00,#ff9100);}
-.t5 .tier-bar{background:linear-gradient(90deg,#d50000,#ff1744);}
-.tier-pct{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;}
-.t1 .tier-pct{color:#00d2ff;}.t2 .tier-pct{color:#00c853;}.t3 .tier-pct{color:#ffd600;}.t4 .tier-pct{color:#ff6d00;}.t5 .tier-pct{color:#d50000;}
-.tier-name{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--grey);margin-bottom:6px;}
-.tier-risk-lbl{font-size:0.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:100px;}
-.t1 .tier-risk-lbl{background:rgba(0,210,255,0.1);color:#00d2ff;}
-.t2 .tier-risk-lbl{background:rgba(0,200,83,0.1);color:#00c853;}
-.t3 .tier-risk-lbl{background:rgba(255,214,0,0.1);color:#ffd600;}
-.t4 .tier-risk-lbl{background:rgba(255,109,0,0.1);color:#ff6d00;}
-.t5 .tier-risk-lbl{background:rgba(213,0,0,0.1);color:#d50000;}
-.tier-recommended{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0a0a;font-size:0.5rem;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;white-space:nowrap;}
-
-/* RISK EXPLAINER */
-.risk-explainer{margin-top:16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:0;}
-.re-item{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start;}
-.re-item:last-child{border-bottom:none;}
-.re-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px;}
-.re-item:nth-child(1) .re-dot{background:#00d2ff;}
-.re-item:nth-child(2) .re-dot{background:#00c853;}
-.re-item:nth-child(3) .re-dot{background:#ffd600;}
-.re-item:nth-child(4) .re-dot{background:#ff6d00;}
-.re-item:nth-child(5) .re-dot{background:#d50000;}
-.re-text{font-size:0.78rem;color:var(--grey);line-height:1.6;}
-.re-text strong{color:var(--white);font-weight:600;}
-
-/* WARNING BOX */
-.warn-box{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:18px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px;}
-.warn-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
-.warn-box p{color:var(--grey);font-size:0.78rem;line-height:1.7;}
-.warn-box p strong{color:var(--red);}
-
-/* SUBMIT BTN */
-.submit-btn{width:100%;background:var(--gold);color:#0a0a0a;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.submit-btn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
-.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-.form-note{text-align:center;font-size:0.75rem;color:var(--grey2);margin-top:14px;line-height:1.6;}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-.field-row{grid-template-columns:1fr;}
-.tiers-grid{grid-template-columns:1fr 1fr;}
-.form-card{padding:22px;}
-.main{padding:32px 5% 60px;}
-}
-@media(max-width:380px){
-.tiers-grid{grid-template-columns:1fr;}
-}
+.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px;}
+.to{position:relative;cursor:pointer;}
+.to input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+.tc{background:var(--navy);border:2px solid var(--border);border-radius:12px;padding:16px 10px;text-align:center;transition:all 0.25s;}
+.to input:checked + .tc{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+.tb{height:3px;border-radius:3px;margin-bottom:12px;}
+.t1 .tb{background:linear-gradient(90deg,#00d2ff,#00a8e8);}
+.t2 .tb{background:linear-gradient(90deg,#00c853,#69f0ae);}
+.t3 .tb{background:linear-gradient(90deg,#ffd600,#ffab00);}
+.t4 .tb{background:linear-gradient(90deg,#ff6d00,#ff9100);}
+.t5 .tb{background:linear-gradient(90deg,#d50000,#ff1744);}
+.tp{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;}
+.t1 .tp{color:#00d2ff;}.t2 .tp{color:#00c853;}.t3 .tp{color:#ffd600;}.t4 .tp{color:#ff6d00;}.t5 .tp{color:#d50000;}
+.tn{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--grey);margin-bottom:6px;}
+.trl{font-size:0.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:100px;}
+.t1 .trl{background:rgba(0,210,255,0.1);color:#00d2ff;}
+.t2 .trl{background:rgba(0,200,83,0.1);color:#00c853;}
+.t3 .trl{background:rgba(255,214,0,0.1);color:#ffd600;}
+.t4 .trl{background:rgba(255,109,0,0.1);color:#ff6d00;}
+.t5 .trl{background:rgba(213,0,0,0.1);color:#d50000;}
+.trec{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0a0a;font-size:0.5rem;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;white-space:nowrap;}
+.warn{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:18px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px;}
+.warn p{color:var(--grey);font-size:0.78rem;line-height:1.7;}
+.warn p strong{color:var(--red);}
+.sbtn{width:100%;background:var(--gold);color:#0a0a0a;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.sbtn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
+.sbtn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.fnote{text-align:center;font-size:0.75rem;color:var(--grey2);margin-top:14px;line-height:1.6;}
+.ll{text-align:center;margin-top:20px;font-size:0.85rem;color:var(--grey);}
+.ll a{color:var(--gold);text-decoration:none;font-weight:500;}
+.ebanner{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:0.82rem;color:var(--red);display:none;}
+.ebanner.show{display:block;}
+@media(max-width:600px){.row{grid-template-columns:1fr;}.tiers{grid-template-columns:1fr 1fr;}.card{padding:22px;}.main{padding:32px 5% 60px;}}
+@media(max-width:380px){.tiers{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <nav class="nav">
   <a href="index.html" class="nav-logo">
     <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
-    <div class="logo-text">
-      <span>PPG Trading Club</span>
-      <span>Penny Partners Group</span>
-    </div>
+    <div class="logo-text"><span>PPG Trading Club</span><span>Penny Partners Group</span></div>
   </a>
   <a href="index.html" class="nav-back">← Back to Home</a>
 </nav>
-
-<div class="progress-wrap">
-  <div class="progress-inner">
-    <div class="progress-steps">
-      <div class="ps active">
-        <div class="ps-circle">1</div>
-        <div class="ps-label">Register</div>
-      </div>
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <div class="prog-steps">
+      <div class="ps active"><div class="ps-c">1</div><div class="ps-l">Register</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">2</div>
-        <div class="ps-label">Payment</div>
-      </div>
+      <div class="ps"><div class="ps-c">2</div><div class="ps-l">Payment</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">3</div>
-        <div class="ps-label">Consent</div>
-      </div>
+      <div class="ps"><div class="ps-c">3</div><div class="ps-l">Consent</div></div>
       <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">4</div>
-        <div class="ps-label">Complete</div>
-      </div>
+      <div class="ps"><div class="ps-c">4</div><div class="ps-l">Complete</div></div>
     </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" style="width:25%"></div>
-    </div>
+    <div class="pb-wrap"><div class="pb" style="width:25%"></div></div>
   </div>
 </div>
-
 <div class="main">
-  <div class="form-wrap">
-    <div class="form-header">
-      <div class="form-tag">Step 1 of 4</div>
-      <h1 class="form-title">Your <em>Membership</em><br>Application</h1>
-      <p class="form-sub">Complete all fields carefully. Ensure your details are accurate — they will be used for KYC verification and your member profile.</p>
+  <div class="fw">
+    <div class="fh">
+      <div class="ftag">Step 1 of 4</div>
+      <h1 class="ftitle">Your <em>Membership</em><br>Application</h1>
+      <p class="fsub">Complete all fields carefully. Your details are used for KYC verification and your secure member account.</p>
     </div>
+    <div class="ebanner" id="eb"></div>
 
-    <div class="form-card">
-      <div class="form-section-title">Personal Information</div>
-      <div class="field-row">
-        <div class="field" id="field-firstname">
-          <label>First Name <span>*</span></label>
-          <input type="text" id="firstname" placeholder="e.g. Vershima" autocomplete="given-name">
-          <div class="field-error">Please enter your first name</div>
-        </div>
-        <div class="field" id="field-lastname">
-          <label>Last Name <span>*</span></label>
-          <input type="text" id="lastname" placeholder="e.g. Kwaghshi" autocomplete="family-name">
-          <div class="field-error">Please enter your last name</div>
-        </div>
+    <div class="card">
+      <div class="card-title">Personal Information</div>
+      <div class="row">
+        <div class="f" id="ff"><label>First Name <span class="req">*</span></label><input type="text" id="fn" placeholder="e.g. Vershima" autocomplete="given-name"><div class="ferr">Enter your first name</div></div>
+        <div class="f" id="fl"><label>Last Name <span class="req">*</span></label><input type="text" id="ln" placeholder="e.g. Kwaghshi" autocomplete="family-name"><div class="ferr">Enter your last name</div></div>
       </div>
-      <div class="field" id="field-email">
-        <label>Email Address <span>*</span></label>
-        <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
-        <div class="field-error">Please enter a valid email address</div>
-      </div>
-      <div class="field" id="field-phone">
-        <label>Phone Number <span>*</span></label>
-        <input type="tel" id="phone" placeholder="+234 800 000 0000" autocomplete="tel">
-        <div class="field-error">Please enter your phone number</div>
-      </div>
-      <div class="field" id="field-country">
-        <label>Country <span>*</span></label>
-        <select id="country">
+      <div class="f" id="fe"><label>Email Address <span class="req">*</span></label><input type="email" id="em" placeholder="your@email.com" autocomplete="email"><div class="ferr">Enter a valid email address</div></div>
+      <div class="f" id="fp"><label>Phone Number <span class="req">*</span></label><input type="tel" id="ph" placeholder="+234 800 000 0000" autocomplete="tel"><div class="ferr">Enter your phone number</div></div>
+      <div class="f" id="fc"><label>Country <span class="req">*</span></label>
+        <select id="co">
           <option value="">Select your country</option>
           <option value="Nigeria" selected>Nigeria</option>
           <option value="Ghana">Ghana</option>
@@ -220,156 +158,148 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
           <option value="Canada">Canada</option>
           <option value="Other">Other</option>
         </select>
-        <div class="field-error">Please select your country</div>
+        <div class="ferr">Select your country</div>
       </div>
     </div>
 
-    <div class="form-card">
-      <div class="form-section-title">Referral Information</div>
-      <div class="ref-box">
-        <h4>🤝 Referral ID Required</h4>
-        <p>Every new member must be referred by an existing PPG Trading Club member. Please obtain your referral ID from the member who introduced you to the club before completing this form.</p>
+    <div class="card">
+      <div class="card-title">Create Your Password</div>
+      <div class="f" id="fpw">
+        <label>Password <span class="req">*</span></label>
+        <div class="iw">
+          <input type="password" id="pw" placeholder="Minimum 8 characters" class="pt" oninput="checkStr(this.value)">
+          <button class="tpw" type="button" onclick="togglePw('pw',this)">👁</button>
+        </div>
+        <div class="pw-bar"><div class="pw-fill" id="pwf"></div></div>
+        <div class="pw-lbl" id="pwl">Enter a password</div>
+        <div class="ferr">Password must be at least 8 characters</div>
       </div>
-      <div class="field" id="field-referral">
-        <label>Referral Member ID <span>*</span></label>
-        <input type="text" id="referral" placeholder="e.g. PPG-000123" autocomplete="off" style="text-transform:uppercase;">
-        <div class="field-hint">Enter the unique ID of the member who referred you. Contact them if you don't have it.</div>
-        <div class="field-error">A valid referral ID is required to register</div>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="form-section-title">Choose Your Risk Tier</div>
-      <p style="color:var(--grey);font-size:0.83rem;line-height:1.7;margin-bottom:20px;font-weight:300;">Select the risk level you are comfortable with. The <strong style="color:var(--white);">1% Conservative tier is recommended</strong> for all new members. You may change your tier later when no trades are running.</p>
-
-      <div class="tiers-grid">
-        <label class="tier-opt t1">
-          <div class="tier-recommended">⭐ Best</div>
-          <input type="radio" name="risk" value="1% Conservative" checked>
-          <div class="tier-card">
-            <div class="tier-bar"></div>
-            <div class="tier-pct">1%</div>
-            <div class="tier-name">Conservative</div>
-            <div class="tier-risk-lbl">Low Risk</div>
-          </div>
-        </label>
-        <label class="tier-opt t2">
-          <input type="radio" name="risk" value="5% Moderate">
-          <div class="tier-card">
-            <div class="tier-bar"></div>
-            <div class="tier-pct">5%</div>
-            <div class="tier-name">Moderate</div>
-            <div class="tier-risk-lbl">Med Risk</div>
-          </div>
-        </label>
-        <label class="tier-opt t3">
-          <input type="radio" name="risk" value="10% Balanced">
-          <div class="tier-card">
-            <div class="tier-bar"></div>
-            <div class="tier-pct">10%</div>
-            <div class="tier-name">Balanced</div>
-            <div class="tier-risk-lbl">Med-High</div>
-          </div>
-        </label>
-        <label class="tier-opt t4">
-          <input type="radio" name="risk" value="15% Aggressive">
-          <div class="tier-card">
-            <div class="tier-bar"></div>
-            <div class="tier-pct">15%</div>
-            <div class="tier-name">Aggressive</div>
-            <div class="tier-risk-lbl">High Risk</div>
-          </div>
-        </label>
-        <label class="tier-opt t5">
-          <input type="radio" name="risk" value="20% Maximum">
-          <div class="tier-card">
-            <div class="tier-bar"></div>
-            <div class="tier-pct">20%</div>
-            <div class="tier-name">Maximum</div>
-            <div class="tier-risk-lbl">Very High</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="risk-explainer">
-        <div class="re-item">
-          <div class="re-dot"></div>
-          <div class="re-text"><strong>1% Daily</strong> — Easiest to achieve consistently. Lowest risk. Best for beginners. ~$1/day on $100.</div>
+      <div class="f" id="fcf">
+        <label>Confirm Password <span class="req">*</span></label>
+        <div class="iw">
+          <input type="password" id="cf" placeholder="Re-enter your password" class="pt" oninput="checkMatch()">
+          <button class="tpw" type="button" onclick="togglePw('cf',this)">👁</button>
         </div>
-        <div class="re-item">
-          <div class="re-dot"></div>
-          <div class="re-text"><strong>5% Daily</strong> — Moderate positions. Higher potential but harder to sustain. ~$5/day on $100.</div>
-        </div>
-        <div class="re-item">
-          <div class="re-dot"></div>
-          <div class="re-text"><strong>10% Daily</strong> — Large positions required. Deeper and more frequent drawdowns. ~$10/day on $100.</div>
-        </div>
-        <div class="re-item">
-          <div class="re-dot"></div>
-          <div class="re-text"><strong>15% Daily</strong> — High aggression. Significant losses possible. Only for experienced risk-takers. ~$15/day on $100.</div>
-        </div>
-        <div class="re-item">
-          <div class="re-dot"></div>
-          <div class="re-text"><strong>20% Daily</strong> — Maximum risk. High probability of large losses. You may lose your entire capital. ~$20/day on $100.</div>
-        </div>
+        <div class="pw-match" id="pm"></div>
+        <div class="ferr">Passwords do not match</div>
       </div>
     </div>
 
-    <div class="warn-box">
-      <div class="warn-icon">⚠️</div>
-      <p><strong>Risk Warning:</strong> Forex trading involves substantial risk of loss. The daily percentages shown are potential targets only — they are not guaranteed. You may lose some or all of your invested capital. By proceeding, you agree to read and sign our full risk consent in Step 3.</p>
+    <div class="card">
+      <div class="card-title">Referral Information</div>
+      <div class="ref-box"><h4>🤝 Referral ID Required</h4><p>Every new member must be referred by an existing PPG Trading Club member. Get your referral ID from the person who introduced you before completing this form.</p></div>
+      <div class="f" id="fr"><label>Referral Member ID <span class="req">*</span></label><input type="text" id="ref" placeholder="e.g. PPG-AB12CD" autocomplete="off" style="text-transform:uppercase;"><div class="hint">Enter the unique PPG ID of the member who referred you.</div><div class="ferr">A valid referral ID is required</div></div>
     </div>
 
-    <button class="submit-btn" onclick="handleSubmit()">
-      Continue to Payment →
-    </button>
-    <p class="form-note">Your information is kept private and used only for KYC verification and membership processing.<br>Step 2 of 4: Payment of $3.99 registration fee.</p>
+    <div class="card">
+      <div class="card-title">Choose Your Risk Tier</div>
+      <p style="color:var(--grey);font-size:0.83rem;line-height:1.7;margin-bottom:20px;font-weight:300;">Select your risk level. The <strong style="color:var(--white);">1% Conservative tier is recommended</strong> for all new members.</p>
+      <div class="tiers">
+        <label class="to t1"><div class="trec">⭐ Best</div><input type="radio" name="risk" value="1% Conservative" checked><div class="tc"><div class="tb"></div><div class="tp">1%</div><div class="tn">Conservative</div><div class="trl">Low Risk</div></div></label>
+        <label class="to t2"><input type="radio" name="risk" value="5% Moderate"><div class="tc"><div class="tb"></div><div class="tp">5%</div><div class="tn">Moderate</div><div class="trl">Med Risk</div></div></label>
+        <label class="to t3"><input type="radio" name="risk" value="10% Balanced"><div class="tc"><div class="tb"></div><div class="tp">10%</div><div class="tn">Balanced</div><div class="trl">Med-High</div></div></label>
+        <label class="to t4"><input type="radio" name="risk" value="15% Aggressive"><div class="tc"><div class="tb"></div><div class="tp">15%</div><div class="tn">Aggressive</div><div class="trl">High Risk</div></div></label>
+        <label class="to t5"><input type="radio" name="risk" value="20% Maximum"><div class="tc"><div class="tb"></div><div class="tp">20%</div><div class="tn">Maximum</div><div class="trl">Very High</div></div></label>
+      </div>
+    </div>
+
+    <div class="warn"><span>⚠️</span><p><strong>Risk Warning:</strong> Forex trading involves substantial risk of loss. Daily percentages shown are potential targets only — not guaranteed. You may lose some or all of your invested capital.</p></div>
+
+    <button class="sbtn" id="sbtn" onclick="handleSubmit()">Create My Account →</button>
+    <p class="fnote">Your information is stored securely in our database. Step 2: Payment of $3.99 registration fee.</p>
+    <div class="ll">Already have an account? <a href="login.html">Log in here</a></div>
   </div>
 </div>
 
 <script>
+const{createClient}=supabase;
+const sb=createClient('https://adkptfexitqutwjdexmf.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFka3B0ZmV4aXRxdXR3amRleG1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTczODYsImV4cCI6MjA5NDU5MzM4Nn0.8Zd4QLZb8aImw8ea9RzWkxMVCW5aydpeRaHd7mqJW44');
+
+function togglePw(id,btn){const f=document.getElementById(id);f.type=f.type==='password'?'text':'password';btn.textContent=f.type==='password'?'👁':'🙈';}
+
+function checkStr(v){
+  const fill=document.getElementById('pwf');const lbl=document.getElementById('pwl');
+  let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const c=['#ef4444','#f97316','#eab308','#22c55e'];const l=['Too weak','Weak','Good','Strong'];const p=['25%','50%','75%','100%'];
+  if(!v.length){fill.style.width='0%';lbl.textContent='Enter a password';lbl.style.color='var(--grey2)';return;}
+  const i=Math.min(s-1,3);fill.style.width=p[i];fill.style.background=c[i];lbl.textContent=l[i];lbl.style.color=c[i];
+  if(document.getElementById('cf').value)checkMatch();
+}
+
+function checkMatch(){
+  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
+  const el=document.getElementById('pm');const inp=document.getElementById('cf');
+  if(!cf){el.className='pw-match';return;}
+  if(pw===cf){el.textContent='✓ Passwords match';el.className='pw-match show ok';inp.classList.remove('err');inp.classList.add('ok');}
+  else{el.textContent='✗ Passwords do not match';el.className='pw-match show bad';inp.classList.remove('ok');inp.classList.add('err');}
+}
+
+function genId(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let id='PPG-';for(let i=0;i<6;i++)id+=c[Math.floor(Math.random()*c.length)];return id;}
+
+async function hashPw(pw){
+  const enc=new TextEncoder();const data=enc.encode(pw+'ppg_salt_2025');
+  const hash=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 function validate(){
   let ok=true;
-  const fields=[
-    {id:'firstname',el:'field-firstname',check:v=>v.trim().length>1},
-    {id:'lastname',el:'field-lastname',check:v=>v.trim().length>1},
-    {id:'email',el:'field-email',check:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
-    {id:'phone',el:'field-phone',check:v=>v.trim().length>6},
-    {id:'country',el:'field-country',check:v=>v!==''},
-    {id:'referral',el:'field-referral',check:v=>v.trim().length>2},
+  const checks=[
+    {id:'fn',wrap:'ff',fn:v=>v.trim().length>1},
+    {id:'ln',wrap:'fl',fn:v=>v.trim().length>1},
+    {id:'em',wrap:'fe',fn:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    {id:'ph',wrap:'fp',fn:v=>v.trim().length>6},
+    {id:'co',wrap:'fc',fn:v=>v!==''},
+    {id:'pw',wrap:'fpw',fn:v=>v.length>=8},
+    {id:'ref',wrap:'fr',fn:v=>v.trim().length>2},
   ];
-  fields.forEach(f=>{
-    const val=document.getElementById(f.id).value;
-    const wrap=document.getElementById(f.el);
-    if(!f.check(val)){wrap.classList.add('has-error');ok=false;}
-    else{wrap.classList.remove('has-error');}
+  checks.forEach(c=>{
+    const v=document.getElementById(c.id).value;
+    const w=document.getElementById(c.wrap);
+    if(!c.fn(v)){w.classList.add('he');ok=false;}else{w.classList.remove('he');}
   });
+  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
+  const cfw=document.getElementById('fcf');
+  if(pw!==cf||!cf){cfw.classList.add('he');ok=false;}else{cfw.classList.remove('he');}
   return ok;
 }
 
-function handleSubmit(){
-  if(!validate()){
-    document.querySelector('.has-error').scrollIntoView({behavior:'smooth',block:'center'});
-    return;
-  }
-  // Save to sessionStorage for use across pages
-  const data={
-    name: document.getElementById('firstname').value.trim()+' '+document.getElementById('lastname').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    phone: document.getElementById('phone').value.trim(),
-    country: document.getElementById('country').value,
-    referral: document.getElementById('referral').value.trim().toUpperCase(),
-    risk: document.querySelector('input[name="risk"]:checked').value,
-  };
-  sessionStorage.setItem('ppg_reg',JSON.stringify(data));
+async function handleSubmit(){
+  if(!validate()){document.querySelector('.he')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  const btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.textContent='Creating your account...';
+  const fn=document.getElementById('fn').value.trim();
+  const ln=document.getElementById('ln').value.trim();
+  const em=document.getElementById('em').value.trim().toLowerCase();
+  const ph=document.getElementById('ph').value.trim();
+  const co=document.getElementById('co').value;
+  const pw=document.getElementById('pw').value;
+  const ref=document.getElementById('ref').value.trim().toUpperCase();
+  const risk=document.querySelector('input[name="risk"]:checked').value;
+  const myId=genId();
+  const pwHash=await hashPw(pw);
+
+  // Check email exists
+  const{data:ex}=await sb.from('members').select('id').eq('email',em);
+  if(ex&&ex.length>0){showErr('An account with this email already exists. Please log in instead.');btn.disabled=false;btn.textContent='Create My Account →';return;}
+
+  const{data,error}=await sb.from('members').insert([{
+    first_name:fn,last_name:ln,email:em,phone:ph,country:co,
+    password_hash:pwHash,referral_id:myId,referred_by:ref,
+    risk_tier:risk,status:'pending',kyc_status:'pending'
+  }]).select().single();
+
+  if(error){showErr('Registration failed: '+error.message);btn.disabled=false;btn.textContent='Create My Account →';return;}
+
+  sessionStorage.setItem('ppg_reg',JSON.stringify({
+    name:fn+' '+ln,email:em,phone:ph,country:co,
+    referral:ref,risk:risk,myReferralId:myId,memberId:data.id
+  }));
   window.location.href='payment.html';
 }
 
-// Live uppercase for referral
-document.getElementById('referral').addEventListener('input',function(){
-  this.value=this.value.toUpperCase();
-});
+function showErr(msg){const el=document.getElementById('eb');el.textContent=msg;el.classList.add('show');el.scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('ref').addEventListener('input',function(){this.value=this.value.toUpperCase();});
 </script>
-
 </body>
 </html>
