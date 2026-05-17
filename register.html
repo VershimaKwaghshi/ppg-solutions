@@ -236,12 +236,6 @@ function checkMatch(){
 
 function genId(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let id='PPG-';for(let i=0;i<6;i++)id+=c[Math.floor(Math.random()*c.length)];return id;}
 
-async function hashPw(pw){
-  const enc=new TextEncoder();const data=enc.encode(pw+'ppg_salt_2025');
-  const hash=await crypto.subtle.digest('SHA-256',data);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
 function validate(){
   let ok=true;
   const checks=[
@@ -271,30 +265,49 @@ async function handleSubmit(){
   const fn=document.getElementById('fn').value.trim();
   const ln=document.getElementById('ln').value.trim();
   const em=document.getElementById('em').value.trim().toLowerCase();
-  const ph=document.getElementById('ph').value.trim();
-  const co=document.getElementById('co').value;
   const pw=document.getElementById('pw').value;
   const ref=document.getElementById('ref').value.trim().toUpperCase();
   const risk=document.querySelector('input[name="risk"]:checked').value;
   const myId=genId();
-  const pwHash=await hashPw(pw);
 
-  // Check email exists
-  const{data:ex}=await sb.from('members').select('id').eq('email',em);
-  if(ex&&ex.length>0){showErr('An account with this email already exists. Please log in instead.');btn.disabled=false;btn.textContent='Create My Account →';return;}
+  // 1. First search for existing accounts inside public.profiles
+  const{data:ex, error:exErr}=await sb.from('profiles').select('id').eq('email',em);
+  if(ex && ex.length>0){
+    showErr('An account with this email already exists. Please log in instead.');
+    btn.disabled=false;btn.textContent='Create My Account →';
+    return;
+  }
 
-  const{data,error}=await sb.from('members').insert([{
-    first_name:fn,last_name:ln,email:em,phone:ph,country:co,
-    password_hash:pwHash,referral_id:myId,referred_by:ref,
-    risk_tier:risk,status:'pending',kyc_status:'pending'
-  }]).select().single();
+  // 2. Direct registration using Supabase Core Auth engine instead of manual insertion
+  const { data: authData, error: authError } = await sb.auth.signUp({
+    email: em,
+    password: pw,
+    options: {
+      data: {
+        full_name: fn + ' ' + ln,
+        risk_tier: risk,
+        parent_referral_id: ref,
+        payment_method: 'Crypto Stream'
+      }
+    }
+  });
 
-  if(error){showErr('Registration failed: '+error.message);btn.disabled=false;btn.textContent='Create My Account →';return;}
+  if(authError){
+    showErr('Registration failed: ' + authError.message);
+    btn.disabled=false;btn.textContent='Create My Account →';
+    return;
+  }
 
+  // 3. Cache registration session parameters locally
   sessionStorage.setItem('ppg_reg',JSON.stringify({
-    name:fn+' '+ln,email:em,phone:ph,country:co,
-    referral:ref,risk:risk,myReferralId:myId,memberId:data.id
+    name: fn+' '+ln,
+    email: em,
+    referral: ref,
+    risk: risk,
+    myReferralId: myId,
+    memberId: authData.user.id
   }));
+  
   window.location.href='payment.html';
 }
 
