@@ -1,30 +1,641 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PPG Solutions | Landing</title>
-    <style>
-        :root { --bg: #090B0E; --card: #12161A; --blue: #0066FF; --gold: #E5B842; --text: #F5F7FA; --muted: #8A94A6; --border: #1F262E; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 20px; }
-        .wrapper { max-width: 500px; margin: 40px auto; }
-        .hero { background-color: var(--card); border: 1px solid var(--border); padding: 24px; border-radius: 12px; text-align: center; }
-        h1 { font-size: 22px; margin-bottom: 8px; font-weight: 800; }
-        p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-        .cost-badge { font-size: 24px; color: var(--gold); font-weight: 800; margin-bottom: 20px; }
-        .btn { display: block; background-color: var(--blue); color: #FFF; text-align: center; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPG Trading Club — Penny Partners Group</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#040d1c;--navy2:#071428;--navy3:#0a1a35;--blue:#1640d6;--blue-glow:rgba(22,64,214,0.4);--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--border2:rgba(22,64,214,0.25);--red:#ef4444;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;line-height:1.6;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--navy);}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(–border);transition:box-shadow 0.3s;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:38px;width:38px;object-fit:contain;border-radius:8px;}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text span:first-child{font-family:‘Cormorant Garamond’,serif;font-size:1.15rem;font-weight:700;color:var(–white);}
+.logo-text span:last-child{font-size:0.62rem;color:var(–gold);letter-spacing:2px;text-transform:uppercase;font-weight:500;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{color:var(–grey);text-decoration:none;font-size:0.85rem;font-weight:400;transition:color 0.2s;}
+.nav-links a:hover{color:var(–white);}
+.nav-btn{background:var(–blue)!important;color:var(–white)!important;padding:9px 22px;border-radius:6px;font-weight:600!important;transition:all 0.2s!important;}
+.nav-btn:hover{background:#1e50f0!important;transform:translateY(-1px);box-shadow:0 8px 24px var(–blue-glow)!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(–white);border-radius:2px;}
+.mob-nav{display:none;position:fixed;top:70px;left:0;right:0;background:var(–navy2);border-bottom:1px solid var(–border);padding:24px 5% 32px;flex-direction:column;gap:0;z-index:999;}
+.mob-nav.open{display:flex;}
+.mob-nav a{color:var(–grey);text-decoration:none;font-size:0.95rem;padding:14px 0;border-bottom:1px solid var(–border);transition:color 0.2s;}
+.mob-nav a:hover{color:var(–white);}
+.mob-nav .mob-cta{margin-top:20px;background:var(–blue);color:var(–white);text-align:center;padding:14px;border-radius:8px;font-weight:600;font-size:0.95rem;border:none;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 5% 80px;position:relative;overflow:hidden;text-align:center;}
+.hero-glow{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(22,64,214,0.18) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;}
+.hero-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(22,64,214,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(22,64,214,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.hero-content{position:relative;z-index:2;max-width:780px;margin:0 auto;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);border-radius:100px;padding:7px 18px;font-size:0.72rem;font-weight:600;color:var(–gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp 0.5s ease both;}
+.pill-dot{width:5px;height:5px;background:var(–gold);border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hero h1{font-family:‘Cormorant Garamond’,serif;font-size:clamp(2.8rem,7vw,5.2rem);font-weight:700;line-height:1.08;margin-bottom:24px;animation:fadeUp 0.6s ease 0.1s both;}
+.hero h1 em{font-style:italic;color:var(–gold);}
+.hero-sub{font-size:clamp(0.95rem,2vw,1.05rem);color:var(–grey);line-height:1.8;max-width:580px;margin:0 auto 40px;font-weight:300;animation:fadeUp 0.6s ease 0.2s both;}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:64px;animation:fadeUp 0.6s ease 0.3s both;}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(–gold);color:#0a0a0a;padding:14px 32px;border-radius:7px;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all 0.25s;border:none;cursor:pointer;}
+.btn-gold:hover{background:var(–gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(–white);padding:14px 32px;border-radius:7px;font-weight:500;font-size:0.9rem;text-decoration:none;border:1px solid rgba(255,255,255,0.15);transition:all 0.25s;}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.4);transform:translateY(-2px);}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(–border);border:1px solid var(–border);border-radius:14px;overflow:hidden;animation:fadeUp 0.6s ease 0.4s both;}
+.metric{background:var(–navy2);padding:24px 16px;text-align:center;transition:background 0.2s;}
+.metric:hover{background:var(–navy3);}
+.metric-val{font-family:‘Cormorant Garamond’,serif;font-size:2rem;font-weight:700;color:var(–gold);line-height:1;margin-bottom:6px;}
+.metric-lbl{font-size:0.7rem;color:var(–grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* DIVIDER */
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(–border2),transparent);}
+
+/* SECTIONS */
+.section{padding:96px 5%;}
+.section-inner{max-width:1040px;margin:0 auto;}
+.s-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–gold);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.s-tag::before{content:’’;width:24px;height:1px;background:var(–gold);}
+.s-title{font-family:‘Cormorant Garamond’,serif;font-size:clamp(2rem,4.5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:16px;}
+.s-title em{font-style:italic;color:var(–gold);}
+.s-body{color:var(–grey);font-size:0.93rem;line-height:1.8;max-width:600px;font-weight:300;margin-bottom:52px;}
+
+/* ABOUT */
+.about{background:var(–navy2);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;}
+.about-text p{color:var(–grey);font-size:0.92rem;line-height:1.85;margin-bottom:18px;font-weight:300;}
+.about-text p strong{color:var(–white);font-weight:600;}
+.about-text .hl{color:var(–gold);font-weight:500;}
+.features{display:flex;flex-direction:column;gap:14px;}
+.fc{background:var(–navy);border:1px solid var(–border);border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start;transition:all 0.25s;}
+.fc:hover{border-color:var(–border2);transform:translateX(4px);}
+.fc-icon{width:40px;height:40px;background:rgba(22,64,214,0.1);border:1px solid var(–border2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.fc-text h4{font-weight:600;font-size:0.88rem;margin-bottom:4px;}
+.fc-text p{color:var(–grey);font-size:0.78rem;line-height:1.6;}
+
+/* BROKER */
+.broker{background:var(–navy);}
+.broker-box{background:var(–navy2);border:1px solid var(–border);border-radius:18px;overflow:hidden;}
+.broker-top{padding:44px;border-bottom:1px solid var(–border);}
+.broker-top h3{font-family:‘Cormorant Garamond’,serif;font-size:1.8rem;font-weight:700;margin-bottom:16px;}
+.broker-top h3 em{font-style:italic;color:var(–gold);}
+.broker-top p{color:var(–grey);font-size:0.91rem;line-height:1.85;font-weight:300;margin-bottom:14px;max-width:680px;}
+.broker-top p strong{color:var(–white);font-weight:600;}
+.analogy{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:24px;margin-top:24px;}
+.analogy h4{color:var(–gold);font-size:0.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.analogy-row{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;text-align:center;}
+.a-item{background:var(–navy);border-radius:10px;padding:16px;}
+.a-item .a-icon{font-size:1.8rem;margin-bottom:8px;}
+.a-item h5{font-size:0.85rem;font-weight:600;margin-bottom:4px;}
+.a-item p{font-size:0.75rem;color:var(–grey);line-height:1.5;}
+.a-arrow{color:var(–gold);font-size:1.5rem;}
+.broker-grid{display:grid;grid-template-columns:repeat(3,1fr);}
+.bp{padding:26px 28px;border-right:1px solid var(–border);border-top:1px solid var(–border);}
+.bp:nth-child(3n){border-right:none;}
+.bp-icon{font-size:1.3rem;margin-bottom:10px;}
+.bp h4{font-weight:600;font-size:0.87rem;margin-bottom:6px;}
+.bp p{color:var(–grey);font-size:0.78rem;line-height:1.6;}
+
+/* RISK */
+.risk{background:var(–navy2);}
+.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:36px;}
+.tier{background:var(–navy);border:1px solid var(–border);border-radius:14px;padding:28px 14px 22px;text-align:center;position:relative;transition:all 0.25s;cursor:default;}
+.tier:hover{transform:translateY(-6px);border-color:rgba(255,255,255,0.12);}
+.tier-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.t1 .tier-bar{background:linear-gradient(90deg,#00d2ff,#00a8e8);}
+.t2 .tier-bar{background:linear-gradient(90deg,#00c853,#69f0ae);}
+.t3 .tier-bar{background:linear-gradient(90deg,#ffd600,#ffab00);}
+.t4 .tier-bar{background:linear-gradient(90deg,#ff6d00,#ff9100);}
+.t5 .tier-bar{background:linear-gradient(90deg,#d50000,#ff1744);}
+.tier-star{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(–gold);color:#0a0a0a;font-size:0.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.tier-pct{font-family:‘Cormorant Garamond’,serif;font-size:2.8rem;font-weight:700;line-height:1;margin-bottom:4px;}
+.t1 .tier-pct{color:#00d2ff;}.t2 .tier-pct{color:#00c853;}.t3 .tier-pct{color:#ffd600;}.t4 .tier-pct{color:#ff6d00;}.t5 .tier-pct{color:#d50000;}
+.tier-name{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(–grey);margin-bottom:12px;}
+.tier-daily{font-size:0.72rem;color:var(–grey2);margin-bottom:12px;line-height:1.5;}
+.tier-risk{display:inline-block;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;padding:3px 9px;border-radius:100px;margin-bottom:10px;}
+.t1 .tier-risk{background:rgba(0,210,255,0.1);color:#00d2ff;}
+.t2 .tier-risk{background:rgba(0,200,83,0.1);color:#00c853;}
+.t3 .tier-risk{background:rgba(255,214,0,0.1);color:#ffd600;}
+.t4 .tier-risk{background:rgba(255,109,0,0.1);color:#ff6d00;}
+.t5 .tier-risk{background:rgba(213,0,0,0.1);color:#d50000;}
+.tier-pot{font-size:0.68rem;color:var(–grey2);}
+.risk-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.rc{background:var(–navy);border:1px solid var(–border);border-radius:12px;padding:24px;}
+.rc h4{font-weight:600;font-size:0.88rem;margin-bottom:10px;}
+.rc p{color:var(–grey);font-size:0.82rem;line-height:1.7;}
+.rc p strong{color:var(–white);}
+.risk-warn{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:22px 26px;display:flex;gap:14px;align-items:flex-start;}
+.rw-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px;}
+.risk-warn p{color:var(–grey);font-size:0.82rem;line-height:1.7;}
+.risk-warn p strong{color:var(–red);}
+
+/* HOW */
+.how{background:var(–navy);}
+.steps{display:flex;flex-direction:column;}
+.step{display:grid;grid-template-columns:64px 1fr;gap:28px;padding:36px 0;border-bottom:1px solid var(–border);align-items:start;}
+.step:last-child{border-bottom:none;}
+.step:hover .step-n{color:var(–gold);}
+.step-n{font-family:‘Cormorant Garamond’,serif;font-size:3.5rem;font-weight:700;color:rgba(255,255,255,0.07);line-height:1;transition:color 0.25s;}
+.step-b h4{font-weight:600;font-size:0.98rem;margin-bottom:8px;}
+.step-b p{color:var(–grey);font-size:0.87rem;line-height:1.8;font-weight:300;}
+.step-b p strong{color:var(–white);font-weight:600;}
+.step-note{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;color:var(–gold);font-weight:500;}
+
+/* TRANSPARENCY */
+.trans{background:var(–navy2);}
+.trans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.tc{background:var(–navy);border:1px solid var(–border);border-radius:14px;padding:26px 22px;transition:all 0.25s;}
+.tc:hover{border-color:var(–border2);transform:translateY(-4px);}
+.tc-icon{width:42px;height:42px;background:rgba(22,64,214,0.1);border:1px solid var(–border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:14px;}
+.tc h4{font-weight:600;font-size:0.88rem;margin-bottom:7px;}
+.tc p{color:var(–grey);font-size:0.78rem;line-height:1.6;}
+
+/* REFERRAL */
+.ref{background:var(–navy);}
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+.ref-text h2{font-family:‘Cormorant Garamond’,serif;font-size:clamp(2rem,4vw,2.8rem);font-weight:700;line-height:1.15;margin-bottom:20px;}
+.ref-text h2 em{font-style:italic;color:var(–gold);}
+.ref-text p{color:var(–grey);font-size:0.91rem;line-height:1.8;font-weight:300;margin-bottom:14px;}
+.ref-text p strong{color:var(–white);font-weight:600;}
+.ref-card{background:var(–navy2);border:1px solid var(–border);border-radius:18px;padding:36px;text-align:center;}
+.ref-pct{font-family:‘Cormorant Garamond’,serif;font-size:5rem;font-weight:700;color:var(–gold);line-height:1;margin-bottom:4px;}
+.ref-pct span{font-size:2.5rem;}
+.ref-lbl{font-size:0.75rem;color:var(–grey);text-transform:uppercase;letter-spacing:2px;font-weight:500;margin-bottom:26px;}
+.ref-rule{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:10px;padding:14px 16px;font-size:0.78rem;color:var(–grey);line-height:1.6;margin-bottom:12px;text-align:left;}
+.ref-rule strong{color:var(–gold);}
+
+/* CTA */
+.cta{background:var(–navy2);border-top:1px solid var(–border);border-bottom:1px solid var(–border);padding:96px 5%;text-align:center;position:relative;overflow:hidden;}
+.cta-glow{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(22,64,214,0.15) 0%,transparent 65%);pointer-events:none;}
+.cta h2{font-family:‘Cormorant Garamond’,serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;line-height:1.1;margin-bottom:16px;position:relative;}
+.cta h2 em{font-style:italic;color:var(–gold);}
+.cta p{color:var(–grey);font-size:0.98rem;margin-bottom:28px;position:relative;font-weight:300;max-width:480px;margin-left:auto;margin-right:auto;}
+.cta-fee-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 20px;font-size:0.8rem;color:var(–gold);font-weight:500;margin-bottom:28px;position:relative;}
+
+/* FOOTER */
+footer{background:#020912;padding:60px 5% 32px;border-top:1px solid var(–border);}
+.footer-grid{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px;}
+.f-about p{color:var(–grey2);font-size:0.78rem;line-height:1.7;margin-top:14px;font-weight:300;}
+.f-contact{margin-top:18px;display:flex;flex-direction:column;gap:6px;}
+.f-contact a{color:var(–grey2);text-decoration:none;font-size:0.76rem;transition:color 0.2s;}
+.f-contact a:hover{color:var(–white);}
+.f-col h5{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(–grey2);margin-bottom:16px;}
+.f-col a{display:block;color:var(–grey2);text-decoration:none;font-size:0.8rem;margin-bottom:10px;transition:color 0.2s;font-weight:300;}
+.f-col a:hover{color:var(–white);}
+.footer-bottom{max-width:1040px;margin:0 auto;padding-top:26px;border-top:1px solid var(–border);display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;}
+.footer-bottom p{color:var(–grey2);font-size:0.75rem;}
+.f-disc{max-width:480px;color:var(–grey2)!important;font-size:0.7rem!important;line-height:1.6!important;}
+.f-disc strong{color:var(–red);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+.nav-links{display:none;}.hamburger{display:flex;}
+.metrics{grid-template-columns:repeat(2,1fr);}
+.about-grid{grid-template-columns:1fr;gap:36px;}
+.tiers{grid-template-columns:repeat(2,1fr);}
+.risk-cards{grid-template-columns:1fr;}
+.trans-grid{grid-template-columns:1fr 1fr;}
+.ref-grid{grid-template-columns:1fr;gap:36px;}
+.broker-grid{grid-template-columns:1fr 1fr;}
+.bp:nth-child(3n){border-right:1px solid var(–border);}
+.bp:nth-child(2n){border-right:none;}
+.footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+.broker-top{padding:28px;}
+}
+@media(max-width:600px){
+.tiers{grid-template-columns:1fr;}
+.trans-grid{grid-template-columns:1fr;}
+.broker-grid{grid-template-columns:1fr;}
+.bp:nth-child(n){border-right:none;}
+.analogy-row{grid-template-columns:1fr;gap:8px;}
+.a-arrow{transform:rotate(90deg);}
+.footer-grid{grid-template-columns:1fr;gap:24px;}
+.footer-bottom{flex-direction:column;}
+.step{grid-template-columns:44px 1fr;gap:14px;}
+.step-n{font-size:2.5rem;}
+.metrics{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+
 </head>
 <body>
-    <div class="wrapper">
-        <div class="hero">
-            <h1>PPG Solutions Club</h1>
-            <p>Access automated execution infrastructure network copy systems linkups.</p>
-            <div class="cost-badge">$3.99 / Month</div>
-            <p style="font-size: 12px; margin-top: -10px;">Recurring monthly access contribution subscription mandatory.</p>
-            <a href="register.html" class="btn">Initialize Onboarding Protocol</a>
-        </div>
+
+<!-- NAV -->
+
+<nav class="nav" id="topnav">
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+    <div class="logo-text">
+      <span>PPG Trading Club</span>
+      <span>Penny Partners Group</span>
     </div>
+  </a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#broker">Our Broker</a>
+    <a href="#risk">Risk Tiers</a>
+    <a href="#how">How It Works</a>
+    <a href="#referral">Referral</a>
+    <a href="register.html" class="nav-btn">Join Now</a>
+  </div>
+  <div class="hamburger" onclick="toggleNav()" id="ham">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mob-nav" id="mobNav">
+  <a href="#about" onclick="closeNav()">About</a>
+  <a href="#broker" onclick="closeNav()">Our Broker</a>
+  <a href="#risk" onclick="closeNav()">Risk Tiers</a>
+  <a href="#how" onclick="closeNav()">How It Works</a>
+  <a href="#referral" onclick="closeNav()">Referral</a>
+  <a href="register.html" class="mob-cta">Join the Club — $3.99</a>
+</div>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-pill"><div class="pill-dot"></div>Now Accepting Members</div>
+    <h1>Trade with Purpose.<br><em>Grow with Community.</em></h1>
+    <p class="hero-sub">PPG Trading Club is an exclusive, members-only forex trading community. Your capital stays in your own account. You watch every trade live. You withdraw on your terms.</p>
+    <div class="hero-btns">
+      <a href="register.html" class="btn-gold">Join the Club — $3.99 ›</a>
+      <a href="#how" class="btn-ghost">See How It Works</a>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-val">$100</div><div class="metric-lbl">Min. Deposit</div></div>
+      <div class="metric"><div class="metric-val">5</div><div class="metric-lbl">Risk Tiers</div></div>
+      <div class="metric"><div class="metric-val">24H</div><div class="metric-lbl">Withdrawal</div></div>
+      <div class="metric"><div class="metric-val">15%</div><div class="metric-lbl">Referral Earn</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+
+<section class="about section" id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="s-tag">Who We Are</div>
+        <h2 class="s-title">Penny Partners Group —<br><em>Built on Trust</em></h2>
+        <p>We are <strong>Penny Partners Group (PPG Solutions)</strong>, a CAC-registered Nigerian financial cooperative with a singular mission: to help everyday people access professional-grade trading and build sustainable wealth together.</p>
+        <p>PPG Trading Club is our flagship initiative. We manage forex trades on your behalf — but <span class="hl">your money always stays in your own account</span>. We never pool funds. We never hold your capital. You remain in full control at all times.</p>
+        <p>This is more than a trading club. We are building <strong>PPG OpenMarket</strong> — a full marketplace platform launching soon. Early club members will have priority access and exclusive benefits when it launches.</p>
+        <div style="margin-top:28px;">
+          <a href="register.html" class="btn-gold">Become a Member</a>
+        </div>
+      </div>
+      <div class="features">
+        <div class="fc">
+          <div class="fc-icon">🔐</div>
+          <div class="fc-text">
+            <h4>Your Account. Your Money.</h4>
+            <p>You open and own your own trading account with our licensed broker. We are granted trading access only — your funds are never transferred to us.</p>
+          </div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">👁️</div>
+          <div class="fc-text">
+            <h4>Full Transparency</h4>
+            <p>Every member receives a view-only account password to watch every single trade as it happens — live, 24/7, on desktop or mobile.</p>
+          </div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">📊</div>
+          <div class="fc-text">
+            <h4>Professional Management</h4>
+            <p>Our experienced trader manages positions using disciplined risk strategies aligned with your chosen risk tier.</p>
+          </div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon">🏢</div>
+          <div class="fc-text">
+            <h4>CAC Registered</h4>
+            <p>Penny Partners Group is formally registered with Nigeria's Corporate Affairs Commission. We operate with accountability and integrity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BROKER EXPLAINER -->
+
+<section class="broker section" id="broker">
+  <div class="section-inner">
+    <div class="s-tag">Understanding the Basics</div>
+    <h2 class="s-title">What Is a <em>Broker?</em></h2>
+    <p class="s-body">Before you invest, you should fully understand where your money is held and who regulates it. Here is a clear and honest explanation.</p>
+    <div class="broker-box">
+      <div class="broker-top">
+        <h3>A Broker Is to a Trader What<br>a <em>Bank Is to a Customer</em></h3>
+        <p>Just as a bank holds your money, processes your transactions, and is regulated by the Central Bank of Nigeria to protect your deposits — a <strong>licensed forex broker</strong> holds your trading capital, executes your trades, and is regulated by international financial authorities to protect your funds.</p>
+        <p>You do not send money to PPG. <strong>You deposit directly into your own personal account</strong> with our recommended licensed broker — a regulated financial institution. We are simply granted permission to trade on your account, just as you might authorise a trusted stockbroker to trade shares on your behalf.</p>
+        <p>Your money is <strong>segregated by law</strong> — kept entirely separately from the broker's own operational funds. This is a legal requirement of every regulated broker worldwide. Your capital cannot be touched for any other purpose.</p>
+        <div class="analogy">
+          <h4>The Simple Analogy</h4>
+          <div class="analogy-row">
+            <div class="a-item">
+              <div class="a-icon">🏦</div>
+              <h5>Your Bank</h5>
+              <p>Holds your savings. Regulated by the CBN. You withdraw whenever you want.</p>
+            </div>
+            <div class="a-arrow">↔</div>
+            <div class="a-item">
+              <div class="a-icon">📈</div>
+              <h5>Your Broker</h5>
+              <p>Holds your trading capital. Regulated internationally. You withdraw whenever you want.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="broker-grid">
+        <div class="bp"><div class="bp-icon">🛡️</div><h4>Licensed & Regulated</h4><p>Our recommended broker is fully licensed and regulated by international financial authorities. Your capital is protected under strict financial law.</p></div>
+        <div class="bp"><div class="bp-icon">🔒</div><h4>Segregated Funds</h4><p>By law, regulated brokers must keep client funds in separate accounts — completely apart from the broker's own money. Your funds are protected at all times.</p></div>
+        <div class="bp"><div class="bp-icon">💳</div><h4>Direct Deposits & Withdrawals</h4><p>You deposit and withdraw directly through the broker's secure platform using bank transfer, card, or crypto — at any time you choose.</p></div>
+        <div class="bp"><div class="bp-icon">📱</div><h4>MT5 Trading Platform</h4><p>MetaTrader 5 (MT5) is the world's most trusted trading platform. Available on iOS, Android, and desktop. Used by millions of traders globally.</p></div>
+        <div class="bp"><div class="bp-icon">🌍</div><h4>Open to Nigerians</h4><p>Our broker accepts clients from Nigeria and worldwide. Account registration is fully online and takes less than 10 minutes to complete.</p></div>
+        <div class="bp"><div class="bp-icon">⚡</div><h4>Fast & Transparent Execution</h4><p>Trades are executed on real market prices in milliseconds. No manipulation. Every position is fully visible to you via your view-only access.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RISK TIERS -->
+
+<section class="risk section" id="risk">
+  <div class="section-inner">
+    <div class="s-tag">Choose Your Level</div>
+    <h2 class="s-title">Select Your <em>Risk Tier</em></h2>
+    <p class="s-body">Every member selects their own risk tolerance before trading begins. Higher potential returns always come with higher risk. The most consistently successful tier is recommended by default.</p>
+    <div class="tiers">
+      <div class="tier t1">
+        <div class="tier-bar"></div>
+        <div class="tier-star">⭐ Recommended</div>
+        <div class="tier-pct">1%</div>
+        <div class="tier-name">Conservative</div>
+        <div class="tier-risk">Low Risk</div>
+        <div class="tier-daily">Easiest daily target. Low drawdowns. Best for beginners and capital preservation.</div>
+        <div class="tier-pot">~$1/day potential on $100</div>
+      </div>
+      <div class="tier t2">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">5%</div>
+        <div class="tier-name">Moderate</div>
+        <div class="tier-risk">Medium Risk</div>
+        <div class="tier-daily">Balanced approach. Moderate position sizing. For members with measured risk appetite.</div>
+        <div class="tier-pot">~$5/day potential on $100</div>
+      </div>
+      <div class="tier t3">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">10%</div>
+        <div class="tier-name">Balanced</div>
+        <div class="tier-risk">Med-High Risk</div>
+        <div class="tier-daily">Higher targets need larger positions. Drawdowns are more frequent and deeper.</div>
+        <div class="tier-pot">~$10/day potential on $100</div>
+      </div>
+      <div class="tier t4">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">15%</div>
+        <div class="tier-name">Aggressive</div>
+        <div class="tier-risk">High Risk</div>
+        <div class="tier-daily">High-target trading. Significant drawdowns possible. Only for members who fully accept volatility.</div>
+        <div class="tier-pot">~$15/day potential on $100</div>
+      </div>
+      <div class="tier t5">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">20%</div>
+        <div class="tier-name">Maximum</div>
+        <div class="tier-risk">Very High Risk</div>
+        <div class="tier-daily">Maximum aggression. High probability of significant loss. Entire capital may be lost.</div>
+        <div class="tier-pot">~$20/day potential on $100</div>
+      </div>
+    </div>
+    <div class="risk-cards">
+      <div class="rc">
+        <h4>📈 Why Higher % Is Harder Than It Looks</h4>
+        <p>Making <strong>1% consistently every day</strong> in forex is genuinely difficult — even professional traders work hard for it. It is the most realistic and sustainable target. As you move up the tiers, you are not just increasing potential gains — you are exponentially increasing risk and complexity. <strong>Choose honestly, not ambitiously.</strong></p>
+      </div>
+      <div class="rc">
+        <h4>⚖️ Risk vs Reward — The Real Trade-off</h4>
+        <p>A <strong>20% daily target</strong> requires much larger position sizes, dramatically increasing the chance of a significant losing day. Members on higher tiers must be fully prepared — emotionally and financially — to experience large swings, including potentially losing <strong>all deposited capital</strong>.</p>
+      </div>
+    </div>
+    <div class="risk-warn">
+      <div class="rw-icon">⚠️</div>
+      <p><strong>Risk Warning:</strong> All percentage figures are potential daily targets — they are <strong>not guaranteed returns</strong>. Forex trading involves substantial risk of loss. You may lose some or all of your invested capital. Past performance is not indicative of future results. Never invest money you cannot afford to lose.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+
+<section class="how section" id="how">
+  <div class="section-inner">
+    <div class="s-tag">The Process</div>
+    <h2 class="s-title">How It <em>Works</em></h2>
+    <p class="s-body">A clear, transparent process from registration to your first live trade — every step explained.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-b">
+          <h4>Register & Provide Your Referral ID</h4>
+          <p>Complete our registration form with your full name, email, phone, country, and a valid <strong>referral ID from an existing member</strong>. This keeps our community exclusive and built on trust. Every new member must be referred by someone already in the club.</p>
+          <div class="step-note">→ You will receive your own unique referral ID after approval</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-b">
+          <h4>Pay the $3.99 Registration Fee</h4>
+          <p>A one-time, <strong>non-refundable</strong> registration fee of $3.99 covers your membership processing. Pay via Opay, Zenith Bank, Bitcoin, Ethereum, or USDT TRC20. Upload your payment receipt for verification.</p>
+          <div class="step-note">→ This fee is separate from your trading capital</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-b">
+          <h4>Complete KYC Verification</h4>
+          <p>Upload a valid government-issued ID (national ID, passport, or driver's licence). KYC verifies your identity and protects every member of the community. Your documents are handled with strict confidentiality.</p>
+          <div class="step-note">→ KYC reviewed within 24–48 hours</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <div class="step-b">
+          <h4>Confirm Risk Consent on WhatsApp</h4>
+          <p>After submitting your form, you will be redirected to our WhatsApp support. There, you consciously confirm your full risk consent — including acknowledging that <strong>you could lose all your trading capital</strong>. This step is mandatory. No exceptions. No approval without it.</p>
+          <div class="step-note">→ We do this to protect you and the integrity of the club</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">05</div>
+        <div class="step-b">
+          <h4>Open Your Personal Trading Account</h4>
+          <p>Once approved, you receive a link to register your own personal trading account with our recommended licensed broker. <strong>This account belongs entirely to you.</strong> Deposit a minimum of $100 directly. We never ask you to send trading funds to PPG — ever.</p>
+          <div class="step-note">→ Minimum deposit: $100 USD</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">06</div>
+        <div class="step-b">
+          <h4>Choose Your Risk Tier & Begin Trading</h4>
+          <p>Select your risk tier (1%, 5%, 10%, 15%, or 20%). Our trader begins managing your account. You receive a <strong>view-only MT5 password</strong> to watch every trade in real time — full visibility, full transparency, always.</p>
+          <div class="step-note">→ You can change your tier when no trades are currently open</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">07</div>
+        <div class="step-b">
+          <h4>Monitor, Earn & Withdraw</h4>
+          <p>Watch your account live on MT5. When <strong>no trades are running</strong>, withdraw your earnings directly from your broker account every 24 hours. Funds go straight to your bank or crypto wallet — no middlemen.</p>
+          <div class="step-note">→ You also earn 15% every time your referred member makes a withdrawal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRANSPARENCY -->
+
+<section class="trans section" id="transparency">
+  <div class="section-inner">
+    <div class="s-tag">Why Trust PPG</div>
+    <h2 class="s-title">Radical <em>Transparency</em></h2>
+    <p class="s-body">Every element of PPG Trading Club is designed so you are always informed, always in control, and never left in the dark.</p>
+    <div class="trans-grid">
+      <div class="tc"><div class="tc-icon">🏦</div><h4>Your Own Account</h4><p>Your capital sits in your personal broker account at all times. You have full login access. We only have trading access — never withdrawal access.</p></div>
+      <div class="tc"><div class="tc-icon">👁️</div><h4>View-Only MT5 Access</h4><p>Watch every trade live via your view-only MT5 password. Every entry, exit, stop loss, and profit is visible to you in real time.</p></div>
+      <div class="tc"><div class="tc-icon">📝</div><h4>Mandatory Risk Consent</h4><p>Every member consciously signs our risk disclosure before approval. We never hide the risks of forex trading from our community.</p></div>
+      <div class="tc"><div class="tc-icon">⏱️</div><h4>24-Hour Withdrawals</h4><p>Withdraw your earnings every 24 hours when no trades are active — directly from your broker account to your bank or wallet.</p></div>
+      <div class="tc"><div class="tc-icon">💬</div><h4>WhatsApp Support</h4><p>Our team is available on WhatsApp for onboarding, support, and consent confirmation throughout your membership.</p></div>
+      <div class="tc"><div class="tc-icon">🏢</div><h4>CAC Registered</h4><p>Penny Partners Group is formally registered with Nigeria's Corporate Affairs Commission. We operate with legal accountability.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REFERRAL -->
+
+<section class="ref section" id="referral">
+  <div class="section-inner">
+    <div class="ref-grid">
+      <div class="ref-text">
+        <div class="s-tag">Earn More</div>
+        <h2><em>Refer & Earn</em><br>Every Time They Do.</h2>
+        <p>PPG Trading Club rewards community builders. Every member receives a unique referral ID. When someone joins through your ID and makes a withdrawal, <strong>you automatically earn 15% of that withdrawal amount</strong> — credited directly to your account.</p>
+        <p>The more active members you refer, the more passive income you build alongside your own trading profits. This is how we grow — together.</p>
+        <p style="font-size:0.82rem;"><strong>Important:</strong> You must refer at least one member before your own KYC is fully approved. Every new member must provide a valid referral ID to register.</p>
+        <div style="margin-top:28px;">
+          <a href="register.html" class="btn-gold">Get Your Referral ID ›</a>
+        </div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-pct">15<span>%</span></div>
+        <div class="ref-lbl">Referral Commission</div>
+        <div class="ref-rule"><strong>How it works:</strong><br>Your referral makes a $100 withdrawal → You earn <strong>$15 automatically</strong>.</div>
+        <div class="ref-rule"><strong>Requirement:</strong><br>Refer at least <strong>1 member</strong> before your KYC is approved.</div>
+        <div class="ref-rule"><strong>No limit:</strong><br>Refer as many people as you want. Earn <strong>15%</strong> on every withdrawal they make — forever.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+
+<section class="cta">
+  <div class="cta-glow"></div>
+  <h2>Ready to Join the<br><em>PPG Trading Club?</em></h2>
+  <p>Membership is limited to ensure quality, trust, and personal attention for every member.</p>
+  <div class="cta-fee-tag">🔒 One-time registration fee: $3.99 (non-refundable)</div>
+  <br><br>
+  <a href="register.html" class="btn-gold" style="font-size:1rem;padding:16px 44px;">Start Your Application ›</a>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-grid">
+    <div class="f-about">
+      <a href="index.html" class="nav-logo" style="text-decoration:none;">
+        <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+        <div class="logo-text">
+          <span>PPG Trading Club</span>
+          <span>Penny Partners Group</span>
+        </div>
+      </a>
+      <p>Nigeria's trusted financial cooperative. CAC Registered. Building wealth through professional forex trading and community.</p>
+      <div class="f-contact">
+        <a href="mailto:contact.ppgsolutions@gmail.com">📧 contact.ppgsolutions@gmail.com</a>
+        <a href="tel:+2348130500659">📞 +234 813 050 0659</a>
+        <a href="https://wa.me/2348130500659" target="_blank">💬 WhatsApp Support</a>
+        <a>📍 10 Arab Road, Calabar, Nigeria</a>
+      </div>
+    </div>
+    <div class="f-col">
+      <h5>Club</h5>
+      <a href="#about">About PPG</a>
+      <a href="#broker">Our Broker</a>
+      <a href="#risk">Risk Tiers</a>
+      <a href="#how">How It Works</a>
+      <a href="#transparency">Transparency</a>
+    </div>
+    <div class="f-col">
+      <h5>Membership</h5>
+      <a href="register.html">Register</a>
+      <a href="payment.html">Pay Fee</a>
+      <a href="consent.html">Risk Consent</a>
+      <a href="#referral">Referral Program</a>
+    </div>
+    <div class="f-col">
+      <h5>Support</h5>
+      <a href="https://wa.me/2348130500659" target="_blank">WhatsApp</a>
+      <a href="mailto:contact.ppgsolutions@gmail.com">Email Us</a>
+      <a href="https://ppgsolutions.org" target="_blank">PPG Solutions</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Penny Partners Group (PPG Solutions). CAC Registered. All rights reserved.</p>
+    <p class="f-disc"><strong>Risk Warning:</strong> Forex trading involves substantial risk. You may lose all your invested capital. PPG Trading Club does not guarantee any returns.</p>
+  </div>
+</footer>
+
+<script>
+function toggleNav(){document.getElementById('mobNav').classList.toggle('open');}
+function closeNav(){document.getElementById('mobNav').classList.remove('open');}
+document.addEventListener('click',function(e){
+  const nav=document.getElementById('mobNav');
+  const ham=document.getElementById('ham');
+  if(nav.classList.contains('open')&&!nav.contains(e.target)&&!ham.contains(e.target)){nav.classList.remove('open');}
+});
+window.addEventListener('scroll',function(){
+  document.getElementById('topnav').style.boxShadow=window.scrollY>20?'0 4px 32px rgba(0,0,0,0.5)':'none';
+});
+</script>
+
 </body>
 </html>
