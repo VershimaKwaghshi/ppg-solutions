@@ -1,201 +1,392 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PPG Solutions | Club Registration</title>
-    <style>
-        :root {
-            --bg-deep: #090B0E;
-            --bg-card: #12161A;
-            --accent-blue: #0066FF;
-            --accent-gold: #E5B842;
-            --text-main: #F5F7FA;
-            --text-muted: #8A94A6;
-            --border-color: #1F262E;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — PPG Trading Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#040d1c;--navy2:#071428;--navy3:#0a1a35;--blue:#1640d6;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--border2:rgba(22,64,214,0.25);--red:#ef4444;--green:#22c55e;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;line-height:1.6;}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(–border);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text span:first-child{font-family:‘Cormorant Garamond’,serif;font-size:1.1rem;font-weight:700;color:var(–white);}
+.logo-text span:last-child{font-size:0.6rem;color:var(–gold);letter-spacing:2px;text-transform:uppercase;}
+.nav-back{color:var(–grey);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+.nav-back:hover{color:var(–white);}
 
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 20px;
-        }
+/* PROGRESS */
+.progress-wrap{background:var(–navy2);border-bottom:1px solid var(–border);padding:20px 5%;}
+.progress-inner{max-width:680px;margin:0 auto;}
+.progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(–border);color:var(–grey2);background:var(–navy);transition:all 0.3s;position:relative;z-index:2;}
+.ps.active .ps-circle{border-color:var(–gold);color:var(–gold);background:rgba(201,168,76,0.1);}
+.ps.done .ps-circle{border-color:var(–green);color:var(–white);background:var(–green);}
+.ps-label{font-size:0.65rem;color:var(–grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
+.ps.active .ps-label{color:var(–gold);}
+.ps.done .ps-label{color:var(–green);}
+.ps-line{flex:1;height:1px;background:var(–border);margin:0 -6px;margin-bottom:18px;}
+.ps-line.done{background:var(–green);}
+.progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.progress-bar{height:100%;width:25%;background:linear-gradient(90deg,var(–gold),var(–gold-light));border-radius:3px;transition:width 0.4s ease;}
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
+/* MAIN */
+.main{padding:48px 5% 80px;}
+.form-wrap{max-width:680px;margin:0 auto;}
+.form-header{margin-bottom:40px;}
+.form-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.form-tag::before{content:’’;width:20px;height:1px;background:var(–gold);}
+.form-title{font-family:‘Cormorant Garamond’,serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:10px;}
+.form-title em{font-style:italic;color:var(–gold);}
+.form-sub{color:var(–grey);font-size:0.88rem;line-height:1.7;font-weight:300;}
 
-        .progress-header {
-            margin-bottom: 25px;
-            text-align: center;
-        }
+/* FORM CARD */
+.form-card{background:var(–navy2);border:1px solid var(–border);border-radius:16px;padding:36px;margin-bottom:20px;}
+.form-section-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(–grey2);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(–border);}
 
-        .progress-title {
-            font-size: 12px;
-            color: var(--accent-gold);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
+/* FIELDS */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.field{margin-bottom:16px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:0.78rem;font-weight:500;color:var(–grey);margin-bottom:6px;letter-spacing:0.3px;}
+.field label span{color:var(–red);}
+.field input,.field select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(–white);font-size:0.9rem;font-family:‘Outfit’,sans-serif;transition:all 0.2s;outline:none;}
+.field input::placeholder{color:var(–grey2);}
+.field input:focus,.field select:focus{border-color:var(–gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+.field input.error{border-color:var(–red);}
+.field select{cursor:pointer;appearance:none;background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘12’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%2394a3b8’ stroke-width=‘2’%3E%3Cpath d=‘M6 9l6 6 6-6’/%3E%3C/svg%3E”);background-repeat:no-repeat;background-position:right 14px center;}
+.field select option{background:var(–navy2);color:var(–white);}
+.field-hint{font-size:0.72rem;color:var(–grey2);margin-top:5px;line-height:1.5;}
+.field-error{font-size:0.72rem;color:var(–red);margin-top:5px;display:none;}
+.field.has-error .field-error{display:block;}
+.field.has-error input{border-color:var(–red);}
 
-        .progress-track {
-            width: 100%;
-            height: 4px;
-            background-color: var(--border-color);
-            border-radius: 2px;
-            position: relative;
-        }
+/* REFERRAL HIGHLIGHT */
+.ref-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:20px;margin-bottom:16px;}
+.ref-box h4{font-size:0.82rem;font-weight:600;color:var(–gold);margin-bottom:6px;}
+.ref-box p{font-size:0.78rem;color:var(–grey);line-height:1.6;}
 
-        .progress-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 40%;
-            background-color: var(--accent-blue);
-            border-radius: 2px;
-        }
+/* RISK TIERS */
+.tiers-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px;}
+.tier-opt{position:relative;cursor:pointer;}
+.tier-opt input[type=“radio”]{position:absolute;opacity:0;width:0;height:0;}
+.tier-card{background:var(–navy);border:2px solid var(–border);border-radius:12px;padding:16px 10px;text-align:center;transition:all 0.25s;user-select:none;}
+.tier-opt input:checked + .tier-card{border-color:var(–gold);background:rgba(201,168,76,0.06);}
+.tier-bar{height:3px;border-radius:3px;margin-bottom:12px;}
+.t1 .tier-bar{background:linear-gradient(90deg,#00d2ff,#00a8e8);}
+.t2 .tier-bar{background:linear-gradient(90deg,#00c853,#69f0ae);}
+.t3 .tier-bar{background:linear-gradient(90deg,#ffd600,#ffab00);}
+.t4 .tier-bar{background:linear-gradient(90deg,#ff6d00,#ff9100);}
+.t5 .tier-bar{background:linear-gradient(90deg,#d50000,#ff1744);}
+.tier-pct{font-family:‘Cormorant Garamond’,serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;}
+.t1 .tier-pct{color:#00d2ff;}.t2 .tier-pct{color:#00c853;}.t3 .tier-pct{color:#ffd600;}.t4 .tier-pct{color:#ff6d00;}.t5 .tier-pct{color:#d50000;}
+.tier-name{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(–grey);margin-bottom:6px;}
+.tier-risk-lbl{font-size:0.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:100px;}
+.t1 .tier-risk-lbl{background:rgba(0,210,255,0.1);color:#00d2ff;}
+.t2 .tier-risk-lbl{background:rgba(0,200,83,0.1);color:#00c853;}
+.t3 .tier-risk-lbl{background:rgba(255,214,0,0.1);color:#ffd600;}
+.t4 .tier-risk-lbl{background:rgba(255,109,0,0.1);color:#ff6d00;}
+.t5 .tier-risk-lbl{background:rgba(213,0,0,0.1);color:#d50000;}
+.tier-recommended{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(–gold);color:#0a0a0a;font-size:0.5rem;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;white-space:nowrap;}
 
-        .info-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
+/* RISK EXPLAINER */
+.risk-explainer{margin-top:16px;background:rgba(255,255,255,0.02);border:1px solid var(–border);border-radius:10px;padding:0;}
+.re-item{padding:14px 16px;border-bottom:1px solid var(–border);display:flex;gap:12px;align-items:flex-start;}
+.re-item:last-child{border-bottom:none;}
+.re-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.re-item:nth-child(1) .re-dot{background:#00d2ff;}
+.re-item:nth-child(2) .re-dot{background:#00c853;}
+.re-item:nth-child(3) .re-dot{background:#ffd600;}
+.re-item:nth-child(4) .re-dot{background:#ff6d00;}
+.re-item:nth-child(5) .re-dot{background:#d50000;}
+.re-text{font-size:0.78rem;color:var(–grey);line-height:1.6;}
+.re-text strong{color:var(–white);font-weight:600;}
 
-        .info-card h2 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+/* WARNING BOX */
+.warn-box{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:18px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px;}
+.warn-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.warn-box p{color:var(–grey);font-size:0.78rem;line-height:1.7;}
+.warn-box p strong{color:var(–red);}
 
-        .info-card p {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
+/* SUBMIT BTN */
+.submit-btn{width:100%;background:var(–gold);color:#0a0a0a;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:700;font-family:‘Outfit’,sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-btn:hover{background:var(–gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.form-note{text-align:center;font-size:0.75rem;color:var(–grey2);margin-top:14px;line-height:1.6;}
 
-        .alert-text {
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
+/* RESPONSIVE */
+@media(max-width:600px){
+.field-row{grid-template-columns:1fr;}
+.tiers-grid{grid-template-columns:1fr 1fr;}
+.form-card{padding:22px;}
+.main{padding:32px 5% 60px;}
+}
+@media(max-width:380px){
+.tiers-grid{grid-template-columns:1fr;}
+}
+</style>
 
-        /* Fixed Embedded Form Wrapper */
-        .form-container {
-            background-color: #FFFFFF;
-            border-radius: 12px;
-            overflow: hidden;
-            width: 100%;
-            height: 550px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border-color);
-            -webkit-overflow-scrolling: touch;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .verification-box {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .verification-box input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            accent-color: var(--accent-blue);
-        }
-
-        .verification-label {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .submit-btn {
-            display: block;
-            width: 100%;
-            background-color: var(--accent-blue);
-            color: #FFFFFF;
-            text-align: center;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            opacity: 0.4;
-            pointer-events: none;
-            transition: all 0.2s ease;
-        }
-
-        .submit-btn.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <div class="progress-header">
-            <div class="progress-title">Step 2 of 5: KYC Onboarding Form</div>
-            <div class="progress-track">
-                <div class="progress-fill"></div>
-            </div>
-        </div>
+<!-- NAV -->
 
-        <div class="info-card">
-            <h2>Club Verification Guidelines</h2>
-            <p>Please scroll and complete the questionnaire directly inside the window below.</p>
-            <p class="alert-text">⚠️ Note: You must register 1 member under you as a referral before your verification can be approved.</p>
-        </div>
-
-        <div class="form-container">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSesltKPVeKHpk1fRb7g7I9J7IWnOogpnFfl7ss0Bh3OiPRQzQ/viewform?embedded=true">Loading onboarding form...</iframe>
-        </div>
-
-        <div class="verification-box">
-            <input type="checkbox" id="form_done" onchange="validateStep()">
-            <div class="verification-label">
-                I have filled and successfully submitted the form inside the window above.
-            </div>
-        </div>
-
-        <a href="payment.html" id="nextBtn" class="submit-btn">Continue to Membership Payment</a>
-
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+    <div class="logo-text">
+      <span>PPG Trading Club</span>
+      <span>Penny Partners Group</span>
     </div>
+  </a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
 
-    <script>
-        function validateStep() {
-            var check = document.getElementById("form_done");
-            var btn = document.getElementById("nextBtn");
-            if(check.checked) {
-                btn.classList.add("active");
-            } else {
-                btn.classList.remove("active");
-            }
-        }
-    </script>
+<!-- PROGRESS BAR -->
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-steps">
+      <div class="ps active">
+        <div class="ps-circle">1</div>
+        <div class="ps-label">Register</div>
+      </div>
+      <div class="ps-line"></div>
+      <div class="ps">
+        <div class="ps-circle">2</div>
+        <div class="ps-label">Payment</div>
+      </div>
+      <div class="ps-line"></div>
+      <div class="ps">
+        <div class="ps-circle">3</div>
+        <div class="ps-label">Consent</div>
+      </div>
+      <div class="ps-line"></div>
+      <div class="ps">
+        <div class="ps-circle">4</div>
+        <div class="ps-label">Complete</div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" style="width:25%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+  <div class="form-wrap">
+
+```
+<div class="form-header">
+  <div class="form-tag">Step 1 of 4</div>
+  <h1 class="form-title">Your <em>Membership</em><br>Application</h1>
+  <p class="form-sub">Complete all fields carefully. Ensure your details are accurate — they will be used for KYC verification and your member profile.</p>
+</div>
+
+<!-- PERSONAL INFO -->
+<div class="form-card">
+  <div class="form-section-title">Personal Information</div>
+  <div class="field-row">
+    <div class="field" id="field-firstname">
+      <label>First Name <span>*</span></label>
+      <input type="text" id="firstname" placeholder="e.g. Vershima" autocomplete="given-name">
+      <div class="field-error">Please enter your first name</div>
+    </div>
+    <div class="field" id="field-lastname">
+      <label>Last Name <span>*</span></label>
+      <input type="text" id="lastname" placeholder="e.g. Kwaghshi" autocomplete="family-name">
+      <div class="field-error">Please enter your last name</div>
+    </div>
+  </div>
+  <div class="field" id="field-email">
+    <label>Email Address <span>*</span></label>
+    <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+    <div class="field-error">Please enter a valid email address</div>
+  </div>
+  <div class="field" id="field-phone">
+    <label>Phone Number <span>*</span></label>
+    <input type="tel" id="phone" placeholder="+234 800 000 0000" autocomplete="tel">
+    <div class="field-error">Please enter your phone number</div>
+  </div>
+  <div class="field" id="field-country">
+    <label>Country <span>*</span></label>
+    <select id="country">
+      <option value="">Select your country</option>
+      <option value="Nigeria" selected>Nigeria</option>
+      <option value="Ghana">Ghana</option>
+      <option value="Kenya">Kenya</option>
+      <option value="South Africa">South Africa</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="United States">United States</option>
+      <option value="Canada">Canada</option>
+      <option value="Other">Other</option>
+    </select>
+    <div class="field-error">Please select your country</div>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div class="form-card">
+  <div class="form-section-title">Referral Information</div>
+  <div class="ref-box">
+    <h4>🤝 Referral ID Required</h4>
+    <p>Every new member must be referred by an existing PPG Trading Club member. Please obtain your referral ID from the member who introduced you to the club before completing this form.</p>
+  </div>
+  <div class="field" id="field-referral">
+    <label>Referral Member ID <span>*</span></label>
+    <input type="text" id="referral" placeholder="e.g. PPG-000123" autocomplete="off" style="text-transform:uppercase;">
+    <div class="field-hint">Enter the unique ID of the member who referred you. Contact them if you don't have it.</div>
+    <div class="field-error">A valid referral ID is required to register</div>
+  </div>
+</div>
+
+<!-- RISK TIER -->
+<div class="form-card">
+  <div class="form-section-title">Choose Your Risk Tier</div>
+  <p style="color:var(--grey);font-size:0.83rem;line-height:1.7;margin-bottom:20px;font-weight:300;">Select the risk level you are comfortable with. The <strong style="color:var(--white);">1% Conservative tier is recommended</strong> for all new members. You may change your tier later when no trades are running.</p>
+
+  <div class="tiers-grid">
+    <label class="tier-opt t1">
+      <div class="tier-recommended">⭐ Best</div>
+      <input type="radio" name="risk" value="1% Conservative" checked>
+      <div class="tier-card">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">1%</div>
+        <div class="tier-name">Conservative</div>
+        <div class="tier-risk-lbl">Low Risk</div>
+      </div>
+    </label>
+    <label class="tier-opt t2">
+      <input type="radio" name="risk" value="5% Moderate">
+      <div class="tier-card">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">5%</div>
+        <div class="tier-name">Moderate</div>
+        <div class="tier-risk-lbl">Med Risk</div>
+      </div>
+    </label>
+    <label class="tier-opt t3">
+      <input type="radio" name="risk" value="10% Balanced">
+      <div class="tier-card">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">10%</div>
+        <div class="tier-name">Balanced</div>
+        <div class="tier-risk-lbl">Med-High</div>
+      </div>
+    </label>
+    <label class="tier-opt t4">
+      <input type="radio" name="risk" value="15% Aggressive">
+      <div class="tier-card">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">15%</div>
+        <div class="tier-name">Aggressive</div>
+        <div class="tier-risk-lbl">High Risk</div>
+      </div>
+    </label>
+    <label class="tier-opt t5">
+      <input type="radio" name="risk" value="20% Maximum">
+      <div class="tier-card">
+        <div class="tier-bar"></div>
+        <div class="tier-pct">20%</div>
+        <div class="tier-name">Maximum</div>
+        <div class="tier-risk-lbl">Very High</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="risk-explainer">
+    <div class="re-item">
+      <div class="re-dot"></div>
+      <div class="re-text"><strong>1% Daily</strong> — Easiest to achieve consistently. Lowest risk. Best for beginners. ~$1/day on $100.</div>
+    </div>
+    <div class="re-item">
+      <div class="re-dot"></div>
+      <div class="re-text"><strong>5% Daily</strong> — Moderate positions. Higher potential but harder to sustain. ~$5/day on $100.</div>
+    </div>
+    <div class="re-item">
+      <div class="re-dot"></div>
+      <div class="re-text"><strong>10% Daily</strong> — Large positions required. Deeper and more frequent drawdowns. ~$10/day on $100.</div>
+    </div>
+    <div class="re-item">
+      <div class="re-dot"></div>
+      <div class="re-text"><strong>15% Daily</strong> — High aggression. Significant losses possible. Only for experienced risk-takers. ~$15/day on $100.</div>
+    </div>
+    <div class="re-item">
+      <div class="re-dot"></div>
+      <div class="re-text"><strong>20% Daily</strong> — Maximum risk. High probability of large losses. You may lose your entire capital. ~$20/day on $100.</div>
+    </div>
+  </div>
+</div>
+
+<!-- WARNING -->
+<div class="warn-box">
+  <div class="warn-icon">⚠️</div>
+  <p><strong>Risk Warning:</strong> Forex trading involves substantial risk of loss. The daily percentages shown are potential targets only — they are not guaranteed. You may lose some or all of your invested capital. By proceeding, you agree to read and sign our full risk consent in Step 3.</p>
+</div>
+
+<!-- SUBMIT -->
+<button class="submit-btn" onclick="handleSubmit()">
+  Continue to Payment →
+</button>
+<p class="form-note">Your information is kept private and used only for KYC verification and membership processing.<br>Step 2 of 4: Payment of $3.99 registration fee.</p>
+```
+
+  </div>
+</div>
+
+<script>
+function validate(){
+  let ok=true;
+  const fields=[
+    {id:'firstname',el:'field-firstname',check:v=>v.trim().length>1},
+    {id:'lastname',el:'field-lastname',check:v=>v.trim().length>1},
+    {id:'email',el:'field-email',check:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    {id:'phone',el:'field-phone',check:v=>v.trim().length>6},
+    {id:'country',el:'field-country',check:v=>v!==''},
+    {id:'referral',el:'field-referral',check:v=>v.trim().length>2},
+  ];
+  fields.forEach(f=>{
+    const val=document.getElementById(f.id).value;
+    const wrap=document.getElementById(f.el);
+    if(!f.check(val)){wrap.classList.add('has-error');ok=false;}
+    else{wrap.classList.remove('has-error');}
+  });
+  return ok;
+}
+
+function handleSubmit(){
+  if(!validate()){
+    document.querySelector('.has-error').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  // Save to sessionStorage for use across pages
+  const data={
+    name: document.getElementById('firstname').value.trim()+' '+document.getElementById('lastname').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    country: document.getElementById('country').value,
+    referral: document.getElementById('referral').value.trim().toUpperCase(),
+    risk: document.querySelector('input[name="risk"]:checked').value,
+  };
+  sessionStorage.setItem('ppg_reg',JSON.stringify(data));
+  window.location.href='payment.html';
+}
+
+// Live uppercase for referral
+document.getElementById('referral').addEventListener('input',function(){
+  this.value=this.value.toUpperCase();
+});
+</script>
 
 </body>
 </html>
