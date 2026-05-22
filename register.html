@@ -1,86 +1,288 @@
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-<script src="auth.js"></script>
-<script>
-function togglePw(id,btn){const f=document.getElementById(id);f.type=f.type==='password'?'text':'password';btn.textContent=f.type==='password'?'👁':'🙈';}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Member Account — PPG Trading Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span>PPG Trading Club</span>
+        <span>Onboarding</span>
+      </div>
+    </a>
+    <a href="login.html" class="nav-link">Sign In →</a>
+  </nav>
 
-function checkStr(v){
-  const fill=document.getElementById('pwf');const lbl=document.getElementById('pwl');
-  let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
-  const c=['#ef4444','#f97316','#eab308','#22c55e'];const l=['Too weak','Weak','Good','Strong'];const p=['25%','50%','75%','100%'];
-  if(!v.length){fill.style.width='0%';lbl.textContent='Enter a password';lbl.style.color='var(--grey2)';return;}
-  const i=Math.min(s-1,3);fill.style.width=p[i];fill.style.background=c[i];lbl.textContent=l[i];lbl.style.color=c[i];
-  if(document.getElementById('cf').value)checkMatch();
-}
+  <main class="main">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="section-tag">Account Registration</div>
+        <h1 class="auth-title">Join the Pool</h1>
+        <p class="auth-subtitle">Establish your trading footprint. Fill out the verification form below to activate your account node.</p>
+      </div>
 
-function checkMatch(){
-  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
-  const el=document.getElementById('pm');const inp=document.getElementById('cf');
-  if(!cf){el.className='pw-match';return;}
-  if(pw===cf){el.textContent='✓ Passwords match';el.className='pw-match show ok';inp.classList.remove('err');inp.classList.add('ok');}
-  else{el.textContent='✗ Passwords do not match';el.className='pw-match show bad';inp.classList.remove('ok');inp.classList.add('err');}
-}
+      <div class="alert alert-error" id="eb" style="display: none;"></div>
 
-function validate(){
-  let ok=true;
-  const checks=[
-    {id:'fn',wrap:'ff',fn:v=>v.trim().length>1},
-    {id:'ln',wrap:'fl',fn:v=>v.trim().length>1},
-    {id:'em',wrap:'fe',fn:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
-    {id:'ph',wrap:'fp',fn:v=>v.trim().length>6},
-    {id:'co',wrap:'fc',fn:v=>v!==''},
-    {id:'role',wrap:'frl',fn:v=>v!==''},
-    {id:'pw',wrap:'fpw',fn:v=>v.length>=8},
-    {id:'ref',wrap:'fr',fn:v=>v.trim().length>2},
-  ];
-  checks.forEach(c=>{
-    const v=document.getElementById(c.id).value;
-    const w=document.getElementById(c.wrap);
-    if(!c.fn(v)){w.classList.add('has-error');ok=false;}else{w.classList.remove('has-error');}
-  });
-  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
-  const cfw=document.getElementById('fcf');
-  if(pw!==cf||!cf){cfw.classList.add('has-error');ok=false;}else{cfw.classList.remove('has-error');}
-  return ok;
-}
+      <form id="regForm" onsubmit="event.preventDefault(); handleSubmit();">
+        <div class="grid-2">
+          <div class="field-wrapper" id="ff">
+            <label class="field-label" for="fn">First Name</label>
+            <input class="input-field" type="text" id="fn" placeholder="John" required>
+            <span class="error-msg">Enter your first name</span>
+          </div>
+          <div class="field-wrapper" id="fl">
+            <label class="field-label" for="ln">Last Name</label>
+            <input class="input-field" type="text" id="ln" placeholder="Doe" required>
+            <span class="error-msg">Enter your last name</span>
+          </div>
+        </div>
 
-async function handleSubmit(){
-  if(!validate()){
-    document.querySelector('.has-error')?.scrollIntoView({behavior:'smooth',block:'center'});
-    return;
-  }
-  const btn = document.getElementById('sbtn');
-  btn.disabled = true;
-  btn.textContent = 'Creating your account...';
-  
-  try{
-    const result = await registerUser({
-      firstName: document.getElementById('fn').value.trim(),
-      lastName: document.getElementById('ln').value.trim(),
-      email: document.getElementById('em').value.trim().toLowerCase(),
-      password: document.getElementById('pw').value,
-      phone: document.getElementById('ph').value.trim(),
-      country: document.getElementById('co').value,
-      referral: document.getElementById('ref').value.trim().toUpperCase(),
-      risk: document.querySelector('input[name="risk"]:checked').value,
-      role: document.getElementById('role').value
+        <div class="field-wrapper" id="fe">
+          <label class="field-label" for="em">Email Address</label>
+          <input class="input-field" type="email" id="em" placeholder="john@example.com" required>
+          <span class="error-msg">Provide a valid email identity</span>
+        </div>
+
+        <div class="grid-2">
+          <div class="field-wrapper" id="fp">
+            <label class="field-label" for="ph">Phone Number</label>
+            <input class="input-field" type="tel" id="ph" placeholder="+234..." required>
+            <span class="error-msg">Provide a valid phone record</span>
+          </div>
+          <div class="field-wrapper" id="fc">
+            <label class="field-label" for="co">Country</label>
+            <select class="input-field" id="co" required>
+              <option value="" disabled selected>Select country</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="United States">United States</option>
+              <option value="Ghana">Ghana</option>
+              <option value="Kenya">Kenya</option>
+            </select>
+            <span class="error-msg">Selection required</span>
+          </div>
+        </div>
+
+        <div class="field-wrapper" id="frl">
+          <label class="field-label" for="role">Account Track</label>
+          <select class="input-field" id="role" required>
+            <option value="trader" selected>Trader Track (Standard Account)</option>
+            <option value="manager">Manager Track (Requires Vetting Approval)</option>
+          </select>
+          <span class="error-msg">Select your operational track</span>
+        </div>
+
+        <div class="field-wrapper" id="fpw">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="field-label" for="pw">Security Password</label>
+            <span class="pw-toggle" onclick="togglePw('pw', this)">👁</span>
+          </div>
+          <input class="input-field" type="password" id="pw" placeholder="••••••••" oninput="checkStr(this.value)" required>
+          <div class="meter-container">
+            <div class="meter-bar" id="pwf"></div>
+          </div>
+          <span class="strength-lbl" id="pwl">Enter a password</span>
+          <span class="error-msg">Must contain 8+ characters, capital letter, and numeric digit</span>
+        </div>
+
+        <div class="field-wrapper" id="fcf">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="field-label" for="cf">Confirm Password</label>
+            <span class="pw-toggle" onclick="togglePw('cf', this)">👁</span>
+          </div>
+          <input class="input-field" type="password" id="cf" placeholder="••••••••" oninput="checkMatch()" required>
+          <div class="pw-match" id="pm"></div>
+          <span class="error-msg">Passwords must match completely</span>
+        </div>
+
+        <div class="field-wrapper" id="fr">
+          <label class="field-label" for="ref">Parent Referral Identity ID</label>
+          <input class="input-field" type="text" id="ref" placeholder="PPG-XXXXXX" required>
+          <span class="error-msg">A valid referral code is mandatory to link account nodes</span>
+        </div>
+
+        <div class="risk-section">
+          <label class="field-label" style="margin-bottom: 12px; display: block;">Daily Target Risk Preference Matrix</label>
+          <div class="risk-options">
+            <label class="risk-card">
+              <input type="radio" name="risk" value="1% Conservative" checked>
+              <div class="risk-title">1% Tier</div>
+              <div class="risk-desc">Conservative</div>
+            </label>
+            <label class="risk-card">
+              <input type="radio" name="risk" value="5% Moderate">
+              <div class="risk-title">5% Tier</div>
+              <div class="risk-desc">Moderate</div>
+            </label>
+            <label class="risk-card">
+              <input type="radio" name="risk" value="10% Balanced">
+              <div class="risk-title">10% Tier</div>
+              <div class="risk-desc">Balanced</div>
+            </label>
+            <label class="risk-card">
+              <input type="radio" name="risk" value="15% Aggressive">
+              <div class="risk-title">15% Tier</div>
+              <div class="risk-desc">Aggressive</div>
+            </label>
+            <label class="risk-card">
+              <input type="radio" name="risk" value="20% Maximum">
+              <div class="risk-title">20% Tier</div>
+              <div class="risk-desc">Maximum Risk</div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="sbtn" style="width: 100%; margin-top: 16px;">
+          Create My Account →
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- CONTROL SCRIPT INJECTION TRAIL -->
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    function togglePw(id, btn) {
+      const f = document.getElementById(id);
+      f.type = f.type === 'password' ? 'text' : 'password';
+      btn.textContent = f.type === 'password' ? '👁' : '🙈';
+    }
+
+    function checkStr(v) {
+      const fill = document.getElementById('pwf');
+      const lbl = document.getElementById('pwl');
+      let s = 0;
+      if (v.length >= 8) s++;
+      if (/[A-Z]/.test(v)) s++;
+      if (/[0-9]/.test(v)) s++;
+      if (/[^A-Za-z0-9]/.test(v)) s++;
+      const c = ['#ef4444', '#f97316', '#eab308', '#22c55e'];
+      const l = ['Too weak', 'Weak', 'Good', 'Strong'];
+      const p = ['25%', '50%', '75%', '100%'];
+      if (!v.length) {
+        fill.style.width = '0%';
+        lbl.textContent = 'Enter a password';
+        lbl.style.color = 'var(--grey2)';
+        return;
+      }
+      const i = Math.min(s - 1, 3);
+      fill.style.width = p[i];
+      fill.style.background = c[i];
+      lbl.textContent = l[i];
+      lbl.style.color = c[i];
+      if (document.getElementById('cf').value) checkMatch();
+    }
+
+    function checkMatch() {
+      const pw = document.getElementById('pw').value;
+      const cf = document.getElementById('cf').value;
+      const el = document.getElementById('pm');
+      const inp = document.getElementById('cf');
+      if (!cf) {
+        el.className = 'pw-match';
+        return;
+      }
+      if (pw === cf) {
+        el.textContent = '✓ Passwords match';
+        el.className = 'pw-match show ok';
+        inp.classList.remove('err');
+        inp.classList.add('ok');
+      } else {
+        el.textContent = '✗ Passwords do not match';
+        el.className = 'pw-match show bad';
+        inp.classList.remove('ok');
+        inp.classList.add('err');
+      }
+    }
+
+    function validate() {
+      let ok = true;
+      const checks = [
+        { id: 'fn', wrap: 'ff', fn: v => v.trim().length > 1 },
+        { id: 'ln', wrap: 'fl', fn: v => v.trim().length > 1 },
+        { id: 'em', wrap: 'fe', fn: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        { id: 'ph', wrap: 'fp', fn: v => v.trim().length > 6 },
+        { id: 'co', wrap: 'fc', fn: v => v !== '' },
+        { id: 'role', wrap: 'frl', fn: v => v !== '' },
+        { id: 'pw', wrap: 'fpw', fn: v => v.length >= 8 },
+        { id: 'ref', wrap: 'fr', fn: v => v.trim().length > 2 },
+      ];
+      checks.forEach(c => {
+        const v = document.getElementById(c.id).value;
+        const w = document.getElementById(c.wrap);
+        if (!c.fn(v)) {
+          w.classList.add('has-error');
+          ok = false;
+        } else {
+          w.classList.remove('has-error');
+        }
+      });
+      const pw = document.getElementById('pw').value;
+      const cf = document.getElementById('cf').value;
+      const cfw = document.getElementById('fcf');
+      if (pw !== cf || !cf) {
+        cfw.classList.add('has-error');
+        ok = false;
+      } else {
+        cfw.classList.remove('has-error');
+      }
+      return ok;
+    }
+
+    async function handleSubmit() {
+      if (!validate()) {
+        document.querySelector('.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const btn = document.getElementById('sbtn');
+      btn.disabled = true;
+      btn.textContent = 'Creating your account...';
+      
+      try {
+        const result = await registerUser({
+          firstName: document.getElementById('fn').value.trim(),
+          lastName: document.getElementById('ln').value.trim(),
+          email: document.getElementById('em').value.trim().toLowerCase(),
+          password: document.getElementById('pw').value,
+          phone: document.getElementById('ph').value.trim(),
+          country: document.getElementById('co').value,
+          referral: document.getElementById('ref').value.trim().toUpperCase(),
+          risk: document.querySelector('input[name="risk"]:checked').value,
+          role: document.getElementById('role').value
+        });
+        
+        sessionStorage.setItem('ppg_reg', JSON.stringify({
+          memberId: result.user.id,
+          email: result.user.email,
+          referralCode: result.referralCode
+        }));
+        
+        window.location.href = 'payment.html';
+      } catch (err) {
+        showErr(err.message);
+        btn.disabled = false;
+        btn.textContent = 'Create My Account →';
+      }
+    }
+
+    function showErr(msg) {
+      const el = document.getElementById('eb');
+      el.textContent = msg;
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    document.getElementById('ref').addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
     });
-    
-    sessionStorage.setItem('ppg_reg', JSON.stringify({
-      memberId: result.user.id,
-      email: result.user.email,
-      referralCode: result.referralCode
-    }));
-    
-    window.location.href = 'payment.html';
-  }catch(err){
-    showErr(err.message);
-    btn.disabled = false;
-    btn.textContent = 'Create My Account →';
-  }
-}
-
-function showErr(msg){const el=document.getElementById('eb');el.textContent=msg;el.style.display='block';el.scrollIntoView({behavior:'smooth',block:'center'});}
-document.getElementById('ref').addEventListener('input',function(){this.value=this.value.toUpperCase();});
-</script>
+  </script>
+</body>
+</html>
