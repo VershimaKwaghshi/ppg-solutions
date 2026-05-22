@@ -1,4 +1,5 @@
-const sb = supabase.createClient(
-  window.PPG_CONFIG.SUPABASE_URL,
-  window.PPG_CONFIG.SUPABOR_ANON_KEY || window.PPG_CONFIG.SUPABASE_ANON_KEY
-);
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="auth.js"></script>
+<script src="dashboard.js"></script>
