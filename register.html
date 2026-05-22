@@ -1,309 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — PPG Trading Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--red:#ef4444;--green:#22c55e;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;line-height:1.6;}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
+.logo-text{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
+.logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.nav-back{color:var(--grey);text-decoration:none;font-size:0.85rem;transition:color 0.2s;}
+.nav-back:hover{color:var(--white);}
+.prog-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
+.prog-inner{max-width:680px;margin:0 auto;}
+.prog-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.ps-c{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--border);color:var(--grey2);background:var(--navy);}
+.ps.active .ps-c{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
+.ps.done .ps-c{border-color:var(--green);color:var(--white);background:var(--green);}
+.ps-l{font-size:0.65rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
+.ps.active .ps-l{color:var(--gold);}
+.ps.done .ps-l{color:var(--green);}
+.ps-line{flex:1;height:1px;background:var(--border);margin:0 -6px;margin-bottom:18px;}
+.pb-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.pb{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;}
+.main{padding:48px 5% 80px;}
+.fw{max-width:680px;margin:0 auto;}
+.fh{margin-bottom:40px;}
+.ftag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.ftag::before{content:'';width:20px;height:1px;background:var(--gold);}
+.ftitle{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:10px;}
+.ftitle em{font-style:italic;color:var(--gold);}
+.fsub{color:var(--grey);font-size:0.88rem;line-height:1.7;font-weight:300;}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:36px;margin-bottom:20px;}
+.card-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.f{margin-bottom:16px;}
+.f:last-child{margin-bottom:0;}
+.f label{display:block;font-size:0.78rem;font-weight:500;color:var(--grey);margin-bottom:6px;}
+.f label .req{color:var(--red);}
+.iw{position:relative;}
+.f input,.f select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(--white);font-size:0.9rem;font-family:'Outfit',sans-serif;transition:all 0.2s;outline:none;}
+.f input.pt{padding-right:44px;}
+.f input::placeholder{color:var(--grey2);}
+.f input:focus,.f select:focus{border-color:var(--gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+.f input.ok{border-color:var(--green);}
+.f input.err{border-color:var(--red);}
+.f select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+.f select option{background:var(--navy2);}
+.hint{font-size:0.72rem;color:var(--grey2);margin-top:5px;line-height:1.5;}
+.ferr{font-size:0.72rem;color:var(--red);margin-top:5px;display:none;}
+.f.he .ferr{display:block;}
+.f.he input,.f.he select{border-color:var(--red);}
+.tpw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--grey2);cursor:pointer;font-size:1rem;padding:4px;}
+.pw-bar{height:3px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px;margin-bottom:4px;}
+.pw-fill{height:100%;width:0%;border-radius:3px;transition:all 0.3s;}
+.pw-lbl{font-size:0.7rem;color:var(--grey2);}
+.pw-match{font-size:0.72rem;margin-top:5px;display:none;}
+.pw-match.show{display:block;}
+.pw-match.ok{color:var(--green);}
+.pw-match.bad{color:var(--red);}
+.ref-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:18px;margin-bottom:16px;}
+.ref-box h4{font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:5px;}
+.ref-box p{font-size:0.78rem;color:var(--grey);line-height:1.6;}
+.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px;}
+.to{position:relative;cursor:pointer;}
+.to input[type="radio"]{position:absolute;opacity:0;width:0;height:0;}
+.tc{background:var(--navy);border:2px solid var(--border);border-radius:12px;padding:16px 10px;text-align:center;transition:all 0.25s;}
+.to input:checked + .tc{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+.tb{height:3px;border-radius:3px;margin-bottom:12px;}
+.t1 .tb{background:linear-gradient(90deg,#00d2ff,#00a8e8);}
+.t2 .tb{background:linear-gradient(90deg,#00c853,#69f0ae);}
+.t3 .tb{background:linear-gradient(90deg,#ffd600,#ffab00);}
+.t4 .tb{background:linear-gradient(90deg,#ff6d00,#ff9100);}
+.t5 .tb{background:linear-gradient(90deg,#d50000,#ff1744);}
+.tp{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;line-height:1;margin-bottom:3px;}
+.t1 .tp{color:#00d2ff;}.t2 .tp{color:#00c853;}.t3 .tp{color:#ffd600;}.t4 .tp{color:#ff6d00;}.t5 .tp{color:#d50000;}
+.tn{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--grey);margin-bottom:6px;}
+.trl{font-size:0.58rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:100px;}
+.t1 .trl{background:rgba(0,210,255,0.1);color:#00d2ff;}
+.t2 .trl{background:rgba(0,200,83,0.1);color:#00c853;}
+.t3 .trl{background:rgba(255,214,0,0.1);color:#ffd600;}
+.t4 .trl{background:rgba(255,109,0,0.1);color:#ff6d00;}
+.t5 .trl{background:rgba(213,0,0,0.1);color:#d50000;}
+.trec{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0a0a;font-size:0.5rem;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;white-space:nowrap;}
+.warn{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:18px 20px;display:flex;gap:12px;align-items:flex-start;margin-bottom:20px;}
+.warn p{color:var(--grey);font-size:0.78rem;line-height:1.7;}
+.warn p strong{color:var(--red);}
+.sbtn{width:100%;background:var(--gold);color:#0a0a0a;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.sbtn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
+.sbtn:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+.fnote{text-align:center;font-size:0.75rem;color:var(--grey2);margin-top:14px;line-height:1.6;}
+.ll{text-align:center;margin-top:20px;font-size:0.85rem;color:var(--grey);}
+.ll a{color:var(--gold);text-decoration:none;font-weight:500;}
+.ebanner{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:0.82rem;color:var(--red);display:none;}
+.ebanner.show{display:block;}
+@media(max-width:600px){.row{grid-template-columns:1fr;}.tiers{grid-template-columns:1fr 1fr;}.card{padding:22px;}.main{padding:32px 5% 60px;}}
+@media(max-width:380px){.tiers{grid-template-columns:1fr;}}
+</style>
+<!-- Include config.js file containing window.PPG_CONFIG parameters here -->
+<script src="config.js"></script>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+    <div class="logo-text"><span>PPG Trading Club</span><span>Penny Partners Group</span></div>
+  </a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <div class="prog-steps">
+      <div class="ps active"><div class="ps-c">1</div><div class="ps-l">Register</div></div>
+      <div class="ps-line"></div>
+      <div class="ps"><div class="ps-c">2</div><div class="ps-l">Payment</div></div>
+      <div class="ps-line"></div>
+      <div class="ps"><div class="ps-c">3</div><div class="ps-l">Consent</div></div>
+      <div class="ps-line"></div>
+      <div class="ps"><div class="ps-c">4</div><div class="ps-l">Complete</div></div>
+    </div>
+    <div class="pb-wrap"><div class="pb" style="width:25%"></div></div>
+  </div>
+</div>
+<div class="main">
+  <div class="fw">
+    <div class="fh">
+      <div class="ftag">Step 1 of 4</div>
+      <h1 class="ftitle">Your <em>Membership</em><br>Application</h1>
+      <p class="fsub">Complete all fields carefully. Your details are used for KYC verification and your secure member account.</p>
+    </div>
+    <div class="ebanner" id="eb"></div>
+
+    <div class="card">
+      <div class="card-title">Personal Information</div>
+      <div class="row">
+        <div class="f" id="ff"><label>First Name <span class="req">*</span></label><input type="text" id="fn" placeholder="e.g. John" autocomplete="given-name"><div class="ferr">Enter your first name</div></div>
+        <div class="f" id="fl"><label>Last Name <span class="req">*</span></label><input type="text" id="ln" placeholder="e.g. Doe" autocomplete="family-name"><div class="ferr">Enter your last name</div></div>
+      </div>
+      <div class="f" id="fe"><label>Email Address <span class="req">*</span></label><input type="email" id="em" placeholder="your@email.com" autocomplete="email"><div class="ferr">Enter a valid email address</div></div>
+      <div class="f" id="fp"><label>Phone Number <span class="req">*</span></label><input type="tel" id="ph" placeholder="+234 800 000 0000" autocomplete="tel"><div class="ferr">Enter your phone number</div></div>
+      <div class="row">
+        <div class="f" id="fc"><label>Country <span class="req">*</span></label>
+          <select id="co">
+            <option value="">Select your country</option>
+            <option value="Nigeria" selected>Nigeria</option>
+            <option value="Ghana">Ghana</option>
+            <option value="Kenya">Kenya</option>
+            <option value="South Africa">South Africa</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="Other">Other</option>
+          </select>
+          <div class="ferr">Select your country</div>
+        </div>
+        <div class="f" id="frl"><label>Account Designation <span class="req">*</span></label>
+          <select id="role">
+            <option value="trader" selected>Trader</option>
+            <option value="manager">Manager</option>
+          </select>
+          <div class="ferr">Select an account designation</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Create Your Password</div>
+      <div class="f" id="fpw">
+        <label>Password <span class="req">*</span></label>
+        <div class="iw">
+          <input type="password" id="pw" placeholder="Minimum 8 characters" class="pt" oninput="checkStr(this.value)">
+          <button class="tpw" type="button" onclick="togglePw('pw',this)">👁</button>
+        </div>
+        <div class="pw-bar"><div class="pw-fill" id="pwf"></div></div>
+        <div class="pw-lbl" id="pwl">Enter a password</div>
+        <div class="ferr">Password must be at least 8 characters</div>
+      </div>
+      <div class="f" id="fcf">
+        <label>Confirm Password <span class="req">*</span></label>
+        <div class="iw">
+          <input type="password" id="cf" placeholder="Re-enter your password" class="pt" oninput="checkMatch()">
+          <button class="tpw" type="button" onclick="togglePw('cf',this)">👁</button>
+        </div>
+        <div class="pw-match" id="pm"></div>
+        <div class="ferr">Passwords do not match</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Referral Information</div>
+      <div class="ref-box"><h4>🤝 Referral ID Required</h4><p>Every new member must be referred by an existing PPG Trading Club member. Get your referral ID from the person who introduced you before completing this form.</p></div>
+      <div class="f" id="fr"><label>Referral Member ID <span class="req">*</span></label><input type="text" id="ref" placeholder="e.g. PPG-AB12CD" autocomplete="off" style="text-transform:uppercase;"><div class="hint">Enter the unique PPG ID of the member who referred you.</div><div class="ferr">A valid referral ID is required</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Choose Your Risk Tier</div>
+      <p style="color:var(--grey);font-size:0.83rem;line-height:1.7;margin-bottom:20px;font-weight:300;">Select your risk level. The <strong style="color:var(--white);">1% Conservative tier is recommended</strong> for all new members.</p>
+      <div class="tiers">
+        <label class="to t1"><div class="trec">⭐ Best</div><input type="radio" name="risk" value="1% Conservative" checked><div class="tc"><div class="tb"></div><div class="tp">1%</div><div class="tn">Conservative</div><div class="trl">Low Risk</div></div></label>
+        <label class="to t2"><input type="radio" name="risk" value="5% Moderate"><div class="tc"><div class="tb"></div><div class="tp">5%</div><div class="tn">Moderate</div><div class="trl">Med Risk</div></div></label>
+        <label class="to t3"><input type="radio" name="risk" value="10% Balanced"><div class="tc"><div class="tb"></div><div class="tp">10%</div><div class="tn">Balanced</div><div class="trl">Med-High</div></div></label>
+        <label class="to t4"><input type="radio" name="risk" value="15% Aggressive"><div class="tc"><div class="tb"></div><div class="tp">15%</div><div class="tn">Aggressive</div><div class="trl">High Risk</div></div></label>
+        <label class="to t5"><input type="radio" name="risk" value="20% Maximum"><div class="tc"><div class="tb"></div><div class="tp">20%</div><div class="tn">Maximum</div><div class="trl">Very High</div></div></label>
+      </div>
+    </div>
+
+    <div class="warn"><span>⚠️</span><p><strong>Risk Warning:</strong> Forex trading involves substantial risk of loss. Daily percentages shown are potential targets only — not guaranteed. You may lose some or all of your invested capital.</p></div>
+
+    <button class="sbtn" id="sbtn" onclick="handleSubmit()">Create My Account →</button>
+    <p class="fnote">Your information is stored securely in our database. Step 2: Payment of $3.99 registration fee.</p>
+    <div class="ll">Already have an account? <a href="login.html">Log in here</a></div>
+  </div>
+</div>
+
 <script>
 const { createClient } = supabase;
+const sb = createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABOR_ANON_KEY || window.PPG_CONFIG.SUPABASE_ANON_KEY);
 
-const sb = createClient(
-  'https://adkptfexitqutwjdexmf.supabase.co',
-  'YOUR_ANON_KEY'
-);
+function togglePw(id,btn){const f=document.getElementById(id);f.type=f.type==='password'?'text':'password';btn.textContent=f.type==='password'?'👁':'🙈';}
 
-function togglePw(id, btn) {
-  const f = document.getElementById(id);
-  f.type = f.type === 'password' ? 'text' : 'password';
-  btn.textContent = f.type === 'password' ? '👁' : '🙈';
+function checkStr(v){
+  const fill=document.getElementById('pwf');const lbl=document.getElementById('pwl');
+  let s=0;if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const c=['#ef4444','#f97316','#eab308','#22c55e'];const l=['Too weak','Weak','Good','Strong'];const p=['25%','50%','75%','100%'];
+  if(!v.length){fill.style.width='0%';lbl.textContent='Enter a password';lbl.style.color='var(--grey2)';return;}
+  const i=Math.min(s-1,3);fill.style.width=p[i];fill.style.background=c[i];lbl.textContent=l[i];lbl.style.color=c[i];
+  if(document.getElementById('cf').value)checkMatch();
 }
 
-function checkStr(v) {
-  const fill = document.getElementById('pwf');
-  const lbl = document.getElementById('pwl');
-
-  let s = 0;
-
-  if (v.length >= 8) s++;
-  if (/[A-Z]/.test(v)) s++;
-  if (/[0-9]/.test(v)) s++;
-  if (/[^A-Za-z0-9]/.test(v)) s++;
-
-  const c = ['#ef4444', '#f97316', '#eab308', '#22c55e'];
-  const l = ['Too weak', 'Weak', 'Good', 'Strong'];
-  const p = ['25%', '50%', '75%', '100%'];
-
-  if (!v.length) {
-    fill.style.width = '0%';
-    lbl.textContent = 'Enter a password';
-    lbl.style.color = 'var(--grey2)';
-    return;
-  }
-
-  const i = Math.min(s - 1, 3);
-
-  fill.style.width = p[i];
-  fill.style.background = c[i];
-  lbl.textContent = l[i];
-  lbl.style.color = c[i];
-
-  if (document.getElementById('cf').value) checkMatch();
+function checkMatch(){
+  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
+  const el=document.getElementById('pm');const inp=document.getElementById('cf');
+  if(!cf){el.className='pw-match';return;}
+  if(pw===cf){el.textContent='✓ Passwords match';el.className='pw-match show ok';inp.classList.remove('err');inp.classList.add('ok');}
+  else{el.textContent='✗ Passwords do not match';el.className='pw-match show bad';inp.classList.remove('ok');inp.classList.add('err');}
 }
 
-function checkMatch() {
-  const pw = document.getElementById('pw').value;
-  const cf = document.getElementById('cf').value;
+function genId(){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let id='PPG-';for(let i=0;i<6;i++)id+=c[Math.floor(Math.random()*c.length)];return id;}
 
-  const el = document.getElementById('pm');
-  const inp = document.getElementById('cf');
-
-  if (!cf) {
-    el.className = 'pw-match';
-    return;
-  }
-
-  if (pw === cf) {
-    el.textContent = '✓ Passwords match';
-    el.className = 'pw-match show ok';
-    inp.classList.remove('err');
-    inp.classList.add('ok');
-  } else {
-    el.textContent = '✗ Passwords do not match';
-    el.className = 'pw-match show bad';
-    inp.classList.remove('ok');
-    inp.classList.add('err');
-  }
-}
-
-function genReferralId() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-  let id = 'PPG-';
-
-  for (let i = 0; i < 6; i++) {
-    id += chars[Math.floor(Math.random() * chars.length)];
-  }
-
-  return id;
-}
-
-function validate() {
-  let ok = true;
-
-  const checks = [
-    { id: 'fn', wrap: 'ff', fn: v => v.trim().length > 1 },
-    { id: 'ln', wrap: 'fl', fn: v => v.trim().length > 1 },
-    { id: 'em', wrap: 'fe', fn: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
-    { id: 'ph', wrap: 'fp', fn: v => v.trim().length > 6 },
-    { id: 'co', wrap: 'fc', fn: v => v !== '' },
-    { id: 'pw', wrap: 'fpw', fn: v => v.length >= 8 },
-    { id: 'ref', wrap: 'fr', fn: v => v.trim().length > 2 }
+function validate(){
+  let ok=true;
+  const checks=[
+    {id:'fn',wrap:'ff',fn:v=>v.trim().length>1},
+    {id:'ln',wrap:'fl',fn:v=>v.trim().length>1},
+    {id:'em',wrap:'fe',fn:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    {id:'ph',wrap:'fp',fn:v=>v.trim().length>6},
+    {id:'co',wrap:'fc',fn:v=>v!==''},
+    {id:'role',wrap:'frl',fn:v=>v!==''},
+    {id:'pw',wrap:'fpw',fn:v=>v.length>=8},
+    {id:'ref',wrap:'fr',fn:v=>v.trim().length>2},
   ];
-
-  checks.forEach(c => {
-    const v = document.getElementById(c.id).value;
-    const w = document.getElementById(c.wrap);
-
-    if (!c.fn(v)) {
-      w.classList.add('he');
-      ok = false;
-    } else {
-      w.classList.remove('he');
-    }
+  checks.forEach(c=>{
+    const v=document.getElementById(c.id).value;
+    const w=document.getElementById(c.wrap);
+    if(!c.fn(v)){w.classList.add('he');ok=false;}else{w.classList.remove('he');}
   });
-
-  const pw = document.getElementById('pw').value;
-  const cf = document.getElementById('cf').value;
-
-  const cfw = document.getElementById('fcf');
-
-  if (pw !== cf || !cf) {
-    cfw.classList.add('he');
-    ok = false;
-  } else {
-    cfw.classList.remove('he');
-  }
-
+  const pw=document.getElementById('pw').value;const cf=document.getElementById('cf').value;
+  const cfw=document.getElementById('fcf');
+  if(pw!==cf||!cf){cfw.classList.add('he');ok=false;}else{cfw.classList.remove('he');}
   return ok;
 }
 
-async function handleSubmit() {
-
-  if (!validate()) {
-    document.querySelector('.he')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
-
-    return;
-  }
-
-  const btn = document.getElementById('sbtn');
-
-  btn.disabled = true;
-  btn.textContent = 'Creating your account...';
+async function handleSubmit(){
+  if(!validate()){document.querySelector('.he')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  const btn=document.getElementById('sbtn');
+  btn.disabled=true;btn.textContent='Creating your account...';
+  const fn=document.getElementById('fn').value.trim();
+  const ln=document.getElementById('ln').value.trim();
+  const em=document.getElementById('em').value.trim().toLowerCase();
+  const ph=document.getElementById('ph').value.trim();
+  const co=document.getElementById('co').value;
+  const role=document.getElementById('role').value;
+  const pw=document.getElementById('pw').value;
+  const ref=document.getElementById('ref').value.trim().toUpperCase();
+  const risk=document.querySelector('input[name="risk"]:checked').value;
+  const myId=genId();
 
   try {
+    const { data: authData, error: authError } = await sb.auth.signUp({
+      email: em,
+      password: pw,
+      options: {
+        data: {
+          full_name: fn + ' ' + ln,
+          risk_tier: risk,
+          parent_referral_id: ref,
+          payment_method: 'Crypto Stream'
+        }
+      }
+    });
 
-    const fn = document.getElementById('fn').value.trim();
-    const ln = document.getElementById('ln').value.trim();
-
-    const em = document.getElementById('em')
-      .value
-      .trim()
-      .toLowerCase();
-
-    const ph = document.getElementById('ph').value.trim();
-
-    const co = document.getElementById('co').value;
-
-    const pw = document.getElementById('pw').value;
-
-    const ref = document.getElementById('ref')
-      .value
-      .trim()
-      .toUpperCase();
-
-    const risk = document.querySelector(
-      'input[name="risk"]:checked'
-    ).value;
-
-    const myReferralId = genReferralId();
-
-    // CHECK REFERRAL EXISTS
-
-    const { data: refUser, error: refErr } = await sb
-      .from('profiles')
-      .select('id')
-      .eq('referral_id', ref)
-      .single();
-
-    if (refErr || !refUser) {
-      showErr('Invalid referral ID.');
-      resetBtn();
-      return;
-    }
-
-    // CHECK EMAIL EXISTS
-
-    const { data: existing } = await sb
-      .from('profiles')
-      .select('id')
-      .eq('email', em);
-
-    if (existing && existing.length > 0) {
-      showErr('An account with this email already exists.');
-      resetBtn();
-      return;
-    }
-
-    // CREATE AUTH USER
-
-    const { data: authData, error: authError } =
-      await sb.auth.signUp({
-        email: em,
-        password: pw
-      });
-
-    if (authError) {
-      showErr(authError.message);
-      resetBtn();
+    if(authError){
+      showErr('Registration failed: ' + authError.message);
+      btn.disabled=false;btn.textContent='Create My Account →';
       return;
     }
 
     const user = authData.user;
-
     if (!user) {
-      showErr('Failed to create account.');
-      resetBtn();
+      showErr('Registration failed: No user instance returned.');
+      btn.disabled=false;btn.textContent='Create My Account →';
       return;
     }
-
-    // CREATE PROFILE
 
     const { error: profileError } = await sb
       .from('profiles')
       .insert({
         id: user.id,
-
+        email: em,
         first_name: fn,
         last_name: ln,
-
         full_name: fn + ' ' + ln,
-
-        email: em,
-
         phone: ph,
-
         country: co,
-
-        risk_tier: risk,
-
-        referral_id: myReferralId,
-
+        role: role,
+        referral_code: myId,
         referred_by: ref,
-
-        payment_method: 'Crypto Stream',
-
-        membership_status: 'pending_payment',
-
-        created_at: new Date().toISOString()
+        risk_tier: risk
       });
 
-    if (profileError) {
-
-      showErr(profileError.message);
-
-      resetBtn();
-
+    if(profileError){
+      showErr('Profile setup failed: ' + profileError.message);
+      btn.disabled=false;btn.textContent='Create My Account →';
       return;
     }
 
-    // STORE SESSION
-
-    sessionStorage.setItem(
-      'ppg_reg',
-      JSON.stringify({
-        memberId: user.id,
-        email: em,
-        name: fn + ' ' + ln,
-        referral: ref,
-        myReferralId,
-        risk
-      })
-    );
-
-    window.location.href = 'payment.html';
+    sessionStorage.setItem('ppg_reg',JSON.stringify({
+      name: fn+' '+ln,
+      email: em,
+      referral: ref,
+      risk: risk,
+      myReferralId: myId,
+      memberId: user.id,
+      role: role
+    }));
+    
+    window.location.href='payment.html';
 
   } catch (err) {
-
-    showErr('Unexpected error occurred.');
-
-    console.error(err);
-
-    resetBtn();
+    showErr('An unexpected exception occurred: ' + err.message);
+    btn.disabled=false;btn.textContent='Create My Account →';
   }
 }
 
-function resetBtn() {
-  const btn = document.getElementById('sbtn');
-
-  btn.disabled = false;
-
-  btn.textContent = 'Create My Account →';
-}
-
-function showErr(msg) {
-
-  const el = document.getElementById('eb');
-
-  el.textContent = msg;
-
-  el.classList.add('show');
-
-  el.scrollIntoView({
-    behavior: 'smooth',
-    block: 'center'
-  });
-}
-
-document
-  .getElementById('ref')
-  .addEventListener('input', function () {
-    this.value = this.value.toUpperCase();
-  });
+function showErr(msg){const el=document.getElementById('eb');el.textContent=msg;el.classList.add('show');el.scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('ref').addEventListener('input',function(){this.value=this.value.toUpperCase();});
 </script>
+</body>
+</html>
