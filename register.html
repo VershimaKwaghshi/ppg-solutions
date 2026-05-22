@@ -46,39 +46,35 @@ function validate(){
 }
 
 async function handleSubmit(){
-  if(!validate()){document.querySelector('.has-error')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
-  const btn=document.getElementById('sbtn');
-  btn.disabled=true;btn.textContent='Creating your account...';
-
-  const userData = {
-    firstName: document.getElementById('fn').value.trim(),
-    lastName: document.getElementById('ln').value.trim(),
-    email: document.getElementById('em').value.trim().toLowerCase(),
-    phone: document.getElementById('ph').value.trim(),
-    country: document.getElementById('co').value,
-    role: document.getElementById('role').value,
-    password: document.getElementById('pw').value,
-    referral: document.getElementById('ref').value.trim().toUpperCase(),
-    risk: document.querySelector('input[name="risk"]:checked').value
-  };
-
-  try {
-    const res = await registerUser(userData);
+  if(!validate()){
+    document.querySelector('.has-error')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const btn = document.getElementById('sbtn');
+  btn.disabled = true;
+  btn.textContent = 'Creating your account...';
+  
+  try{
+    const result = await registerUser({
+      firstName: document.getElementById('fn').value.trim(),
+      lastName: document.getElementById('ln').value.trim(),
+      email: document.getElementById('em').value.trim().toLowerCase(),
+      password: document.getElementById('pw').value,
+      phone: document.getElementById('ph').value.trim(),
+      country: document.getElementById('co').value,
+      referral: document.getElementById('ref').value.trim().toUpperCase(),
+      risk: document.querySelector('input[name="risk"]:checked').value,
+      role: document.getElementById('role').value
+    });
     
-    if (res.success) {
-      sessionStorage.setItem('ppg_reg', JSON.stringify({
-        name: userData.firstName + ' ' + userData.lastName,
-        email: userData.email,
-        referral: userData.referral,
-        risk: userData.risk,
-        myReferralId: res.referralCode,
-        memberId: res.user.id,
-        role: userData.role
-      }));
-      
-      window.location.href = 'payment.html';
-    }
-  } catch (err) {
+    sessionStorage.setItem('ppg_reg', JSON.stringify({
+      memberId: result.user.id,
+      email: result.user.email,
+      referralCode: result.referralCode
+    }));
+    
+    window.location.href = 'payment.html';
+  }catch(err){
     showErr(err.message);
     btn.disabled = false;
     btn.textContent = 'Create My Account →';
