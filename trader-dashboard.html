@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trader Workspace — PPG Trading Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span>PPG Trading Club</span>
+        <span>Trader Portal</span>
+      </div>
+    </a>
+    <button class="nav-link" onclick="logout()" style="background:none;border:none;cursor:pointer;">Logout →</button>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <div class="section-tag">Member Workspace</div>
+        <h1 class="page-title">Welcome Back, <em id="welcome">Trader</em></h1>
+        <p class="page-subtitle">Track your trading pool performance, monitor daily target tiers, and manage your account credentials from a single secure environment.</p>
+      </div>
+
+      <div class="alert alert-success" id="status-alert" style="display:none;"></div>
+
+      <!-- METRICS SECTION -->
+      <div class="dashboard-grid" style="margin-bottom: 32px;">
+        <div class="stat-card">
+          <div class="stat-label">Active Risk Tier</div>
+          <div class="stat-value" id="m-risk" style="color:var(--gold); font-size:1.75rem;">Loading...</div>
+          <div class="stat-change" id="m-risk-sub" style="color:var(--grey2);">Target Limit</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Your Referral Code</div>
+          <div class="stat-value" id="m-code" style="letter-spacing:1px; font-size:1.75rem;">Loading...</div>
+          <div class="stat-change" style="color:var(--gold); cursor:pointer;" onclick="copyReferral()">Copy Link</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Network Referrals</div>
+          <div class="stat-value" id="m-count">0</div>
+          <div class="stat-change" style="color:var(--green);">Active Members</div>
+        </div>
+      </div>
+
+      <!-- CORE CONTENT ROW -->
+      <div class="row">
+        <!-- MANAGEMENT CARD -->
+        <div class="card">
+          <div class="card-title">Risk & Account Profile</div>
+          <div class="field">
+            <label>Update Daily Target Risk Tier</label>
+            <select id="u-risk">
+              <option value="1% Conservative">1% Conservative (Recommended)</option>
+              <option value="5% Moderate">5% Moderate</option>
+              <option value="10% Balanced">10% Balanced</option>
+              <option value="15% Aggressive">15% Aggressive</option>
+              <option value="20% Maximum">20% Maximum</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <input type="text" id="u-phone" placeholder="+234...">
+          </div>
+          <button class="btn btn-primary" id="save-btn" onclick="updateProfileData()">Save Dynamic Changes</button>
+        </div>
+
+        <!-- STREAMS LOG CARD -->
+        <div class="card">
+          <div class="card-title">Crypto Stream Payout Log</div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="payout-rows">
+                <tr>
+                  <td colspan="4" style="text-align:center; padding:30px 0;">Loading verification state...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    let currentProfile = null;
+
+    async function init() {
+      const auth = await requireRole('trader');
+      if (!auth) return;
+
+      currentProfile = auth.profile;
+      
+      // Update UI Elements
+      document.getElementById('welcome').textContent = currentProfile.full_name;
+      document.getElementById('m-risk').textContent = currentProfile.risk_tier || '1% Conservative';
+      document.getElementById('m-code').textContent = currentProfile.referral_code || 'N/A';
+      document.getElementById('u-risk').value = currentProfile.risk_tier || '1% Conservative';
+      document.getElementById('u-phone').value = currentProfile.phone || '';
+
+      // Fetch Context Data
+      loadReferralsCount(currentProfile.referral_code);
+      loadMockPayouts(currentProfile.id);
+    }
+
+    async function loadReferralsCount(code) {
+      if (!code) return;
+      const { count, error } = await sb
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('referred_by', code);
+      
+      if (!error && count !== null) {
+        document.getElementById('network-count' ? 'm-count' : 'm-count').textContent = count;
+      }
+    }
+
+    async function loadMockPayouts(uid) {
+      const tbody = document.getElementById('payout-rows');
+      tbody.innerHTML = `
+        <tr>
+          <td>#ST-9921</td>
+          <td>Registration</td>
+          <td>$3.99</td>
+          <td><span class="badge badge-success">Verified</span></td>
+        </tr>
+        <tr>
+          <td>#ST-0144</td>
+          <td>Daily Stream</td>
+          <td>--</td>
+          <td><span class="badge badge-warning">Pending</span></td>
+        </tr>
+      `;
+    }
+
+    async function updateProfileData() {
+      const btn = document.getElementById('save-btn');
+      const alertBox = document.getElementById('status-alert');
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      const updatedRisk = document.getElementById('u-risk').value;
+      const updatedPhone = document.getElementById('u-phone').value.trim();
+
+      const { error } = await sb
+        .from('profiles')
+        .update({ risk_tier: updatedRisk, phone: updatedPhone })
+        .eq('id', currentProfile.id);
+
+      if (error) {
+        alertBox.className = 'alert alert-error';
+        alertBox.textContent = 'Error updating file matrix: ' + error.message;
+      } else {
+        alertBox.className = 'alert alert-success';
+        alertBox.textContent = 'Profile synchronization completed successfully.';
+        document.getElementById('m-risk').textContent = updatedRisk;
+      }
+      
+      alertBox.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Save Dynamic Changes';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function copyReferral() {
+      const code = document.getElementById('m-code').textContent;
+      navigator.clipboard.writeText(code);
+      alert('Referral identity token copied to clipboard.');
+    }
+
+    init();
+  </script>
+</body>
+</html>
