@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Station — PPG Trading Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span>PPG Trading Club</span>
+        <span>Manager Terminal</span>
+      </div>
+    </a>
+    <button class="nav-link" onclick="logout()" style="background:none;border:none;cursor:pointer;">Logout →</button>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <div class="section-tag">System Governance</div>
+        <h1 class="page-title">Operational Overview: <em id="welcome">Manager</em></h1>
+        <p class="page-subtitle">Monitor security thresholds, oversee active member records, and track revenue distribution rules.</p>
+      </div>
+
+      <!-- SYSTEM ANALYTICS COUNTERS -->
+      <div class="dashboard-grid" style="margin-bottom: 32px;">
+        <div class="stat-card">
+          <div class="stat-label">Total System Registrations</div>
+          <div class="stat-value" id="sys-users">0</div>
+          <div class="stat-change" style="color:var(--gold);">Across All Tiers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Platform Distribution Allocation</div>
+          <div class="stat-value">37%</div>
+          <div class="stat-change" style="color:var(--grey2);">Fixed Business Matrix</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Public Liquidity Pool</div>
+          <div class="stat-value">63%</div>
+          <div class="stat-change" style="color:var(--green);">Programmatic Splitting</div>
+        </div>
+      </div>
+
+      <!-- DIRECTORY LISTING -->
+      <div class="card">
+        <div class="card-title">Verified Member Directory Matrix</div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Email Address</th>
+                <th>Country</th>
+                <th>Assigned Role</th>
+                <th>Selected Risk Tier</th>
+              </tr>
+            </thead>
+            <tbody id="directory-rows">
+              <tr>
+                <td colspan="5" style="text-align:center; padding:40px 0;">Querying cloud ledger rows...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    async function init() {
+      const auth = await requireRole('manager');
+      if (!auth) return;
+
+      document.getElementById('welcome').textContent = auth.profile.full_name;
+      loadEcosystemData();
+    }
+
+    async function loadEcosystemData() {
+      const { data: profiles, error } = await sb
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Failed to parse system entries:', error.message);
+        return;
+      }
+
+      document.getElementById('sys-users').textContent = profiles.length;
+      
+      const tbody = document.getElementById('directory-rows');
+      if(profiles.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No profile entities discovered inside cluster.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      profiles.forEach(p => {
+        const row = document.createElement('tr');
+        
+        const badgeClass = p.role === 'manager' ? 'badge-warning' : 'badge-success';
+        const riskMarkup = p.risk_tier ? `<code>${p.risk_tier}</code>` : '<span style="color:var(--grey2)">None</span>';
+        
+        row.innerHTML = `
+          <td style="color:var(--white); font-weight:500;">${p.full_name || (p.first_name + ' ' + p.last_name)}</td>
+          <td>${p.email}</td>
+          <td>${p.country || 'N/A'}</td>
+          <td><span class="badge ${badgeClass}">${p.role}</span></td>
+          <td>${riskMarkup}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
