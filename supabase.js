@@ -1,5 +1,6 @@
-<script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-<script src="auth.js"></script>
-<script src="dashboard.js"></script>
+// Supabase Initialization
+const { createClient } = supabase;
+const sb = createClient(
+  window.PPG_CONFIG.SUPABASE_URL,
+  window.PPG_CONFIG.SUPABASE_ANON_KEY
+);
