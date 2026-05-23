@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Member Account — PPG Trading Club</title>
+  <title>Account Registration — Penny Partners Group</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,8 +12,8 @@
     <a href="index.html" class="nav-logo">
       <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
       <div class="logo-text">
-        <span>PPG Trading Club</span>
-        <span>Onboarding</span>
+        <span>Penny Partners Group</span>
+        <span>Corporate Onboarding</span>
       </div>
     </a>
     <a href="login.html" class="nav-link">Sign In →</a>
@@ -22,9 +22,9 @@
   <main class="main">
     <div class="auth-card">
       <div class="auth-header">
-        <div class="section-tag">Account Registration</div>
-        <h1 class="auth-title">Join the Pool</h1>
-        <p class="auth-subtitle">Establish your trading footprint. Fill out the verification form below to activate your account node.</p>
+        <div class="section-tag">Membership Initiation</div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Establish your identity within the ecosystem. Fill out the verification fields below to activate your business profile.</p>
       </div>
 
       <div class="alert alert-error" id="eb" style="display: none;"></div>
@@ -72,7 +72,7 @@
         <div class="field-wrapper" id="frl">
           <label class="field-label" for="role">Account Track</label>
           <select class="input-field" id="role" required>
-            <option value="trader" selected>Trader Track (Standard Account)</option>
+            <option value="trader" selected>Standard Member Account</option>
             <option value="manager">Manager Track (Requires Vetting Approval)</option>
           </select>
           <span class="error-msg">Select your operational track</span>
@@ -104,38 +104,7 @@
         <div class="field-wrapper" id="fr">
           <label class="field-label" for="ref">Parent Referral Identity ID</label>
           <input class="input-field" type="text" id="ref" placeholder="PPG-XXXXXX" required>
-          <span class="error-msg">A valid referral code is mandatory to link account nodes</span>
-        </div>
-
-        <div class="risk-section">
-          <label class="field-label" style="margin-bottom: 12px; display: block;">Daily Target Risk Preference Matrix</label>
-          <div class="risk-options">
-            <label class="risk-card">
-              <input type="radio" name="risk" value="1% Conservative" checked>
-              <div class="risk-title">1% Tier</div>
-              <div class="risk-desc">Conservative</div>
-            </label>
-            <label class="risk-card">
-              <input type="radio" name="risk" value="5% Moderate">
-              <div class="risk-title">5% Tier</div>
-              <div class="risk-desc">Moderate</div>
-            </label>
-            <label class="risk-card">
-              <input type="radio" name="risk" value="10% Balanced">
-              <div class="risk-title">10% Tier</div>
-              <div class="risk-desc">Balanced</div>
-            </label>
-            <label class="risk-card">
-              <input type="radio" name="risk" value="15% Aggressive">
-              <div class="risk-title">15% Tier</div>
-              <div class="risk-desc">Aggressive</div>
-            </label>
-            <label class="risk-card">
-              <input type="radio" name="risk" value="20% Maximum">
-              <div class="risk-title">20% Tier</div>
-              <div class="risk-desc">Maximum Risk</div>
-            </label>
-          </div>
+          <span class="error-msg">A valid referral code is mandatory to connect your account node</span>
         </div>
 
         <button type="submit" class="btn btn-primary" id="sbtn" style="width: 100%; margin-top: 16px;">
@@ -145,7 +114,6 @@
     </div>
   </main>
 
-  <!-- CONTROL SCRIPT INJECTION TRAIL -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="supabase.js"></script>
@@ -264,7 +232,6 @@
       const selectedRole = document.getElementById('role').value;
       const pw = document.getElementById('pw').value;
       const ref = document.getElementById('ref').value.trim().toUpperCase();
-      const risk = document.querySelector('input[name="risk"]:checked').value;
       const myReferral = genId();
       
       const { data, error } = await sb.auth.signUp({
@@ -279,8 +246,7 @@
             country: co,
             role: selectedRole,
             referral_code: myReferral,
-            referred_by: ref,
-            risk_tier: risk
+            referred_by: ref
           }
         }
       });
@@ -296,7 +262,6 @@
         email: em,
         full_name: fn + ' ' + ln,
         referral_code: myReferral,
-        risk_tier: risk,
         role: selectedRole
       }));
       
