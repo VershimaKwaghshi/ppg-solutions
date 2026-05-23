@@ -19,11 +19,13 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);o
 .logo-text{display:flex;flex-direction:column;line-height:1.1;}
 .logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--white);}
 .logo-text span:last-child{font-size:0.62rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:500;}
-.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links{display:flex;align-items:center;gap:20px;}
 .nav-links a{color:var(--grey);text-decoration:none;font-size:0.85rem;font-weight:400;transition:color 0.2s;}
 .nav-links a:hover{color:var(--white);}
 .nav-btn{background:var(--blue)!important;color:var(--white)!important;padding:9px 22px;border-radius:6px;font-weight:600!important;transition:all 0.2s!important;}
 .nav-btn:hover{background:#1e50f0!important;transform:translateY(-1px);box-shadow:0 8px 24px var(--blue-glow)!important;}
+.lang-selector{background:#071428;color:white;border:1px solid rgba(255,255,255,0.1);padding:8px 12px;border-radius:6px;font-size:0.8rem;cursor:pointer;font-family:'Outfit',sans-serif;outline:none;}
+.lang-selector:focus{border-color:var(--blue);}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
 .hamburger span{display:block;width:22px;height:1.5px;background:var(--white);border-radius:2px;}
 .mob-nav{display:none;position:fixed;top:70px;left:0;right:0;background:var(--navy2);border-bottom:1px solid var(--border);padding:24px 5% 32px;flex-direction:column;gap:0;z-index:999;}
@@ -31,6 +33,7 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);o
 .mob-nav a{color:var(--grey);text-decoration:none;font-size:0.95rem;padding:14px 0;border-bottom:1px solid var(--border);transition:color 0.2s;}
 .mob-nav a:hover{color:var(--white);}
 .mob-nav .mob-cta{margin-top:20px;background:var(--blue);color:var(--white);text-align:center;padding:14px;border-radius:8px;font-weight:600;font-size:0.95rem;border:none;}
+.mob-lang-container{padding:14px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:between;}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 5% 80px;position:relative;overflow:hidden;text-align:center;}
@@ -179,6 +182,10 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);o
 .cta p{color:var(--grey);font-size:0.98rem;margin-bottom:28px;position:relative;font-weight:300;max-width:480px;margin-left:auto;margin-right:auto;}
 .cta-fee-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 20px;font-size:0.8rem;color:var(--gold);font-weight:500;margin-bottom:28px;position:relative;}
 
+/* FLOATING CHAT */
+.chat-float{position:fixed;bottom:22px;right:22px;width:62px;height:62px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none;box-shadow:0 8px 25px rgba(0,0,0,.35);z-index:9999;transition:.25s;}
+.chat-float:hover{transform:translateY(-3px) scale(1.05);}
+
 /* FOOTER */
 footer{background:#020912;padding:60px 5% 32px;border-top:1px solid var(--border);}
 .footer-grid{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:44px;}
@@ -240,18 +247,36 @@ footer{background:#020912;padding:60px 5% 32px;border-top:1px solid var(--border
     <a href="#risk">Risk Tiers</a>
     <a href="#how">How It Works</a>
     <a href="#referral">Referral</a>
+    <select id="langSwitch" class="lang-selector">
+      <option value="en">🇺🇸 EN</option>
+      <option value="fr">🇫🇷 FR</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="ar">🇸🇦 AR</option>
+      <option value="zh-CN">🇨🇳 中文</option>
+    </select>
     <a href="register.html" class="nav-btn">Join Now</a>
   </div>
   <div class="hamburger" onclick="toggleNav()" id="ham">
     <span></span><span></span><span></span>
   </div>
 </nav>
+
 <div class="mob-nav" id="mobNav">
   <a href="#about" onclick="closeNav()">About</a>
   <a href="#broker" onclick="closeNav()">Our Broker</a>
   <a href="#risk" onclick="closeNav()">Risk Tiers</a>
   <a href="#how" onclick="closeNav()">How It Works</a>
   <a href="#referral" onclick="closeNav()">Referral</a>
+  <div class="mob-lang-container">
+    <span style="font-size:0.85rem; color:var(--grey);">Language:</span>
+    <select id="langSwitchMob" class="lang-selector">
+      <option value="en">🇺🇸 EN</option>
+      <option value="fr">🇫🇷 FR</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="ar">🇸🇦 AR</option>
+      <option value="zh-CN">🇨🇳 中文</option>
+    </select>
+  </div>
   <a href="register.html" class="mob-cta">Join the Club — $3.99/Mo</a>
 </div>
 
@@ -259,7 +284,7 @@ footer{background:#020912;padding:60px 5% 32px;border-top:1px solid var(--border
   <div class="hero-glow"></div>
   <div class="hero-lines"></div>
   <div class="hero-content">
-    <div class="hero-pill"><div class="pill-dot"></div>Now Accepting Members</div>
+    <div class="hero-pill"><div class="pill-dot"></div>Now Accepting Members • 🔞 18+ Only</div>
     <h1>Trade with Purpose.<br><em>Grow with Community.</em></h1>
     <p class="hero-sub">PPG Trading Club is an exclusive, members-only forex trading community. Your capital stays in your own account. You watch every trade live. You withdraw on your terms.</p>
     <div class="hero-btns">
@@ -602,6 +627,8 @@ footer{background:#020912;padding:60px 5% 32px;border-top:1px solid var(--border
   </div>
 </footer>
 
+<a href="https://wa.me/2348130500659" class="chat-float" target="_blank">💬</a>
+
 <script>
 function toggleNav(){document.getElementById('mobNav').classList.toggle('open');}
 function closeNav(){document.getElementById('mobNav').classList.remove('open');}
@@ -613,6 +640,24 @@ document.addEventListener('click',function(e){
 window.addEventListener('scroll',function(){
   document.getElementById('topnav').style.boxShadow=window.scrollY>20?'0 4px 32px rgba(0,0,0,0.5)':'none';
 });
+
+// Translation Management System
+function initTranslationEngine(selectId) {
+  document.getElementById(selectId).addEventListener('change', function(){
+    const lang = this.value;
+    if (lang === 'en') {
+      // If returning to English, strip the translation wrapper parameter if active
+      if (window.location.href.includes('translate.google.com')) {
+        window.location.href = window.location.origin + window.location.pathname;
+      }
+      return;
+    }
+    window.location.href = "https://translate.google.com/translate?sl=auto&tl=" + lang + "&u=" + encodeURIComponent(window.location.href);
+  });
+}
+
+initTranslationEngine('langSwitch');
+initTranslationEngine('langSwitchMob');
 </script>
 
 </body>
