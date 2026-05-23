@@ -547,15 +547,14 @@
       if (updateErr) throw updateErr;
 
       // Step D: Write transaction back into local cache matrices
-      let reg = {};
-      try {
-        reg = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
-      } catch(e) {}
-      
-      reg.payMethod = method;
-      reg.txRef = ref;
-      reg.paymentStatus = 'pending';
-      sessionStorage.setItem('ppg_reg', JSON.stringify(reg));
+      const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
+      d.payMethod = method;
+      d.txRef = ref;
+      d.receiptFileName = file.name;
+      sessionStorage.setItem(
+        'ppg_reg',
+        JSON.stringify(d)
+      );
 
       window.location.href = 'consent.html';
 
