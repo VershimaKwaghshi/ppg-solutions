@@ -541,11 +541,11 @@
       
       // Populate session cache parameters cleanly for payment and consent validation steps
       sessionStorage.setItem('ppg_reg', JSON.stringify({
-        full_name: fn + ' ' + ln,
+        name: fn + ' ' + ln,
         email: em,
-        phone: ph,
-        country: co,
-        role: selectedRole,
+        phone: document.getElementById('ph').value.trim(),
+        country: document.getElementById('co').value,
+        role: document.getElementById('role')?.value || 'Trader',
         referral: ref,
         risk: selectedRisk,
         myReferralId: myReferral,
