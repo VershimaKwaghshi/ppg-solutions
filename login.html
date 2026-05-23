@@ -1,74 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Member Login — PPG</title>
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#040d1c;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-color:white;
-padding:20px;
-}
-.card{
-background:#071428;
-border:1px solid rgba(255,255,255,.08);
-padding:40px;
-border-radius:18px;
-width:100%;
-max-width:420px;
-}
-h1{
-margin-top:0;
-margin-bottom:10px;
-}
-p{
-color:#94a3b8;
-line-height:1.6;
-margin-bottom:25px;
-}
-input{
-width:100%;
-padding:14px;
-margin-bottom:15px;
-background:#0a1a35;
-border:1px solid rgba(255,255,255,.08);
-border-radius:8px;
-color:white;
-box-sizing:border-box;
-}
-button{
-width:100%;
-padding:14px;
-background:#1640d6;
-border:none;
-border-radius:8px;
-color:white;
-font-weight:600;
-cursor:pointer;
-}
-button:hover{
-opacity:.92;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Member Login — PPG</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#040d1c;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      color:white;
+      padding:20px;
+    }
+    .card{
+      background:#071428;
+      border:1px solid rgba(255,255,255,.08);
+      padding:40px;
+      border-radius:18px;
+      width:100%;
+      max-width:420px;
+    }
+    h1{
+      margin-top:0;
+      margin-bottom:10px;
+    }
+    p{
+      color:#94a3b8;
+      line-height:1.6;
+      margin-bottom:25px;
+    }
+    input{
+      width:100%;
+      padding:14px;
+      margin-bottom:15px;
+      background:#0a1a35;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:8px;
+      color:white;
+      box-sizing:border-box;
+      outline:none;
+    }
+    input:focus {
+      border-color: #1640d6;
+    }
+    button{
+      width:100%;
+      padding:14px;
+      background:#1640d6;
+      border:none;
+      border-radius:8px;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+    }
+    button:hover{
+      opacity:.92;
+    }
+    button:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
+    .msg {
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+      display: none;
+    }
+    .error { color: #ef4444; }
+    .success { color: #22c55e; }
+  </style>
 </head>
 <body>
 <div class="card">
-<h1>Member Login</h1>
-<p>
-Login to access your PPG member dashboard.
-</p>
-<input type="email" placeholder="Email">
-<input type="password" placeholder="Password">
-<button onclick="window.location='dashboard.html'">
-Login
-</button>
+  <h1>Member Login</h1>
+  <p>Login to access your PPG member dashboard.</p>
+  
+  <div id="msgBox" class="msg"></div>
+  
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Password" required>
+  <button id="loginBtn" onclick="handleLogin()">Login</button>
 </div>
+
+<script>
+  const sb = supabase.createClient(
+    window.PPG_CONFIG.SUPABASE_URL,
+    window.PPG_CONFIG.SUPABASE_ANON_KEY
+  );
+
+  async function handleLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const msgBox = document.getElementById('msgBox');
+    const btn = document.getElementById('loginBtn');
+
+    if (!email || !password) {
+      showMsg('Please fill in all fields.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Authenticating...';
+    msgBox.style.display = 'none';
+
+    try {
+      const { data, error: authErr } = await sb.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (authErr) throw authErr;
+
+      showMsg('Login successful. Verifying authorization metrics...', 'success');
+
+      const { data: profile, error: profileErr } = await sb
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileErr) throw profileErr;
+
+      if (profile && profile.role && profile.role.toLowerCase() === 'manager') {
+        window.location.href = 'dashboard.html?type=manager';
+      } else {
+        window.location.href = 'dashboard.html?type=trader';
+      }
+
+    } catch (err) {
+      showMsg(err.message || 'Authentication sequence failed.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Login';
+    }
+  }
+
+  function showMsg(text, type) {
+    const msgBox = document.getElementById('msgBox');
+    msgBox.textContent = text;
+    msgBox.className = 'msg ' + type;
+    msgBox.style.display = 'block';
+  }
+</script>
 </body>
 </html>
