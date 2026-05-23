@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment — PPG Trading Club</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;500;600;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
@@ -405,12 +405,6 @@
       </div>
 
       <div class="field">
-        <label>Transaction Reference / Hash <span>*</span></label>
-        <input type="text" id="tx-ref" placeholder="e.g. TXN123456789 or crypto transaction hash">
-        <div class="field-hint">Enter your bank transaction reference number or your crypto transaction hash/ID.</div>
-      </div>
-
-      <div class="field">
         <label>Upload Receipt Screenshot <span>*</span></label>
         <div class="upload-area" id="uploadArea">
           <div class="upload-icon">📎</div>
@@ -503,11 +497,9 @@
 
   async function handleSubmit() {
     const method = document.getElementById('pay-method').value;
-    const ref = document.getElementById('tx-ref').value.trim();
     const file = document.getElementById('receipt-file').files[0];
 
     if (!method) { alert('Please select your payment method.'); return; }
-    if (!ref) { alert('Please enter your transaction reference or hash.'); return; }
     if (!file) { alert('Please upload your payment receipt screenshot.'); return; }
 
     const btn = document.querySelector('.submit-btn');
@@ -539,7 +531,6 @@
         .from('profiles')
         .update({
           payment_method: method,
-          payment_reference: ref,
           payment_receipt: fileName,
           payment_status: 'pending',
           payment_submitted_at: new Date().toISOString()
@@ -551,13 +542,13 @@
       // Step D: Write transaction back into local cache matrices
       const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
       d.payMethod = method;
-      d.txRef = ref;
       d.receiptFileName = file.name;
       sessionStorage.setItem(
         'ppg_reg',
         JSON.stringify(d)
       );
 
+      localStorage.setItem('ppg_payment_confirmed', 'yes');
       window.location.href = 'consent.html';
 
     } catch (err) {
