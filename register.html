@@ -117,6 +117,55 @@
       color: var(--gold);
       font-weight: 500;
     }
+
+    /* Radio Group Selector Component for Risk Matrices */
+    .risk-selectors {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .risk-card-input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .risk-card-label {
+      display: block;
+      border: 1px solid var(--border);
+      background-color: var(--input-bg);
+      border-radius: 6px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .risk-card-input:checked + .risk-card-label {
+      border-color: var(--gold);
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    .risk-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .risk-card-input:checked + .risk-card-label .risk-title {
+      color: var(--gold);
+    }
+
+    .risk-desc {
+      font-size: 0.75rem;
+      color: var(--grey2);
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -189,10 +238,31 @@
         <div class="field-wrapper" id="frl">
           <label class="field-label" for="role">Account Track</label>
           <select class="input-field" id="role" required>
-            <option value="trader" selected>Standard Member Account</option>
-            <option value="manager">Manager Track (Requires Vetting Approval)</option>
+            <option value="Trader" selected>Standard Member Account</option>
+            <option value="Manager">Manager Track (Requires Vetting Approval)</option>
           </select>
           <span class="error-msg">Select your operational track</span>
+        </div>
+
+        <div class="field-wrapper" id="frk">
+          <label class="field-label">Risk Threshold Allocation Plan</label>
+          <div class="risk-selectors">
+            <div>
+              <input type="radio" name="risk" id="risk_5" value="5%" class="risk-card-input" checked>
+              <label for="risk_5" class="risk-card-label">
+                <span class="risk-title">Standard 5% Plan</span>
+                <span class="risk-desc">Baseline protective parameters</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="risk" id="risk_10" value="10%" class="risk-card-input">
+              <label for="risk_10" class="risk-card-label">
+                <span class="risk-title">Extended 10% Plan</span>
+                <span class="risk-desc">Deep liquidity matrix spacing</span>
+              </label>
+            </div>
+          </div>
+          <span class="error-msg">Select a protective parameter tier</span>
         </div>
 
         <div class="field-wrapper" id="fpw">
@@ -275,8 +345,6 @@
       e.stopPropagation();
       const drop = document.getElementById('countryDropdown');
       const isOpen = drop.classList.contains('open');
-      
-      // Close any other potential open triggers
       drop.classList.toggle('open');
       
       if (!isOpen) {
@@ -308,7 +376,6 @@
       });
     }
 
-    // Global Event Listener to dismiss dropdown card upon outside tap
     document.addEventListener('click', function() {
       document.getElementById('countryDropdown').classList.remove('open');
     });
@@ -417,7 +484,7 @@
       
       const btn = document.getElementById('sbtn');
       btn.disabled = true;
-      btn.textContent = 'Creating your account...';
+      btn.textContent = 'Creating account node...';
       
       const fn = document.getElementById('fn').value.trim();
       const ln = document.getElementById('ln').value.trim();
@@ -427,37 +494,62 @@
       const selectedRole = document.getElementById('role').value;
       const pw = document.getElementById('pw').value;
       const ref = document.getElementById('ref').value.trim().toUpperCase();
+      const selectedRisk = document.querySelector('input[name="risk"]:checked').value;
       const myReferral = genId();
       
-      const { data, error } = await sb.auth.signUp({
+      // Execute security onboarding layer
+      const { data: authData, error: authError } = await sb.auth.signUp({
         email: em,
-        password: pw,
-        options: {
-          data: {
-            first_name: fn,
-            last_name: ln,
-            full_name: fn + ' ' + ln,
-            phone: ph,
-            country: co,
-            role: selectedRole,
-            referral_code: myReferral,
-            referred_by: ref
-          }
-        }
+        password: pw
       });
       
-      if (error) {
-        showErr(error.message);
+      if (authError) {
+        showErr(authError.message);
+        btn.disabled = false;
+        btn.textContent = 'Create My Account →';
+        return;
+      }
+
+      if (!authData || !authData.user) {
+        showErr('Critical error capturing your secure identity row context.');
+        btn.disabled = false;
+        btn.textContent = 'Create My Account →';
+        return;
+      }
+
+      // Execute database update statement targeting the auto-generated profile table row
+      const { error: profileErr } = await sb
+        .from('profiles')
+        .update({
+          first_name: fn,
+          last_name: ln,
+          phone: ph,
+          country: co,
+          role: selectedRole,
+          risk_tier: selectedRisk,
+          referral_id: myReferral,
+          parent_referral_id: ref
+        })
+        .eq('id', authData.user.id);
+
+      if (profileErr) {
+        showErr('Profile metadata synchronization failure: ' + profileErr.message);
         btn.disabled = false;
         btn.textContent = 'Create My Account →';
         return;
       }
       
+      // Populate session cache parameters cleanly for payment and consent validation steps
       sessionStorage.setItem('ppg_reg', JSON.stringify({
-        email: em,
         full_name: fn + ' ' + ln,
-        referral_code: myReferral,
-        role: selectedRole
+        email: em,
+        phone: ph,
+        country: co,
+        role: selectedRole,
+        referral: ref,
+        risk: selectedRisk,
+        myReferralId: myReferral,
+        memberId: authData.user.id
       }));
       
       window.location.href = 'payment.html';
