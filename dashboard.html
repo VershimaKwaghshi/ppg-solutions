@@ -413,6 +413,56 @@ Copy Link
 </table>
 </div>
 
+<div id="traderSection">
+<div class="section-card">
+<h3>Trader Dashboard</h3>
+<table>
+<tr>
+<th>Account Status</th>
+<td>Active Member</td>
+</tr>
+<tr>
+<th>Selected Risk Tier</th>
+<td id="riskTier">Loading...</td>
+</tr>
+<tr>
+<th>Verification</th>
+<td id="traderVerify">Pending</td>
+</tr>
+<tr>
+<th>Broker Setup</th>
+<td id="brokerStatus">
+Awaiting Broker Setup
+</td>
+</tr>
+</table>
+</div>
+</div>
+
+<div id="managerSection" style="display:none">
+<div class="section-card">
+<h3>Manager Dashboard</h3>
+<table>
+<tr>
+<th>Manager Access</th>
+<td>Enabled</td>
+</tr>
+<tr>
+<th>Member Oversight</th>
+<td>Available</td>
+</tr>
+<tr>
+<th>Verification Queue</th>
+<td>Pending Review</td>
+</tr>
+<tr>
+<th>Reports</th>
+<td>Manager Tools Enabled</td>
+</tr>
+</table>
+</div>
+</div>
+
 <div class="section-card" id="manager-panel">
 <h3>Manager Administrative Oversight</h3>
 <table>
@@ -470,23 +520,40 @@ async function initializeDashboardRuntime() {
       document.getElementById('pCountry').innerText = data.country || '—';
       document.getElementById('pRole').innerText = data.role || 'Member';
       
+      const role = (data.role || '').toLowerCase();
+      if(role === 'manager'){
+        document.getElementById('managerSection').style.display = 'block';
+        document.getElementById('traderSection').style.display = 'none';
+      } else {
+        document.getElementById('managerSection').style.display = 'none';
+        document.getElementById('traderSection').style.display = 'block';
+      }
+      
       document.querySelector('.member-id').innerText = 'Member ID: ' + (data.member_id || 'PPG-' + user.id.slice(0,6));
       
       document.getElementById('refLink').value = window.location.origin + '/register.html?ref=' + (data.referral_code || user.id.slice(0,6));
       
+      if (document.getElementById('riskTier')) {
+        document.getElementById('riskTier').innerText = data.risk_tier || 'Not Configured';
+      }
+
       const statusBox = document.querySelector('.status');
+      const tVerify = document.getElementById('traderVerify');
       if (data.kyc_status === 'approved') {
         statusBox.className = 'status verified';
         statusBox.innerText = 'Verified';
         document.getElementById('pKyc').innerText = 'Verified';
+        if (tVerify) tVerify.innerText = 'Verified';
       } else if (data.kyc_status === 'pending') {
         statusBox.className = 'status pending';
         statusBox.innerText = 'Verification Pending';
         document.getElementById('pKyc').innerText = 'Pending';
+        if (tVerify) tVerify.innerText = 'Pending Review';
       } else {
         statusBox.className = 'status not-verified';
         statusBox.innerText = 'Not Verified';
         document.getElementById('pKyc').innerText = 'Not Verified';
+        if (tVerify) tVerify.innerText = 'Not Verified';
       }
 
       if (data.role === 'Manager') {
