@@ -121,7 +121,7 @@
     /* Radio Group Selector Component for Risk Matrices */
     .risk-selectors {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 12px;
       margin-top: 6px;
     }
@@ -134,14 +134,16 @@
     }
 
     .risk-card-label {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       border: 1px solid var(--border);
       background-color: var(--input-bg);
       border-radius: 6px;
       padding: 14px;
       cursor: pointer;
       transition: all 0.2s ease;
-      text-align: center;
+      text-align: left;
     }
 
     .risk-card-input:checked + .risk-card-label {
@@ -183,9 +185,9 @@
   <main class="main">
     <div class="auth-card">
       <div class="auth-header">
-        <div class="section-tag">Membership Initiation</div>
+        <div class="section-tag">$3.99 Monthly Membership Subscription</div>
         <h1 class="auth-title">Create Account</h1>
-        <p class="auth-subtitle">Establish your identity within the ecosystem. Fill out the verification fields below to activate your business profile.</p>
+        <p class="auth-subtitle">Non-refundable recurring monthly membership subscription required to maintain club access and platform linkage.</p>
       </div>
 
       <div class="alert alert-error" id="eb" style="display: none;"></div>
@@ -248,17 +250,38 @@
           <label class="field-label">Risk Threshold Allocation Plan</label>
           <div class="risk-selectors">
             <div>
+              <input type="radio" name="risk" id="risk_1" value="1%" class="risk-card-input">
+              <label for="risk_1" class="risk-card-label">
+                <span class="risk-title">1% — Conservative (Low Risk)</span>
+                <span class="risk-desc">Minimum relative volatility threshold protection</span>
+              </label>
+            </div>
+            <div>
               <input type="radio" name="risk" id="risk_5" value="5%" class="risk-card-input" checked>
               <label for="risk_5" class="risk-card-label">
-                <span class="risk-title">Standard 5% Plan</span>
+                <span class="risk-title">5% — Moderate (Medium Risk)</span>
                 <span class="risk-desc">Baseline protective parameters</span>
               </label>
             </div>
             <div>
               <input type="radio" name="risk" id="risk_10" value="10%" class="risk-card-input">
               <label for="risk_10" class="risk-card-label">
-                <span class="risk-title">Extended 10% Plan</span>
+                <span class="risk-title">10% — Balanced (Med-High Risk)</span>
                 <span class="risk-desc">Deep liquidity matrix spacing</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="risk" id="risk_15" value="15%" class="risk-card-input">
+              <label for="risk_15" class="risk-card-label">
+                <span class="risk-title">15% — Aggressive (High Risk)</span>
+                <span class="risk-desc">Accelerated volatility threshold tolerance</span>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="risk" id="risk_20" value="20%" class="risk-card-input">
+              <label for="risk_20" class="risk-card-label">
+                <span class="risk-title">20% — Maximum (Very High Risk)</span>
+                <span class="risk-desc">Maximum scaling parameter optimization</span>
               </label>
             </div>
           </div>
