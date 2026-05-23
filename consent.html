@@ -46,28 +46,46 @@
       font-size: 0.9rem;
       margin-bottom: 24px;
     }
-    .risk-box {
+    .card {
       background: rgba(4, 13, 28, 0.5);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      margin-bottom: 20px;
     }
-    .risk-box label {
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--gold);
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: var(--grey);
+      margin-bottom: 12px;
+    }
+    .card label {
       display: flex;
       align-items: flex-start;
       gap: 12px;
       font-size: 0.88rem;
       color: var(--white);
       cursor: pointer;
+      margin-top: 10px;
     }
-    .risk-box input[type="checkbox"] {
+    .card input[type="checkbox"] {
       margin-top: 4px;
       accent-color: var(--gold);
     }
-    .input {
+    .card label.field-label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--grey);
+      margin-top: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .input-field {
       width: 100%;
       background: #0a1a35;
       border: 1px solid var(--border);
@@ -76,23 +94,15 @@
       color: white;
       font-family: inherit;
       font-size: 0.9rem;
-      margin-top: 12px;
+      margin-top: 8px;
       outline: none;
     }
-    .input:focus {
+    .input-field:focus {
       border-color: var(--gold);
     }
-    .consent-card label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--grey);
-      margin-top: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .submit-btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 30px; transition: background 0.2s; }
-    .submit-btn:hover { background: var(--gold-light); }
-    .submit-btn:disabled { background: var(--grey2); cursor: not-allowed; }
+    .btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .btn:hover { background: var(--gold-light); }
+    .btn:disabled { background: var(--grey2); cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -109,70 +119,72 @@
 
 <div class="main">
   <div class="consent-wrap">
-    
     <div class="consent-card">
-      <div id="riskStep">
+      <form id="consentForm">
         <h2>Risk Consent & KYC Verification</h2>
-        <p class="consent-text">
-          Please read carefully before proceeding.
-          Forex trading carries substantial risk and may result in partial or total loss of deposited capital.
-          PPG Trading Club does not guarantee profits and does not hold member trading capital.
-          All trading occurs inside your personal broker account.
-        </p>
-        
         <div class="card">
-          <h3>Risk Acknowledgement</h3>
-          <div class="risk-box" style="margin-top:12px;">
-            <label style="display:flex;gap:10px;">
-              <input type="checkbox" id="risk1">
-              <span>I understand that forex trading carries risk and I may lose all deposited capital.</span>
-            </label>
-            <label style="display:flex;gap:10px;">
-              <input type="checkbox" id="risk2">
-              <span>I understand PPG does not guarantee profits or returns.</span>
-            </label>
-            <label style="display:flex;gap:10px;">
-              <input type="checkbox" id="risk3">
-              <span>I understand my capital remains inside my own broker account.</span>
-            </label>
-            <label style="display:flex;gap:10px;">
-              <input type="checkbox" id="risk4">
-              <span>I voluntarily choose my selected risk allocation tier.</span>
-            </label>
-          </div>
+          <h3>Risk Disclosure</h3>
+          <p>
+            Forex trading involves substantial risk and may result in partial or total loss
+            of capital. PPG Trading Club does not guarantee profits or returns.
+          </p>
+          <p>
+            Members understand that higher risk tiers carry increased volatility and loss
+            potential.
+          </p>
+          <label>
+            <input type="checkbox" id="risk1" required>
+            <span>I understand forex trading carries risk and losses may occur.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="risk2" required>
+            <span>I understand PPG does not hold or pool my trading funds.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="risk3" required>
+            <span>I understand profits are not guaranteed and I may lose all deposited capital.</span>
+          </label>
+          <label>
+            <input type="checkbox" id="risk4" required>
+            <span>I voluntarily consent to participation and risk exposure.</span>
+          </label>
         </div>
-
-        <h3 style="margin-top:30px">Digital Signature</h3>
-        <input id="legalName" placeholder="Full Legal Name" class="input" />
-        <input id="signature" placeholder="Type Full Name as Signature" class="input" />
-        <input id="signedDate" class="input" readonly />
-
-        <div class="card" style="margin-top:20px;">
+        <div class="card">
           <h3>KYC Verification</h3>
-          <label>Government ID Type</label>
-          <select id="idType" class="input">
-            <option value="">Select</option>
+          <input
+            type="text"
+            id="fullname"
+            placeholder="Full Legal Name"
+            class="input-field"
+            required
+          >
+          <select id="idtype" class="input-field" required>
+            <option value="">Select ID Type</option>
             <option value="National ID">National ID</option>
             <option value="Passport">Passport</option>
-            <option value="Driver's License">Driver's License</option>
+            <option value="Driver's Licence">Driver's Licence</option>
           </select>
-          
-          <label style="margin-top:15px;">Upload ID Front</label>
-          <input type="file" id="idFront" class="input">
-          
-          <label style="margin-top:15px;">Upload ID Back / Supporting Document</label>
-          <input type="file" id="idBack" class="input">
-          
-          <label style="margin-top:15px;">Selfie / Face Verification</label>
-          <input type="file" id="selfie" class="input">
+          <input
+            type="text"
+            id="idnumber"
+            placeholder="ID Number"
+            class="input-field"
+            required
+          >
+          <label class="field-label">Upload ID Document</label>
+          <input
+            type="file"
+            id="kycfile"
+            accept="image/*,.pdf"
+            class="input-field"
+            required
+          >
         </div>
-
-        <button id="submitConsentBtn" onclick="submitConsent()" class="submit-btn">
-          Submit Consent & KYC
+        <button type="submit" class="btn" id="submitBtn">
+          Complete Verification
         </button>
-      </div>
+      </form>
     </div>
-
   </div>
 </div>
 
@@ -183,60 +195,35 @@ const sb = createClient(
   window.PPG_CONFIG.SUPABASE_ANON_KEY
 );
 
-document.getElementById('signedDate').value = new Date().toLocaleDateString();
-
-async function submitConsent(){
-  const btn = document.getElementById('submitConsentBtn');
+document.getElementById('consentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const btn = document.getElementById('submitBtn');
   const userResponse = await sb.auth.getUser();
   const user = userResponse.data.user;
-  
-  if(!user){
+
+  if(!user) {
     alert('Please login first');
     return;
   }
-  
-  const r1 = document.getElementById('risk1');
-  const r2 = document.getElementById('risk2');
-  const r3 = document.getElementById('risk3');
-  const r4 = document.getElementById('risk4');
 
-  if(!r1.checked || !r2.checked || !r3.checked || !r4.checked){
-    alert('Please acknowledge all risk statements.');
-    return;
-  }
-
-  const fullName = document.getElementById('legalName').value.trim();
-  const signature = document.getElementById('signature').value.trim();
-  const idType = document.getElementById('idType').value;
-  const idFrontFile = document.getElementById('idFront').files[0];
-  const idBackFile = document.getElementById('idBack').files[0];
-  const selfieFile = document.getElementById('selfie').files[0];
-
-  if(!fullName || !signature || !idType || !idFrontFile || !idBackFile || !selfieFile){
-    alert('Please complete all fields and uploads.');
-    return;
-  }
+  const fullName = document.getElementById('fullname').value.trim();
+  const idType = document.getElementById('idtype').value;
+  const idNumber = document.getElementById('idnumber').value.trim();
+  const kycFile = document.getElementById('kycfile').files[0];
 
   btn.disabled = true;
-  btn.textContent = 'Uploading documents...';
+  btn.textContent = 'Processing verification...';
 
   try {
     const uid = user.id;
     const timestamp = Date.now();
     const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
     
-    const frontPath = 'id_front/' + uid + '-' + timestamp;
-    const backPath = 'id_back/' + uid + '-' + timestamp;
-    const selfiePath = 'selfie/' + uid + '-' + timestamp;
+    const idPath = 'kyc_id/' + uid + '-' + timestamp;
 
-    const up1 = await sb.storage.from('kyc-documents').upload(frontPath, idFrontFile);
-    if (up1.error) throw new Error('ID Front upload failed: ' + up1.error.message);
-
-    const up2 = await sb.storage.from('kyc-documents').upload(backPath, idBackFile);
-    if (up2.error) throw new Error('ID Back upload failed: ' + up2.error.message);
-
-    const up3 = await sb.storage.from('kyc-documents').upload(selfiePath, selfieFile);
-    if (up3.error) throw new Error('Selfie upload failed: ' + up3.error.message);
+    const uploadResponse = await sb.storage.from('kyc-documents').upload(idPath, kycFile);
+    if (uploadResponse.error) throw new Error('Document upload failed: ' + uploadResponse.error.message);
 
     const { error } = await sb
       .from('profiles')
@@ -253,11 +240,9 @@ async function submitConsent(){
         kyc_status: 'pending',
         registration_status: 'complete',
         legal_name: fullName,
-        signature: signature,
         id_type: idType,
-        id_doc: frontPath,
-        address_doc: backPath,
-        selfie_doc: selfiePath
+        signature: fullName, 
+        id_doc: idPath
       })
       .eq('id', uid);
 
@@ -265,12 +250,12 @@ async function submitConsent(){
 
     window.location.href = 'complete.html';
 
-  } catch (e) {
-    alert(e.message || 'Error executing consent updates.');
+  } catch (err) {
+    alert(err.message || 'Error executing consent updates.');
     btn.disabled = false;
-    btn.textContent = 'Submit Consent & KYC';
+    btn.textContent = 'Complete Verification';
   }
-}
+});
 </script>
 </body>
 </html>
