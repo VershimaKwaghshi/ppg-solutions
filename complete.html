@@ -2,106 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Application Submitted — PPG Trading Club</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Application Submitted — PPG</title>
 <style>
-:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--green:#22c55e;--red:#ef4444;--accent-blue:#0066FF;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);}
-.logo-text{display:flex;flex-direction:column;line-height:1.1;}
-.logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
-.logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.progress-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
-.progress-inner{max-width:780px;margin:0 auto;}
-.progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--green);color:var(--white);background:var(--green);}
-.ps-label{font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:1px;font-weight:500;}
-.ps-line{flex:1;height:1px;background:var(--green);margin:0 -6px;margin-bottom:18px;}
-.progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
-.progress-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));}
-.main{flex:1;padding:60px 5% 80px;display:flex;align-items:center;justify-content:center;}
-.complete-wrap{max-width:640px;width:100%;text-align:center;}
-.success-ring{width:96px;height:96px;border-radius:50%;border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
-.success-inner{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:2rem;}
-.complete-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.complete-tag::before,.complete-tag::after{content:'';width:20px;height:1px;background:var(--green);}
-.complete-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:14px;}
-.complete-title em{font-style:italic;color:var(--gold);}
-.complete-sub{color:var(--grey);font-size:0.92rem;margin-bottom:36px;}
-.summary-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;text-align:left;}
-.summary-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
-.sr-label{font-size:0.75rem;color:var(--grey2);}
-.sr-value{font-size:0.85rem;font-weight:600;color:var(--white);}
-.status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:100px;padding:8px 20px;font-size:0.78rem;font-weight:600;color:var(--gold);margin-bottom:28px;}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
-.actions{display:flex;flex-direction:column;gap:12px;}
-.btn-dash{display:flex;align-items:center;justify-content:center;background:var(--accent-blue);color:#fff;padding:15px;border-radius:10px;font-weight:700;font-size:0.95rem;border:none;cursor:pointer;width:100%;text-decoration:none;}
-.btn-wa{display:flex;align-items:center;justify-content:center;background:#25d366;color:#fff;padding:15px;border-radius:10px;font-weight:700;text-decoration:none;}
-@keyframes blink{50%{opacity:0.3;}}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#040d1c;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+padding:20px;
+}
+.card{
+max-width:520px;
+background:#071428;
+border:1px solid rgba(255,255,255,.08);
+padding:40px;
+border-radius:18px;
+text-align:center;
+}
+.icon{
+font-size:60px;
+margin-bottom:20px;
+}
+h1{
+margin:0 0 15px;
+}
+p{
+color:#94a3b8;
+line-height:1.7;
+}
+.btn{
+display:inline-block;
+margin-top:25px;
+background:#25D366;
+color:white;
+text-decoration:none;
+padding:14px 28px;
+border-radius:8px;
+font-weight:600;
+}
 </style>
 </head>
 <body>
-
-<nav class="nav">
-  <div class="logo-text"><span>PPG Trading Club</span><span>Penny Partners Group</span></div>
-</nav>
-
-<div class="progress-wrap">
-  <div class="progress-inner">
-    <div class="progress-steps">
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Register</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Payment</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Consent</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Complete</div></div>
-    </div>
-    <div class="progress-bar-wrap"><div class="progress-bar"></div></div>
-  </div>
+<div class="card">
+<div class="icon">✅</div>
+<h1>Application Submitted</h1>
+<p>
+Payment and consent have been submitted successfully.
+Your KYC and membership verification will now be reviewed by the PPG team.
+</p>
+<p>
+Click below to notify support and continue onboarding.
+</p>
+<a
+href="https://wa.me/2348130500659?text=Hello%20PPG%20Team,%20I%20have%20completed%20payment%20and%20signed%20consent.%20Please%20confirm%20my%20onboarding."
+class="btn"
+target="_blank">
+Continue to WhatsApp
+</a>
 </div>
-
-<div class="main">
-  <div class="complete-wrap">
-    <div class="success-ring"><div class="success-inner">🎉</div></div>
-    <div class="complete-tag">Application Submitted</div>
-    <h1 class="complete-title">You're Almost In,<br><em>Welcome to PPG.</em></h1>
-    <p class="complete-sub">Your data package allocation is processing. Open your personal partner panel to grab your referral tools while verification finishes.</p>
-
-    <div class="status-badge"><div class="status-dot"></div>Pending Review — Under 48 Hours</div>
-
-    <div class="summary-card">
-      <div class="summary-title">Application Summary</div>
-      <div class="summary-row"><div class="sr-label">Full Name</div><div class="sr-value" id="sum-name">—</div></div>
-      <div class="summary-row"><div class="sr-label">Email</div><div class="sr-value" id="sum-email">—</div></div>
-      <div class="summary-row"><div class="sr-label">Risk Tier Selected</div><div class="sr-value" style="color:var(--gold);" id="sum-risk">—</div></div>
-      <div class="summary-row"><div class="sr-label">Payment Status</div><div class="sr-value" style="color:var(--green);">$3.99 Settled</div></div>
-    </div>
-
-    <div class="actions">
-      <a href="dashboard.html" class="btn-dash">🚀 Access Restricted Member Dashboard</a>
-      <a href="https://wa.me/2348130500659" target="_blank" class="btn-wa">💬 Acknowledge Receipt via WhatsApp</a>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
-<script>
-window.addEventListener('load', function() {
-  try {
-    const d = JSON.parse(sessionStorage.getItem('ppg_reg'));
-    if(d) {
-      document.getElementById('sum-name').textContent = d.name || "—";
-      document.getElementById('sum-email').textContent = d.email || "—";
-      document.getElementById('sum-risk').textContent = d.risk || "—";
-    }
-  } catch(e){}
-});
-</script>
 </body>
 </html>
