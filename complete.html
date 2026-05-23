@@ -22,7 +22,7 @@
     .icon { width: 64px; height: 64px; background: rgba(16, 185, 129, 0.1); color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 24px; }
     h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; margin-bottom: 12px; }
     p { color: var(--grey); font-size: 0.95rem; margin-bottom: 30px; }
-    .btn { display: inline-block; width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+    .btn { display: inline-block; width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.2s; text-align: center; }
     .btn:hover { background: var(--gold-light); }
   </style>
 </head>
@@ -36,7 +36,11 @@
     You are being redirected to verification support coordination services.
   </p>
   
-  <a href="https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20risk%20consent/KYC." class="btn">
+  <a
+    href="https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20risk%20consent/KYC."
+    target="_blank"
+    class="btn"
+    onclick="afterWhatsApp()">
     Continue to WhatsApp
   </a>
 </div>
@@ -47,6 +51,15 @@ if(next === 'whatsapp'){
   setTimeout(function(){
     window.location.href = "https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20risk%20consent/KYC.";
   }, 3000);
+}
+</script>
+
+<script>
+function afterWhatsApp(){
+  localStorage.setItem('whatsapp_done','yes');
+  setTimeout(function(){
+    window.location.href='login.html';
+  },2000);
 }
 </script>
 </body>
