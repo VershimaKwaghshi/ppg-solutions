@@ -153,7 +153,7 @@
       <label>Proof of Address</label>
       <input type="file" id="addressProof" class="input">
 
-      <button id="submitConsent" onclick="handleConsentSubmission()" class="submit-btn">
+      <button id="submitConsent" class="submit-btn">
         Submit Verification
       </button>
     </div>
@@ -171,38 +171,64 @@ const sb = createClient(
 // Auto-populate regional date parameter string
 document.getElementById('signedDate').value = new Date().toLocaleDateString();
 
-async function handleConsentSubmission() {
-  // Validate checkboxes
-  if (!document.getElementById('risk1').checked || 
-      !document.getElementById('risk2').checked || 
-      !document.getElementById('risk3').checked || 
-      !document.getElementById('risk4').checked) {
-    alert('Please confirm your understanding by checking all legal risk fields.');
-    return;
-  }
-
-  // Validate profile metadata signatures
-  const legalName = document.getElementById('legalName').value.trim();
-  const signature = document.getElementById('signature').value.trim();
-  if (!legalName || !signature) {
-    alert('Full identity details and text signatures are required.');
-    return;
-  }
-
+document.getElementById('submitConsent').addEventListener('click', async function(){
   const btn = document.getElementById('submitConsent');
+  const user = (await sb.auth.getUser()).data.user;
+  if(!user){
+    alert('Please login first');
+    return;
+  }
+  if(
+    !risk1.checked ||
+    !risk2.checked ||
+    !risk3.checked ||
+    !risk4.checked
+  ){
+    alert('Please acknowledge all risk statements.');
+    return;
+  }
+  const fullName = document.getElementById('legalName').value.trim();
+  const signature = document.getElementById('signature').value.trim();
+  const idFile = document.getElementById('govID').files[0];
+  const selfieFile = document.getElementById('selfie').files[0];
+  const addressFile = document.getElementById('addressProof').files[0];
+  if(
+    !fullName ||
+    !signature ||
+    !idFile ||
+    !selfieFile ||
+    !addressFile
+  ){
+    alert('Please complete all fields and uploads.');
+    return;
+  }
+
   btn.disabled = true;
-  btn.textContent = 'Processing parameters...';
+  btn.textContent = 'Uploading documents...';
 
   try {
+    const uid = user.id;
     const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
-    const { data: { user } } = await sb.auth.getUser();
-    if (!user) throw new Error('User context dropped.');
+    
+    const idPath = 'id/' + uid + '-' + Date.now();
+    const selfiePath = 'selfie/' + uid + '-' + Date.now();
+    const addressPath = 'address/' + uid + '-' + Date.now();
 
-    // Save profile update context to Supabase backend table structure
+    // Fire storage bucket uploads sequentially
+    const up1 = await sb.storage.from('kyc-documents').upload(idPath, idFile);
+    if (up1.error) throw new Error('ID Upload failed: ' + up1.error.message);
+
+    const up2 = await sb.storage.from('kyc-documents').upload(selfiePath, selfieFile);
+    if (up2.error) throw new Error('Selfie Upload failed: ' + up2.error.message);
+
+    const up3 = await sb.storage.from('kyc-documents').upload(addressPath, addressFile);
+    if (up3.error) throw new Error('Address Proof Upload failed: ' + up3.error.message);
+
+    // Update operational profile attributes inside the DB
     const { error } = await sb
       .from('profiles')
       .update({
-        full_name: legalName || d.name,
+        full_name: fullName || d.name,
         phone: d.phone || null,
         country: d.country || null,
         role: d.role || 'Trader',
@@ -212,9 +238,14 @@ async function handleConsentSubmission() {
         payment_method: d.payMethod || null,
         payment_reference: d.txRef || null,
         kyc_status: 'pending',
-        registration_status: 'submitted'
+        registration_status: 'complete',
+        legal_name: fullName,
+        signature: signature,
+        id_doc: idPath,
+        selfie_doc: selfiePath,
+        address_doc: addressPath
       })
-      .eq('id', user.id);
+      .eq('id', uid);
 
     if (error) throw error;
 
@@ -225,7 +256,7 @@ async function handleConsentSubmission() {
     btn.disabled = false;
     btn.textContent = 'Submit Verification';
   }
-}
+});
 </script>
 </body>
 </html>
