@@ -111,51 +111,66 @@
   <div class="consent-wrap">
     
     <div class="consent-card">
-      <h2>Risk Acknowledgement & KYC Verification</h2>
-      <p class="consent-text">
-        Please read carefully before proceeding.
-        Forex trading carries substantial risk and may result in partial or total loss of deposited capital.
-        PPG Trading Club does not guarantee profits and does not hold member trading capital.
-        All trading occurs inside your personal broker account.
-      </p>
-      
-      <div class="risk-box">
-        <label>
-          <input type="checkbox" id="risk1">
-          I understand that forex trading carries risk and I may lose all deposited capital.
-        </label>
-        <label>
-          <input type="checkbox" id="risk2">
-          I understand PPG does not guarantee profits or returns.
-        </label>
-        <label>
-          <input type="checkbox" id="risk3">
-          I understand my capital remains inside my own broker account.
-        </label>
-        <label>
-          <input type="checkbox" id="risk4">
-          I voluntarily choose my selected risk allocation tier.
-        </label>
+      <div id="riskStep">
+        <h2>Risk Consent & KYC Verification</h2>
+        <p class="consent-text">
+          Please read carefully before proceeding.
+          Forex trading carries substantial risk and may result in partial or total loss of deposited capital.
+          PPG Trading Club does not guarantee profits and does not hold member trading capital.
+          All trading occurs inside your personal broker account.
+        </p>
+        
+        <div class="card">
+          <h3>Risk Acknowledgement</h3>
+          <div class="risk-box" style="margin-top:12px;">
+            <label style="display:flex;gap:10px;">
+              <input type="checkbox" id="risk1">
+              <span>I understand that forex trading carries risk and I may lose all deposited capital.</span>
+            </label>
+            <label style="display:flex;gap:10px;">
+              <input type="checkbox" id="risk2">
+              <span>I understand PPG does not guarantee profits or returns.</span>
+            </label>
+            <label style="display:flex;gap:10px;">
+              <input type="checkbox" id="risk3">
+              <span>I understand my capital remains inside my own broker account.</span>
+            </label>
+            <label style="display:flex;gap:10px;">
+              <input type="checkbox" id="risk4">
+              <span>I voluntarily choose my selected risk allocation tier.</span>
+            </label>
+          </div>
+        </div>
+
+        <h3 style="margin-top:30px">Digital Signature</h3>
+        <input id="legalName" placeholder="Full Legal Name" class="input" />
+        <input id="signature" placeholder="Type Full Name as Signature" class="input" />
+        <input id="signedDate" class="input" readonly />
+
+        <div class="card" style="margin-top:20px;">
+          <h3>KYC Verification</h3>
+          <label>Government ID Type</label>
+          <select id="idType" class="input">
+            <option value="">Select</option>
+            <option value="National ID">National ID</option>
+            <option value="Passport">Passport</option>
+            <option value="Driver's License">Driver's License</option>
+          </select>
+          
+          <label style="margin-top:15px;">Upload ID Front</label>
+          <input type="file" id="idFront" class="input">
+          
+          <label style="margin-top:15px;">Upload ID Back / Supporting Document</label>
+          <input type="file" id="idBack" class="input">
+          
+          <label style="margin-top:15px;">Selfie / Face Verification</label>
+          <input type="file" id="selfie" class="input">
+        </div>
+
+        <button id="submitConsentBtn" onclick="submitConsent()" class="submit-btn">
+          Submit Consent & KYC
+        </button>
       </div>
-
-      <h3 style="margin-top:30px">Digital Signature</h3>
-      <input id="legalName" placeholder="Full Legal Name" class="input" />
-      <input id="signature" placeholder="Type Full Name as Signature" class="input" />
-      <input id="signedDate" class="input" readonly />
-
-      <h3 style="margin-top:30px">KYC Upload</h3>
-      <label>Government ID</label>
-      <input type="file" id="govID" class="input">
-      
-      <label>Selfie Verification</label>
-      <input type="file" id="selfie" class="input">
-      
-      <label>Proof of Address</label>
-      <input type="file" id="addressProof" class="input">
-
-      <button id="submitConsent" class="submit-btn">
-        Submit Verification
-      </button>
     </div>
 
   </div>
@@ -168,37 +183,36 @@ const sb = createClient(
   window.PPG_CONFIG.SUPABASE_ANON_KEY
 );
 
-// Auto-populate regional date parameter string
 document.getElementById('signedDate').value = new Date().toLocaleDateString();
 
-document.getElementById('submitConsent').addEventListener('click', async function(){
-  const btn = document.getElementById('submitConsent');
-  const user = (await sb.auth.getUser()).data.user;
+async function submitConsent(){
+  const btn = document.getElementById('submitConsentBtn');
+  const userResponse = await sb.auth.getUser();
+  const user = userResponse.data.user;
+  
   if(!user){
     alert('Please login first');
     return;
   }
-  if(
-    !risk1.checked ||
-    !risk2.checked ||
-    !risk3.checked ||
-    !risk4.checked
-  ){
+  
+  const r1 = document.getElementById('risk1');
+  const r2 = document.getElementById('risk2');
+  const r3 = document.getElementById('risk3');
+  const r4 = document.getElementById('risk4');
+
+  if(!r1.checked || !r2.checked || !r3.checked || !r4.checked){
     alert('Please acknowledge all risk statements.');
     return;
   }
+
   const fullName = document.getElementById('legalName').value.trim();
   const signature = document.getElementById('signature').value.trim();
-  const idFile = document.getElementById('govID').files[0];
+  const idType = document.getElementById('idType').value;
+  const idFrontFile = document.getElementById('idFront').files[0];
+  const idBackFile = document.getElementById('idBack').files[0];
   const selfieFile = document.getElementById('selfie').files[0];
-  const addressFile = document.getElementById('addressProof').files[0];
-  if(
-    !fullName ||
-    !signature ||
-    !idFile ||
-    !selfieFile ||
-    !addressFile
-  ){
+
+  if(!fullName || !signature || !idType || !idFrontFile || !idBackFile || !selfieFile){
     alert('Please complete all fields and uploads.');
     return;
   }
@@ -208,23 +222,22 @@ document.getElementById('submitConsent').addEventListener('click', async functio
 
   try {
     const uid = user.id;
+    const timestamp = Date.now();
     const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
     
-    const idPath = 'id/' + uid + '-' + Date.now();
-    const selfiePath = 'selfie/' + uid + '-' + Date.now();
-    const addressPath = 'address/' + uid + '-' + Date.now();
+    const frontPath = 'id_front/' + uid + '-' + timestamp;
+    const backPath = 'id_back/' + uid + '-' + timestamp;
+    const selfiePath = 'selfie/' + uid + '-' + timestamp;
 
-    // Fire storage bucket uploads sequentially
-    const up1 = await sb.storage.from('kyc-documents').upload(idPath, idFile);
-    if (up1.error) throw new Error('ID Upload failed: ' + up1.error.message);
+    const up1 = await sb.storage.from('kyc-documents').upload(frontPath, idFrontFile);
+    if (up1.error) throw new Error('ID Front upload failed: ' + up1.error.message);
 
-    const up2 = await sb.storage.from('kyc-documents').upload(selfiePath, selfieFile);
-    if (up2.error) throw new Error('Selfie Upload failed: ' + up2.error.message);
+    const up2 = await sb.storage.from('kyc-documents').upload(backPath, idBackFile);
+    if (up2.error) throw new Error('ID Back upload failed: ' + up2.error.message);
 
-    const up3 = await sb.storage.from('kyc-documents').upload(addressPath, addressFile);
-    if (up3.error) throw new Error('Address Proof Upload failed: ' + up3.error.message);
+    const up3 = await sb.storage.from('kyc-documents').upload(selfiePath, selfieFile);
+    if (up3.error) throw new Error('Selfie upload failed: ' + up3.error.message);
 
-    // Update operational profile attributes inside the DB
     const { error } = await sb
       .from('profiles')
       .update({
@@ -241,9 +254,10 @@ document.getElementById('submitConsent').addEventListener('click', async functio
         registration_status: 'complete',
         legal_name: fullName,
         signature: signature,
-        id_doc: idPath,
-        selfie_doc: selfiePath,
-        address_doc: addressPath
+        id_type: idType,
+        id_doc: frontPath,
+        address_doc: backPath,
+        selfie_doc: selfiePath
       })
       .eq('id', uid);
 
@@ -254,9 +268,9 @@ document.getElementById('submitConsent').addEventListener('click', async functio
   } catch (e) {
     alert(e.message || 'Error executing consent updates.');
     btn.disabled = false;
-    btn.textContent = 'Submit Verification';
+    btn.textContent = 'Submit Consent & KYC';
   }
-});
+}
 </script>
 </body>
 </html>
