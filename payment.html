@@ -1,502 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payment — PPG Trading Club</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#040d1c;--navy2:#071428;--navy3:#0a1a35;--blue:#1640d6;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--border2:rgba(22,64,214,0.25);--red:#ef4444;--green:#22c55e;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;line-height:1.6;}
-
-/* NAV */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
-.logo-text{display:flex;flex-direction:column;line-height:1.1;}
-.logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
-.logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.nav-back{color:var(--grey);text-decoration:none;font-size:0.85rem;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
-.nav-back:hover{color:var(--white);}
-
-/* PROGRESS */
-.progress-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
-.progress-inner{max-width:780px;margin:0 auto;}
-.progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--border);color:var(--grey2);background:var(--navy);transition:all 0.3s;}
-.ps.active .ps-circle{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.1);}
-.ps.done .ps-circle{border-color:var(--green);color:var(--white);background:var(--green);}
-.ps-label{font-size:0.65rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
-.ps.active .ps-label{color:var(--gold);}
-.ps.done .ps-label{color:var(--green);}
-.ps-line{flex:1;height:1px;background:var(--border);margin:0 -6px;margin-bottom:18px;}
-.ps-line.done{background:var(--green);}
-.progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
-.progress-bar{height:100%;width:50%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;}
-
-/* MAIN */
-.main{padding:48px 5% 80px;}
-.page-wrap{max-width:780px;margin:0 auto;}
-.page-header{margin-bottom:40px;}
-.form-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.form-tag::before{content:'';width:20px;height:1px;background:var(--gold);}
-.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;line-height:1.15;margin-bottom:10px;}
-.page-title em{font-style:italic;color:var(--gold);}
-.page-sub{color:var(--grey);font-size:0.88rem;line-height:1.7;font-weight:300;}
-
-/* SUMMARY BOX */
-.summary-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.summary-left h4{font-size:0.78rem;color:var(--grey);font-weight:400;margin-bottom:4px;}
-.summary-left p{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--white);}
-.summary-amount{text-align:right;}
-.summary-amount .amount{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:var(--gold);line-height:1;}
-.summary-amount .amount-label{font-size:0.7rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-.non-refund{display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:5px 12px;font-size:0.72rem;color:var(--red);font-weight:500;margin-top:10px;}
-
-/* PAYMENT TABS */
-.pay-tabs{display:flex;gap:0;background:var(--navy2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
-.pay-tab{flex:1;padding:14px 10px;text-align:center;cursor:pointer;font-size:0.82rem;font-weight:500;color:var(--grey);transition:all 0.2s;border:none;background:none;font-family:'Outfit',sans-serif;}
-.pay-tab.active{background:var(--gold);color:#0a0a0a;font-weight:700;}
-.pay-tab:not(.active):hover{color:var(--white);background:rgba(255,255,255,0.04);}
-
-/* PAYMENT PANELS */
-.pay-panel{display:none;}
-.pay-panel.active{display:block;}
-
-/* BANK CARD */
-.bank-card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
-.bank-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;}
-.bank-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
-.opay-icon{background:rgba(0,200,83,0.1);}
-.zenith-icon{background:rgba(220,38,38,0.1);}
-.bank-header-text h4{font-weight:600;font-size:0.95rem;margin-bottom:2px;}
-.bank-header-text p{font-size:0.75rem;color:var(--grey);}
-.bank-details{padding:20px 24px;}
-.detail-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
-.detail-row:last-child{border-bottom:none;}
-.detail-label{font-size:0.75rem;color:var(--grey2);text-transform:uppercase;letter-spacing:0.8px;font-weight:500;}
-.detail-value{font-size:0.9rem;font-weight:600;color:var(--white);display:flex;align-items:center;gap:8px;}
-.copy-btn{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);color:var(--gold);padding:4px 10px;border-radius:5px;font-size:0.68rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif;}
-.copy-btn:hover{background:rgba(201,168,76,0.2);}
-.copy-btn.copied{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:var(--green);}
-
-/* CRYPTO CARDS */
-.crypto-grid{display:flex;flex-direction:column;gap:14px;}
-.crypto-card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-.crypto-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-.crypto-logo{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;flex-shrink:0;}
-.btc-logo{background:rgba(247,147,26,0.1);color:#f7931a;}
-.eth-logo{background:rgba(98,126,234,0.1);color:#627eea;}
-.usdt-logo{background:rgba(38,161,123,0.1);color:#26a17b;}
-.crypto-name{font-weight:600;font-size:0.92rem;margin-bottom:1px;}
-.crypto-network{font-size:0.7rem;color:var(--grey2);}
-.crypto-body{padding:16px 22px;}
-.wallet-label{font-size:0.7rem;color:var(--grey2);text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-bottom:8px;}
-.wallet-address{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
-.wallet-text{font-size:0.78rem;color:var(--grey);font-family:monospace;word-break:break-all;flex:1;line-height:1.5;}
-.wallet-copy{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);color:var(--gold);padding:6px 12px;border-radius:6px;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.2s;flex-shrink:0;font-family:'Outfit',sans-serif;}
-.wallet-copy:hover{background:rgba(201,168,76,0.2);}
-.wallet-copy.copied{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:var(--green);}
-.crypto-note{font-size:0.72rem;color:var(--grey2);margin-top:10px;line-height:1.5;}
-.crypto-note strong{color:var(--red);}
-
-/* RECEIPT UPLOAD */
-.receipt-section{background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-top:20px;}
-.receipt-title{font-size:0.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.receipt-info{background:rgba(22,64,214,0.06);border:1px solid var(--border2);border-radius:10px;padding:16px;margin-bottom:20px;font-size:0.8rem;color:var(--grey);line-height:1.7;}
-.receipt-info strong{color:var(--white);}
-.field label{display:block;font-size:0.78rem;font-weight:500;color:var(--grey);margin-bottom:6px;}
-.field label span{color:var(--red);}
-.field input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(--white);font-size:0.88rem;font-family:'Outfit',sans-serif;transition:all 0.2s;outline:none;}
-.field input::placeholder{color:var(--grey2);}
-.field input:focus{border-color:var(--gold);background:rgba(201,168,76,0.04);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
-.field{margin-bottom:16px;}
-.field-hint{font-size:0.72rem;color:var(--grey2);margin-top:5px;line-height:1.5;}
-
-/* UPLOAD AREA */
-.upload-area{border:2px dashed rgba(255,255,255,0.1);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;}
-.upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,0.03);}
-.upload-area.has-file{border-color:var(--green);background:rgba(34,197,94,0.03);}
-.upload-icon{font-size:2rem;margin-bottom:10px;}
-.upload-text{font-size:0.85rem;color:var(--grey);margin-bottom:4px;}
-.upload-text strong{color:var(--white);}
-.upload-sub{font-size:0.72rem;color:var(--grey2);}
-.upload-area input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.file-preview{display:none;align-items:center;gap:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:12px 14px;margin-top:10px;}
-.file-preview.show{display:flex;}
-.file-preview span{font-size:0.82rem;color:var(--green);flex:1;}
-.file-remove{background:none;border:none;color:var(--grey2);cursor:pointer;font-size:1rem;padding:0;}
-
-/* IMPORTANT NOTES */
-.notes-box{background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:20px;margin-top:20px;}
-.notes-box h4{font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
-.note-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:0.78rem;color:var(--grey);line-height:1.6;}
-.note-item:last-child{margin-bottom:0;}
-.note-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:6px;}
-
-/* SUBMIT */
-.submit-btn{width:100%;background:var(--gold);color:#0a0a0a;border:none;border-radius:10px;padding:16px;font-size:1rem;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;}
-.submit-btn:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(201,168,76,0.3);}
-.form-note{text-align:center;font-size:0.75rem;color:var(--grey2);margin-top:14px;line-height:1.6;}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy2);border:1px solid var(--green);border-radius:10px;padding:12px 22px;font-size:0.82rem;color:var(--green);font-weight:500;transition:transform 0.3s ease;z-index:9999;white-space:nowrap;}
-.toast.show{transform:translateX(-50%) translateY(0);}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-.summary-box{flex-direction:column;gap:12px;}
-.summary-amount{text-align:left;}
-.pay-tab{font-size:0.72rem;padding:12px 6px;}
-.main{padding:28px 5% 60px;}
-.receipt-section{padding:20px;}
-.wallet-text{font-size:0.68rem;}
-}
-</style>
-</head>
-<body>
-
-<nav class="nav">
-  <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
-    <div class="logo-text">
-      <span>PPG Trading Club</span>
-      <span>Penny Partners Group</span>
-    </div>
-  </a>
-  <a href="register.html" class="nav-back">← Back</a>
-</nav>
-
-<div class="progress-wrap">
-  <div class="progress-inner">
-    <div class="progress-steps">
-      <div class="ps done">
-        <div class="ps-circle">✓</div>
-        <div class="ps-label">Register</div>
-      </div>
-      <div class="ps-line done"></div>
-      <div class="ps active">
-        <div class="ps-circle">2</div>
-        <div class="ps-label">Payment</div>
-      </div>
-      <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">3</div>
-        <div class="ps-label">Consent</div>
-      </div>
-      <div class="ps-line"></div>
-      <div class="ps">
-        <div class="ps-circle">4</div>
-        <div class="ps-label">Complete</div>
-      </div>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" style="width:50%"></div>
-    </div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="page-wrap">
-    <div class="page-header">
-      <div class="form-tag">Step 2 of 4</div>
-      <h1 class="page-title">Registration <em>Fee</em><br>Payment</h1>
-      <p class="page-sub">Pay the one-time $3.99 registration fee using any of the methods below. After payment, upload your receipt to proceed to Step 3.</p>
-    </div>
-
-    <div class="summary-box">
-      <div class="summary-left">
-        <h4>Registration Fee</h4>
-        <p id="member-name">PPG Trading Club Membership</p>
-        <div class="non-refund">⚠️ Non-refundable</div>
-      </div>
-      <div class="summary-amount">
-        <div class="amount">$3.99</div>
-        <div class="amount-label">One-time fee</div>
-      </div>
-    </div>
-
-    <div class="pay-tabs">
-      <button class="pay-tab active" onclick="switchTab('opay',this)">🏦 Opay</button>
-      <button class="pay-tab" onclick="switchTab('zenith',this)">🏛 Zenith</button>
-      <button class="pay-tab" onclick="switchTab('btc',this)">₿ Bitcoin</button>
-      <button class="pay-tab" onclick="switchTab('eth',this)">Ξ Ethereum</button>
-      <button class="pay-tab" onclick="switchTab('usdt',this)">💲 USDT</button>
-    </div>
-
-    <div class="pay-panel active" id="panel-opay">
-      <div class="bank-card">
-        <div class="bank-header">
-          <div class="bank-icon opay-icon">🏦</div>
-          <div class="bank-header-text">
-            <h4>Opay Bank Transfer</h4>
-            <p>Transfer exactly $3.99 equivalent in Naira to this account</p>
-          </div>
-        </div>
-        <div class="bank-details">
-          <div class="detail-row">
-            <div class="detail-label">Bank</div>
-            <div class="detail-value">Opay</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Account Name</div>
-            <div class="detail-value">
-              PPG SOLUTIONS
-              <button class="copy-btn" onclick="copyText('PPG SOLUTIONS',this)">Copy</button>
-            </div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Account Number</div>
-            <div class="detail-value">
-              6141207300
-              <button class="copy-btn" onclick="copyText('6141207300',this)">Copy</button>
-            </div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Amount</div>
-            <div class="detail-value" style="color:var(--gold);">$3.99 equivalent in NGN</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel-zenith">
-      <div class="bank-card">
-        <div class="bank-header">
-          <div class="bank-icon zenith-icon">🏛️</div>
-          <div class="bank-header-text">
-            <h4>Zenith Bank Transfer</h4>
-            <p>Transfer exactly $3.99 equivalent in Naira to this account</p>
-          </div>
-        </div>
-        <div class="bank-details">
-          <div class="detail-row">
-            <div class="detail-label">Bank</div>
-            <div class="detail-value">Zenith Bank</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Account Name</div>
-            <div class="detail-value">
-              PPG SOLUTIONS
-              <button class="copy-btn" onclick="copyText('PPG SOLUTIONS',this)">Copy</button>
-            </div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Account Number</div>
-            <div class="detail-value">
-              1310449275
-              <button class="copy-btn" onclick="copyText('1310449275',this)">Copy</button>
-            </div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Amount</div>
-            <div class="detail-value" style="color:var(--gold);">$3.99 equivalent in NGN</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel-btc">
-      <div class="crypto-grid">
-        <div class="crypto-card">
-          <div class="crypto-header">
-            <div class="crypto-logo btc-logo">₿</div>
-            <div>
-              <div class="crypto-name">Bitcoin (BTC)</div>
-              <div class="crypto-network">Bitcoin Network</div>
-            </div>
-          </div>
-          <div class="crypto-body">
-            <div class="wallet-label">Wallet Address</div>
-            <div class="wallet-address">
-              <div class="wallet-text">1Lv296LMmLSbYCcRZWKctNPZ1MXHs44b36</div>
-              <button class="wallet-copy" onclick="copyText('1Lv296LMmLSbYCcRZWKctNPZ1MXHs44b36',this)">Copy</button>
-            </div>
-            <div class="crypto-note"><strong>Important:</strong> Send only BTC to this address. Send the exact USD equivalent of $3.99 in BTC. Double-check the address before sending.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel-eth">
-      <div class="crypto-grid">
-        <div class="crypto-card">
-          <div class="crypto-header">
-            <div class="crypto-logo eth-logo">Ξ</div>
-            <div>
-              <div class="crypto-name">Ethereum (ETH)</div>
-              <div class="crypto-network">Ethereum Network (ERC20)</div>
-            </div>
-          </div>
-          <div class="crypto-body">
-            <div class="wallet-label">Wallet Address</div>
-            <div class="wallet-address">
-              <div class="wallet-text">0xe02c6c335a2883aefe3df9d6d6fe295f4b6f5a1d</div>
-              <button class="wallet-copy" onclick="copyText('0xe02c6c335a2883aefe3df9d6d6fe295f4b6f5a1d',this)">Copy</button>
-            </div>
-            <div class="crypto-note"><strong>Important:</strong> Send only ETH on the Ethereum network to this address. Do not send from other networks. Send $3.99 equivalent in ETH.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel-usdt">
-      <div class="crypto-grid">
-        <div class="crypto-card">
-          <div class="crypto-header">
-            <div class="crypto-logo usdt-logo">₮</div>
-            <div>
-              <div class="crypto-name">USDT TRC20</div>
-              <div class="crypto-network">TRON Network (TRC20) — Recommended</div>
-            </div>
-          </div>
-          <div class="crypto-body">
-            <div class="wallet-label">Wallet Address</div>
-            <div class="wallet-address">
-              <div class="wallet-text">TWQXaZyrZhdFB8xG5JHD6wF272iQLAvbUq</div>
-              <button class="wallet-copy" onclick="copyText('TWQXaZyrZhdFB8xG5JHD6wF272iQLAvbUq',this)">Copy</button>
-            </div>
-            <div class="crypto-note"><strong>Important:</strong> Send only USDT on the TRC20 (TRON) network. Do not send ERC20 USDT to this address. Amount: exactly <strong>$3.99 USDT</strong>.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="receipt-section">
-      <div class="receipt-title">Upload Payment Receipt</div>
-      <div class="receipt-info">
-        After making your payment, <strong>take a screenshot or photo of your payment confirmation</strong> and upload it below. Your registration will not proceed without a valid receipt. Our team will verify your payment within 24 hours.
-      </div>
-
-      <div class="field">
-        <label>Payment Method Used <span>*</span></label>
-        <select id="pay-method" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 14px;color:var(--white);font-size:0.88rem;font-family:'Outfit',sans-serif;outline:none;appearance:none;cursor:pointer;">
-          <option value="">Select payment method</option>
-          <option value="Opay">Opay Bank Transfer</option>
-          <option value="Zenith Bank">Zenith Bank Transfer</option>
-          <option value="Bitcoin (BTC)">Bitcoin (BTC)</option>
-          <option value="Ethereum (ETH)">Ethereum (ETH)</option>
-          <option value="USDT TRC20">USDT TRC20</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>Transaction Reference / Hash <span>*</span></label>
-        <input type="text" id="tx-ref" placeholder="e.g. TXN123456789 or crypto transaction hash">
-        <div class="field-hint">Enter your bank transaction reference number or your crypto transaction hash/ID.</div>
-      </div>
-
-      <div class="field">
-        <label>Upload Receipt Screenshot <span>*</span></label>
-        <div class="upload-area" id="uploadArea">
-          <div class="upload-icon">📎</div>
-          <div class="upload-text"><strong>Tap to upload</strong> your payment receipt</div>
-          <div class="upload-sub">JPG, PNG, or PDF · Max 10MB</div>
-          <input type="file" id="receipt-file" accept="image/*,.pdf" onchange="handleFile(this)">
-        </div>
-        <div class="file-preview" id="filePreview">
-          <span id="fileName">receipt.jpg</span>
-          <button class="file-remove" onclick="removeFile()">✕</button>
-        </div>
-      </div>
-
-      <div class="notes-box">
-        <h4>📋 Important Notes</h4>
-        <div class="note-item"><div class="note-dot"></div>The $3.99 registration fee is strictly non-refundable under any circumstances.</div>
-        <div class="note-item"><div class="note-dot"></div>Payment verification takes up to 24 hours on business days.</div>
-        <div class="note-item"><div class="note-dot"></div>This fee does not go toward your trading capital — it covers membership processing only.</div>
-        <div class="note-item"><div class="note-dot"></div>For crypto payments, ensure you send on the correct network to avoid loss of funds.</div>
-        <div class="note-item"><div class="note-dot"></div>After submitting, you will be directed to confirm your risk consent on WhatsApp.</div>
-      </div>
-
-      <button class="submit-btn" onclick="handleSubmit()">
-        Continue to Risk Consent →
-      </button>
-      <p class="form-note">Step 3 of 4: You will confirm your risk consent on WhatsApp before final approval.</p>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast">✓ Copied to clipboard</div>
-
 <script>
-// Load member name from previous step
-window.addEventListener('load',function(){
-  try{
-    const d=JSON.parse(sessionStorage.getItem('ppg_reg'));
-    if(d&&d.name) document.getElementById('member-name').textContent=d.name+' — '+d.risk+' Tier';
-  }catch(e){}
+const { createClient } = supabase;
+const sb = createClient(
+  window.PPG_CONFIG.SUPABASE_URL,
+  window.PPG_CONFIG.SUPABASE_ANON_KEY
+);
+
+// Load member name
+window.addEventListener('load', function () {
+  try {
+    const d = JSON.parse(sessionStorage.getItem('ppg_reg'));
+    if (d && d.name) {
+      document.getElementById('member-name').textContent =
+        d.name + ' — ' + d.risk + ' Tier';
+    }
+  } catch (e) {}
 });
 
-// Tab switcher
-function switchTab(id,btn){
+// Tabs
+function switchTab(id, btn) {
   document.querySelectorAll('.pay-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.pay-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   btn.classList.add('active');
-  // Auto-select payment method dropdown
-  const map={opay:'Opay',zenith:'Zenith Bank',btc:'Bitcoin (BTC)',eth:'Ethereum (ETH)',usdt:'USDT TRC20'};
+
+  const map={
+    opay:'Opay',
+    zenith:'Zenith Bank',
+    btc:'Bitcoin (BTC)',
+    eth:'Ethereum (ETH)',
+    usdt:'USDT TRC20'
+  };
   document.getElementById('pay-method').value=map[id]||'';
 }
 
-// Copy to clipboard
+// Copy
 function copyText(text,btn){
   navigator.clipboard.writeText(text).then(()=>{
     const orig=btn.textContent;
     btn.textContent='✓ Copied';
     btn.classList.add('copied');
     showToast();
-    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+    setTimeout(()=>{
+      btn.textContent=orig;
+      btn.classList.remove('copied');
+    },2000);
   });
 }
 
-// Toast
 function showToast(){
   const t=document.getElementById('toast');
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2000);
 }
 
-// File upload
+// File upload preview
 function handleFile(input){
-  if(input.files&&input.files[0]){
+  if(input.files && input.files[0]){
     const file=input.files[0];
     document.getElementById('uploadArea').classList.add('has-file');
     document.getElementById('fileName').textContent=file.name;
     document.getElementById('filePreview').classList.add('show');
   }
 }
+
 function removeFile(){
   document.getElementById('receipt-file').value='';
   document.getElementById('uploadArea').classList.remove('has-file');
   document.getElementById('filePreview').classList.remove('show');
 }
 
-// Submit
-function handleSubmit(){
+// REAL SUBMIT
+async function handleSubmit(){
+
   const method=document.getElementById('pay-method').value;
   const ref=document.getElementById('tx-ref').value.trim();
   const file=document.getElementById('receipt-file').files[0];
-  let ok=true;
-  if(!method){alert('Please select your payment method.');ok=false;}
-  else if(!ref){alert('Please enter your transaction reference or hash.');ok=false;}
-  else if(!file){alert('Please upload your payment receipt screenshot.');ok=false;}
-  if(!ok) return;
 
-  // Save payment info
+  if(!method){
+    alert('Select payment method');
+    return;
+  }
+
+  if(!ref){
+    alert('Enter transaction reference');
+    return;
+  }
+
+  if(!file){
+    alert('Upload receipt');
+    return;
+  }
+
+  const btn=document.querySelector('.submit-btn');
+  btn.disabled=true;
+  btn.textContent='Uploading...';
+
   try{
-    const d=JSON.parse(sessionStorage.getItem('ppg_reg'))||{};
-    d.payMethod=method;
-    d.txRef=ref;
-    sessionStorage.setItem('ppg_reg',JSON.stringify(d));
-  }catch(e){}
 
-  window.location.href='consent.html';
+    const reg=JSON.parse(sessionStorage.getItem('ppg_reg'));
+
+    if(!reg || !reg.memberId){
+      throw new Error('Registration session missing.');
+    }
+
+    // Upload receipt
+    const fileExt=file.name.split('.').pop();
+    const fileName=`${reg.memberId}-${Date.now()}.${fileExt}`;
+
+    const { error: uploadErr } =
+      await sb.storage
+      .from('receipts')
+      .upload(fileName,file);
+
+    if(uploadErr) throw uploadErr;
+
+    // Get file path
+    const receiptPath=`receipts/${fileName}`;
+
+    // Update profile
+    const { error:updateErr }=
+      await sb
+      .from('profiles')
+      .update({
+        payment_method:method,
+        payment_reference:ref,
+        payment_receipt:receiptPath,
+        payment_status:'pending',
+        payment_submitted_at:new Date().toISOString()
+      })
+      .eq('id',reg.memberId);
+
+    if(updateErr) throw updateErr;
+
+    // Save local
+    reg.payMethod=method;
+    reg.txRef=ref;
+    reg.paymentStatus='pending';
+
+    sessionStorage.setItem(
+      'ppg_reg',
+      JSON.stringify(reg)
+    );
+
+    window.location.href='consent.html';
+
+  }catch(err){
+    alert(err.message || 'Payment upload failed.');
+    btn.disabled=false;
+    btn.textContent='Continue to Risk Consent →';
+  }
 }
 </script>
-
-</body>
-</html>
