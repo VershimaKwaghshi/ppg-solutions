@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account Registration — Penny Partners Group</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;600;700&family=Outfit:wght=300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
     /* Custom Contextual Dropdown UI Sub-System */
@@ -562,13 +562,18 @@
         return;
       }
       
-      // Populate session cache parameters cleanly for payment and consent validation steps
+      // Populate storage tracking parameters cleanly for unauthenticated wizard preservation flow
+      localStorage.setItem('ppg_email', em);
+      localStorage.setItem('ppg_name', fn + ' ' + ln);
+      localStorage.setItem('ppg_role', selectedRole);
+      localStorage.setItem('ppg_country', co);
+
       sessionStorage.setItem('ppg_reg', JSON.stringify({
         name: fn + ' ' + ln,
         email: em,
-        phone: document.getElementById('ph').value.trim(),
-        country: document.getElementById('co').value,
-        role: document.getElementById('role')?.value || 'Trader',
+        phone: ph,
+        country: co,
+        role: selectedRole,
         referral: ref,
         risk: selectedRisk,
         myReferralId: myReferral,
