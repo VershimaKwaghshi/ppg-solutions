@@ -189,6 +189,11 @@
 </div>
 
 <script>
+if(localStorage.getItem('ppg_payment_confirmed') !== 'yes'){
+  alert('Payment confirmation required first.');
+  window.location.href='payment.html';
+}
+
 const { createClient } = supabase;
 const sb = createClient(
   window.PPG_CONFIG.SUPABASE_URL,
@@ -267,7 +272,8 @@ document.getElementById('consentForm').addEventListener('submit', async function
       return;
     }
     localStorage.setItem('consent_complete','yes');
-    window.location.href = "complete.html?next=whatsapp";
+    localStorage.removeItem('ppg_payment_confirmed');
+    window.location.href = 'complete.html';
   } catch(err) {
     alert(err.message || 'An error occurred during verification processing.');
     btn.disabled = false;
