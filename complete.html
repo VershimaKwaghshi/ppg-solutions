@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registration Complete — PPG Trading Club</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;500;600;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --navy: #040d1c;
@@ -22,7 +22,7 @@
     .icon { width: 64px; height: 64px; background: rgba(16, 185, 129, 0.1); color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 24px; }
     h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; margin-bottom: 12px; }
     p { color: var(--grey); font-size: 0.95rem; margin-bottom: 30px; }
-    .btn { display: inline-block; width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.2s; text-align: center; }
+    .btn { display: inline-block; width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.2s; text-align: center; font-family: 'Outfit', sans-serif; }
     .btn:hover { background: var(--gold-light); }
   </style>
 </head>
@@ -36,31 +36,32 @@
     You are being redirected to verification support coordination services.
   </p>
   
-  <a
-    href="https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20risk%20consent/KYC."
-    target="_blank"
-    class="btn"
-    onclick="afterWhatsApp()">
+  <button class="btn" onclick="continueFlow()">
     Continue to WhatsApp
-  </a>
+  </button>
 </div>
 
 <script>
-const next = new URLSearchParams(window.location.search).get('next');
-if(next === 'whatsapp'){
+function continueFlow(){
+  localStorage.setItem('whatsapp_done', 'yes');
+  window.open(
+    'https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20consent/KYC.',
+    '_blank'
+  );
   setTimeout(function(){
-    window.location.href = "https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20signed%20my%20risk%20consent/KYC.";
-  }, 3000);
+    window.location.href = 'login.html';
+  }, 1200);
 }
-</script>
 
-<script>
-function afterWhatsApp(){
-  localStorage.setItem('whatsapp_done','yes');
-  setTimeout(function(){
-    window.location.href='login.html';
-  },2000);
-}
+// Optional automatic trigger logic if redirected directly with query parameters
+window.addEventListener('load', function() {
+  const next = new URLSearchParams(window.location.search).get('next');
+  if(next === 'whatsapp'){
+    setTimeout(function(){
+      continueFlow();
+    }, 3000);
+  }
+});
 </script>
 </body>
 </html>
