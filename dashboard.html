@@ -276,7 +276,7 @@ PPG Dashboard
 <a class="side-link" href="#">👤 Profile</a>
 <a class="side-link" href="#">🔔 Notifications</a>
 <a class="side-link" href="#">⚙ Settings</a>
-<a class="side-link" href="login.html" style="color: var(--red);">🚪 Logout</a>
+<a class="side-link" href="#" onclick="logoutUser()" style="color: var(--red);">🚪 Logout</a>
 </div>
 
 <div class="main">
@@ -362,6 +362,13 @@ Network
 <td id="pKyc">Pending</td>
 </tr>
 </table>
+</div>
+
+<div class="section-card">
+<h3>Verification Status</h3>
+<div id="verifyBox">
+Loading verification...
+</div>
 </div>
 
 <div class="section-card">
@@ -570,6 +577,12 @@ function copyLink(){
   box.select();
   document.execCommand('copy');
   alert('Affiliate link copied');
+}
+
+async function logoutUser(){
+  await sb.auth.signOut();
+  localStorage.clear();
+  window.location.href='login.html';
 }
 </script>
 </body>
