@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Risk Consent & KYC — PPG Trading Club</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;500;600;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <style>
@@ -197,11 +197,27 @@ const sb = createClient(
 
 document.getElementById('consentForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  const userId = localStorage.getItem('ppg_user_id');
-  if(!userId){
-    alert('Login required');
+  
+  // Extract tracking state data fields from context caches
+  let regEmail = localStorage.getItem('ppg_email');
+  if(!regEmail) {
+    const cachedSession = sessionStorage.getItem('ppg_reg');
+    if (cachedSession) {
+      try {
+        const parsed = JSON.parse(cachedSession);
+        regEmail = parsed.email;
+      } catch(ex) {
+        console.error(ex);
+      }
+    }
+  }
+
+  if(!regEmail){
+    alert('Registration session expired. Please register again.');
+    window.location.href = 'register.html';
     return;
   }
+
   const file = document.getElementById('kycfile').files[0];
   if(!file){
     alert('Upload ID document');
@@ -230,6 +246,8 @@ document.getElementById('consentForm').addEventListener('submit', async function
       .from('kyc')
       .getPublicUrl(fileName);
     const kycUrl = fileData.publicUrl;
+    
+    // Execute data update utilizing unique profile email assignment
     const { error } = await sb
       .from('profiles')
       .update({
@@ -237,9 +255,11 @@ document.getElementById('consentForm').addEventListener('submit', async function
         consent_signed:true,
         id_type:document.getElementById('idtype').value,
         id_number:document.getElementById('idnumber').value,
-        kyc_url:kycUrl
+        kyc_url:kycUrl,
+        full_name:document.getElementById('fullname').value
       })
-      .eq('id', userId);
+      .eq('email', regEmail);
+      
     if(error){
       alert(error.message);
       btn.disabled = false;
