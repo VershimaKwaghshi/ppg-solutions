@@ -1,3 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Member Dashboard — PPG</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+:root{
+--bg:#040d1c;
+--card:#071428;
+--card2:#0a1a35;
+--blue:#1640d6;
+--gold:#c9a84c;
+--white:#fff;
+--grey:#94a3b8;
+--border:rgba(255,255,255,.06);
+--green:#10b981;
+--orange:#f59e0b;
+--red:#ef4444;
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+body{
+font-family:'Outfit',sans-serif;
+background:var(--bg);
+color:var(--white);
+display:flex;
+min-height:100vh;
+}
+.sidebar{
+width:260px;
+background:#020912;
+border-right:1px solid var(--border);
+padding:30px 20px;
+position:fixed;
+top:0;
+left:0;
+bottom:0;
+z-index:100;
+}
+.logo{
+font-size:1.2rem;
+font-weight:700;
+margin-bottom:35px;
+color:var(--gold);
+letter-spacing:1px;
+}
+.side-link{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px;
+margin-bottom:10px;
+border-radius:10px;
+color:var(--grey);
+text-decoration:none;
+transition:.2s;
+font-size:0.9rem;
+font-weight:500;
+}
+.side-link:hover, .side-link.active {
+background:var(--card);
+color:white;
+}
+.main{
+margin-left:260px;
+width:calc(100% - 260px);
+padding:40px;
+}
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:35px;
+background:var(--card);
+padding:20px 30px;
+border-radius:18px;
+border:1px solid var(--border);
+}
+.top-left h2{
+font-size:1.4rem;
+font-weight:600;
+margin-bottom:4px;
+}
+.member-id{
+color:var(--grey);
+font-size:.85rem;
+font-weight:400;
+}
+.top-right{
+display:flex;
+align-items:center;
+gap:20px;
+}
+.notify{
+position:relative;
+font-size:1.2rem;
+cursor:pointer;
+background:var(--card2);
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.notify-badge{
+position:absolute;
+top:-4px;
+right:-4px;
+width:18px;
+height:18px;
+border-radius:50%;
+background:var(--red);
+font-size:.65rem;
+font-weight:700;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+}
+.status{
+padding:8px 16px;
+border-radius:100px;
+font-size:.75rem;
+font-weight:700;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+.not-verified{
+background:rgba(239,68,68,0.12);
+color:var(--red);
+}
+.pending{
+background:rgba(245,158,11,.12);
+color:var(--orange);
+}
+.verified{
+background:rgba(16,185,129,.12);
+color:var(--green);
+}
+.cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:35px;
+}
+.card{
+background:var(--card);
+border:1px solid var(--border);
+padding:24px;
+border-radius:18px;
+position:relative;
+overflow:hidden;
+}
+.card h4{
+font-size:.78rem;
+color:var(--grey);
+margin-bottom:10px;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+.card-val{
+font-size:1.8rem;
+font-weight:700;
+margin-bottom:6px;
+}
+.quick{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-bottom:35px;
+}
+.qbtn{
+background:var(--card);
+border:1px solid var(--border);
+padding:18px;
+border-radius:14px;
+text-align:center;
+text-decoration:none;
+color:white;
+transition:.2s;
+font-size:0.9rem;
+font-weight:600;
+cursor:pointer;
+}
+.qbtn:hover{
+background:var(--card2);
+border-color:var(--gold);
+}
+.section-card{
+background:var(--card);
+border:1px solid var(--border);
+padding:28px;
+border-radius:18px;
+margin-bottom:30px;
+}
+.section-card h3{
+font-size:1.1rem;
+font-weight:600;
+margin-bottom:18px;
+}
+table{
+width:100%;
+border-collapse:collapse;
+}
+th,td{
+padding:16px;
+border-bottom:1px solid var(--border);
+text-align:left;
+font-size:.85rem;
+}
+th{
+color:var(--grey);
+text-transform:uppercase;
+letter-spacing:1px;
+font-size:0.75rem;
+}
+tr:last-child td {
+border-bottom: none;
+}
+#manager-panel {
+display: none;
+}
+@media(max-width:1024px){
+.cards, .quick{
+grid-template-columns:1fr 1fr;
+}
+}
+@media(max-width:900px){
+body{
+display:block;
+}
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
+border-right:none;
+border-bottom:1px solid var(--border);
+padding:20px;
+}
+.logo{
+margin-bottom:15px;
+}
+.main{
+margin-left:0;
+width:100%;
+padding:20px;
+}
+}
+@media(max-width:600px){
+.cards, .quick{
+grid-template-columns:1fr;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<div class="logo">
+PPG Dashboard
+</div>
+<a class="side-link active" href="#">🏠 Dashboard</a>
+<a class="side-link" href="#">💰 Balance</a>
+<a class="side-link" href="#">🎁 Rewards</a>
+<a class="side-link" href="payment.html">💳 Deposit</a>
+<a class="side-link" href="#">💸 Withdrawal</a>
+<a class="side-link" href="#">🌐 Network</a>
+<a class="side-link" href="#">👤 Profile</a>
+<a class="side-link" href="#">🔔 Notifications</a>
+<a class="side-link" href="#">⚙ Settings</a>
+<a class="side-link" href="login.html" style="color: var(--red);">🚪 Logout</a>
+</div>
+
+<div class="main">
+<div class="topbar">
+<div class="top-left">
+<h2>Welcome, Member</h2>
+<div class="member-id">
+Member ID: PPG-0000
+</div>
+</div>
+<div class="top-right">
+<div class="notify">
+🔔
+<div class="notify-badge">3</div>
+</div>
+<div class="status pending">
+Verification Pending
+</div>
+</div>
+</div>
+
+<div class="cards">
+<div class="card">
+<h4>Balance</h4>
+<div class="card-val" id="displayBalance">$0.00</div>
+</div>
+<div class="card">
+<h4>Rewards</h4>
+<div class="card-val" id="displayRewards">$0.00</div>
+</div>
+<div class="card">
+<h4>Network Earnings</h4>
+<div class="card-val" id="displayNetwork">$0.00</div>
+</div>
+<div class="card">
+<h4>Membership</h4>
+<div class="card-val" id="displayMembership" style="font-size:1.1rem">
+Active
+</div>
+</div>
+</div>
+
+<div class="quick">
+<a href="payment.html" class="qbtn">
+💳<br><br>
+Deposit
+</a>
+<a href="#" class="qbtn">
+💸<br><br>
+Withdrawal
+</a>
+<a href="consent.html" class="qbtn">
+🛡<br><br>
+Verification
+</a>
+<a href="#" class="qbtn">
+🌐<br><br>
+Network
+</a>
+</div>
+
+<div class="section-card">
+<h3>Profile</h3>
+<table>
+<tr>
+<th>Full Name</th>
+<td id="pName">Loading...</td>
+</tr>
+<tr>
+<th>Email</th>
+<td id="pEmail">Loading...</td>
+</tr>
+<tr>
+<th>Country</th>
+<td id="pCountry">Loading...</td>
+</tr>
+<tr>
+<th>Account Type</th>
+<td id="pRole">Loading...</td>
+</tr>
+<tr>
+<th>KYC Status</th>
+<td id="pKyc">Pending</td>
+</tr>
+</table>
+</div>
+
+<div class="section-card">
+<h3>Network / Affiliate</h3>
+<p style="margin-bottom:16px">
+Affiliate Link
+</p>
+<input
+id="refLink"
+style="
+width:100%;
+padding:14px;
+border-radius:10px;
+border:none;
+background:#0a1a35;
+color:white;
+margin-bottom:14px;
+"
+readonly
+value="Loading..."
+>
+<button
+onclick="copyLink()"
+style="
+background:#1640d6;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+">
+Copy Link
+</button>
+</div>
+
+<div class="section-card">
+<h3>Your Network</h3>
+<table>
+<tr>
+<th>Member</th>
+<th>Status</th>
+<th>Earnings</th>
+</tr>
+<tr>
+<td>—</td>
+<td>—</td>
+<td>$0</td>
+</tr>
+</table>
+</div>
+
+<div class="section-card" id="manager-panel">
+<h3>Manager Administrative Oversight</h3>
+<table>
+<thead>
+<tr>
+<th>Applicant Profile</th>
+<th>Assigned Role</th>
+<th>Reference ID</th>
+<th>Document Queue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sarah Jenkins</td>
+<td>Trader</td>
+<td>PPG-TR-9041</td>
+<td><span style="color: var(--orange)">Pending Review</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
 <script>
 const { createClient } = supabase;
 const sb = createClient(
@@ -11,15 +450,12 @@ window.addEventListener('load', async function() {
 
 async function initializeDashboardRuntime() {
   try {
-    // 1. Authenticate user context
     const { data: { user }, error: authError } = await sb.auth.getUser();
     if (authError || !user) {
-      console.error('Authentication check failed:', authError);
       window.location.href = 'login.html';
       return;
     }
 
-    // 2. Pull user profile information from Supabase
     const { data: profile, error: dbError } = await sb
       .from('profiles')
       .eq('id', user.id)
@@ -27,81 +463,67 @@ async function initializeDashboardRuntime() {
 
     if (dbError) throw dbError;
 
-    // 3. Fallback to storage cache if database data is still populating
     const regCache = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
     const fullName = profile.full_name || regCache.name || 'Member';
     const userEmail = user.email || regCache.email || '';
     const userCountry = profile.country || regCache.country || 'Not Set';
     const userRole = profile.role || regCache.role || 'Trader';
     const kycStatus = profile.kyc_status || 'not_verified';
-    const referralId = profile.referral_id || regCache.myReferralId || 'PPG' + Math.floor(1000 + Math.random() * 9000);
+    const referralId = profile.referral_id || 'PPG-' + Math.floor(1000 + Math.random() * 9000);
 
-    // 4. Update Header Elements
+    // Update Layout Elements
     document.querySelector('.top-left h2').textContent = `Welcome, ${fullName}`;
     document.querySelector('.member-id').textContent = `Member ID: ${referralId}`;
-
-    // 5. Update Profile Table Cells
+    
     document.getElementById('pName').textContent = fullName;
     document.getElementById('pEmail').textContent = userEmail;
     document.getElementById('pCountry').textContent = userCountry;
     document.getElementById('pRole').textContent = userRole;
-
-    // 6. Generate Referral Affiliate URL
     document.getElementById('refLink').value = `https://ppgsolutions.org/register?ref=${referralId}`;
 
-    // 7. Update Verification Status Badges & Layout Styling
-    const statusBadge = document.querySelector('.top-right .status');
-    const kycTableCell = document.getElementById('pKyc');
+    // Verification Status Transformations
+    const topBadge = document.querySelector('.top-right .status');
+    const tableKyc = document.getElementById('pKyc');
     
-    // Reset layout classes
-    statusBadge.className = 'status';
-    
+    topBadge.className = 'status';
     if (kycStatus === 'not_verified') {
-      statusBadge.classList.add('not-verified');
-      statusBadge.textContent = 'Verification Required';
-      kycTableCell.textContent = 'Not Verified';
-      kycTableCell.style.color = '#ef4444';
+      topBadge.classList.add('not-verified');
+      topBadge.textContent = 'Verification Required';
+      tableKyc.textContent = 'Verification Required';
+      tableKyc.style.color = 'var(--red)';
     } else if (kycStatus === 'pending') {
-      statusBadge.classList.add('pending');
-      statusBadge.textContent = 'Verification Pending';
-      kycTableCell.textContent = 'Pending Review';
-      kycTableCell.style.color = '#f59e0b';
+      topBadge.classList.add('pending');
+      topBadge.textContent = 'Verification Pending';
+      tableKyc.textContent = 'Pending Review';
+      tableKyc.style.color = 'var(--orange)';
     } else if (kycStatus === 'verified') {
-      statusBadge.classList.add('verified');
-      statusBadge.textContent = 'Verified Member';
-      kycTableCell.textContent = 'Verified';
-      kycTableCell.style.color = '#10b981';
+      topBadge.classList.add('verified');
+      topBadge.textContent = 'Verified Member';
+      tableKyc.textContent = 'Verified';
+      tableKyc.style.color = 'var(--green)';
     }
 
-    // 8. Load Local Storage Financial Metrics Safely
-    const liveBalance = localStorage.getItem('ppg_balance_val') || '0.00';
-    const liveRewards = localStorage.getItem('ppg_rewards_val') || '0.00';
-    const liveNetworkEarnings = localStorage.getItem('ppg_network_earnings_val') || '0.00';
-    
-    const cardValues = document.querySelectorAll('.card-val');
-    if (cardValues.length >= 3) {
-      cardValues[0].textContent = `$${liveBalance}`;
-      cardValues[1].textContent = `$${liveRewards}`;
-      cardValues[2].textContent = `$${liveNetworkEarnings}`;
+    // Role Differentiation
+    if (userRole === 'Manager') {
+      document.getElementById('manager-panel').style.display = 'block';
     }
 
   } catch (err) {
-    console.error('Runtime system execution error:', err);
+    console.error('Error handling profile loading operations:', err);
   }
 }
 
-// 9. Clipboard Allocation Module
 function copyLink() {
   const linkInput = document.getElementById('refLink');
   linkInput.select();
-  linkInput.setSelectionRange(0, 99999); // Mobile responsive coverage
-  
+  linkInput.setSelectionRange(0, 99999);
   try {
     navigator.clipboard.writeText(linkInput.value);
-    alert('Affiliate allocation token copied successfully.');
+    alert('Affiliate link copied successfully.');
   } catch (err) {
-    // Fallback support mechanism for older web rendering views
-    alert('Copy action complete.');
+    alert('Copy execution complete.');
   }
 }
 </script>
+</body>
+</html>
