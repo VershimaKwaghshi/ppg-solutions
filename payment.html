@@ -223,19 +223,19 @@
   <div class="page-wrap">
     <div class="page-header">
       <div class="form-tag">Step 2 of 4</div>
-      <h1 class="page-title">Registration <em>Fee</em><br>Payment</h1>
-      <p class="page-sub">Pay the one-time $3.99 registration fee using any of the methods below. After payment, upload your receipt to proceed to Step 3.</p>
+      <h1 class="page-title">$3.99 Monthly<br>Membership Subscription</h1>
+      <p class="page-sub">Pay the recurring monthly membership subscription using any of the methods below. After payment, upload your receipt to proceed to Step 3.</p>
     </div>
 
     <div class="summary-box">
       <div class="summary-left">
-        <h4>Registration Fee</h4>
+        <h4>Monthly Membership Subscription</h4>
         <p id="member-name">PPG Trading Club Membership</p>
         <div class="non-refund">⚠️ Non-refundable</div>
       </div>
       <div class="summary-amount">
         <div class="amount">$3.99</div>
-        <div class="amount-label">One-time fee</div>
+        <div class="amount-label">Monthly Subscription</div>
       </div>
     </div>
 
@@ -388,7 +388,9 @@
     <div class="receipt-section">
       <div class="receipt-title">Upload Payment Receipt</div>
       <div class="receipt-info">
-        After making your payment, <strong>take a screenshot or photo of your payment confirmation</strong> and upload it below.
+        After making your payment, <strong>take a screenshot or photo of your payment confirmation</strong> and upload it below. 
+        <br><br>
+        After payment verification, you will proceed to Risk Consent and KYC verification. Payment confirmation alone does not complete membership approval.
       </div>
 
       <div class="field">
@@ -424,7 +426,7 @@
 
       <div class="notes-box">
         <h4>📋 Important Notes</h4>
-        <div class="note-item"><div class="note-dot"></div>The $3.99 registration fee is strictly non-refundable under any circumstances.</div>
+        <div class="note-item"><div class="note-dot"></div>Recurring monthly membership required to maintain active club access.</div>
         <div class="note-item"><div class="note-dot"></div>Payment verification takes up to 24 hours on business days.</div>
         <div class="note-item"><div class="note-dot"></div>This fee covers membership profile onboarding validation nodes only.</div>
       </div>
@@ -432,7 +434,7 @@
       <button class="submit-btn" onclick="handleSubmit()">
         Continue to Risk Consent →
       </button>
-      <p class="form-note">Step 3 of 4: You will confirm your risk consent on WhatsApp before final approval.</p>
+      <p class="form-note">Step 3 of 4: You will confirm your risk consent on the platform before final verification.</p>
     </div>
   </div>
 </div>
@@ -449,8 +451,8 @@
   window.addEventListener('load', function() {
     try {
       const d = JSON.parse(sessionStorage.getItem('ppg_reg'));
-      if (d && d.full_name) {
-        document.getElementById('member-name').textContent = d.full_name + ' — Member Profile';
+      if (d && d.name) {
+        document.getElementById('member-name').textContent = d.name + ' — Member Profile';
       }
     } catch(e) {}
   });
