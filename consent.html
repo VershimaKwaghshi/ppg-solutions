@@ -195,63 +195,61 @@ const sb = createClient(
   window.PPG_CONFIG.SUPABASE_ANON_KEY
 );
 
-document.getElementById('consentForm').addEventListener('submit', async function(e) {
+document.getElementById('consentForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  
-  const btn = document.getElementById('submitBtn');
-  const userResponse = await sb.auth.getUser();
-  const user = userResponse.data.user;
-
-  if(!user) {
-    alert('Please login first');
+  const userId = localStorage.getItem('ppg_user_id');
+  if(!userId){
+    alert('Login required');
     return;
   }
-
-  const fullName = document.getElementById('fullname').value.trim();
-  const idType = document.getElementById('idtype').value;
-  const idNumber = document.getElementById('idnumber').value.trim();
-  const kycFile = document.getElementById('kycfile').files[0];
-
+  const file = document.getElementById('kycfile').files[0];
+  if(!file){
+    alert('Upload ID document');
+    return;
+  }
+  
+  const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = 'Processing verification...';
+  btn.textContent = 'Uploading documents...';
 
+  const fileName = Date.now() + "_" + file.name;
+  
   try {
-    const uid = user.id;
-    const timestamp = Date.now();
-    const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
-    
-    const idPath = 'kyc_id/' + uid + '-' + timestamp;
-
-    const uploadResponse = await sb.storage.from('kyc-documents').upload(idPath, kycFile);
-    if (uploadResponse.error) throw new Error('Document upload failed: ' + uploadResponse.error.message);
-
+    const { error: uploadError } = await sb
+      .storage
+      .from('kyc')
+      .upload(fileName, file);
+    if(uploadError){
+      alert(uploadError.message);
+      btn.disabled = false;
+      btn.textContent = 'Complete Verification';
+      return;
+    }
+    const { data:fileData } = sb
+      .storage
+      .from('kyc')
+      .getPublicUrl(fileName);
+    const kycUrl = fileData.publicUrl;
     const { error } = await sb
       .from('profiles')
       .update({
-        full_name: fullName || d.name,
-        phone: d.phone || null,
-        country: d.country || null,
-        role: d.role || 'Trader',
-        risk_tier: d.risk || null,
-        referral_id: d.myReferralId || null,
-        referred_by: d.referral || null,
-        payment_method: d.payMethod || null,
-        payment_reference: d.txRef || null,
-        kyc_status: 'pending',
-        registration_status: 'complete',
-        legal_name: fullName,
-        id_type: idType,
-        signature: fullName, 
-        id_doc: idPath
+        kyc_status:'pending',
+        consent_signed:true,
+        id_type:document.getElementById('idtype').value,
+        id_number:document.getElementById('idnumber').value,
+        kyc_url:kycUrl
       })
-      .eq('id', uid);
-
-    if (error) throw error;
-
-    window.location.href = 'complete.html';
-
-  } catch (err) {
-    alert(err.message || 'Error executing consent updates.');
+      .eq('id', userId);
+    if(error){
+      alert(error.message);
+      btn.disabled = false;
+      btn.textContent = 'Complete Verification';
+      return;
+    }
+    localStorage.setItem('consent_complete','yes');
+    window.location.href = "complete.html?next=whatsapp";
+  } catch(err) {
+    alert(err.message || 'An error occurred during verification processing.');
     btn.disabled = false;
     btn.textContent = 'Complete Verification';
   }
