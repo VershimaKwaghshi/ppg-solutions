@@ -1,235 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Application Submitted — PPG Trading Club</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--green:#22c55e;--red:#ef4444;--accent-blue:#0066FF;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Application Submitted — PPG Trading Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
 
-/* NAV */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
-.logo-text{display:flex;flex-direction:column;line-height:1.1;}
-.logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
-.logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+  <style>
+    :root{--navy:#040d1c;--navy2:#071428;--gold:#c9a84c;--gold-light:#e8c97a;--white:#ffffff;--grey:#94a3b8;--grey2:#64748b;--border:rgba(255,255,255,0.06);--green:#22c55e;--red:#ef4444;--accent-blue:#0066FF;}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;}
 
-/* PROGRESS */
-.progress-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
-.progress-inner{max-width:780px;margin:0 auto;}
-.progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--green);color:var(--white);background:var(--green);transition:all 0.3s;}
-.ps-label{font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
-.ps-line{flex:1;height:1px;background:var(--green);margin:0 -6px;margin-bottom:18px;}
-.progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
-.progress-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;}
+    /* NAV */
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(4,13,28,0.95);border-bottom:1px solid var(--border);}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .nav-logo img{height:36px;width:36px;object-fit:contain;border-radius:8px;}
+    .logo-text{display:flex;flex-direction:column;line-height:1.1;}
+    .logo-text span:first-child{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
+    .logo-text span:last-child{font-size:0.6rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
 
-/* MAIN */
-.main{flex:1;padding:60px 5% 80px;display:flex;align-items:center;justify-content:center;}
-.complete-wrap{max-width:640px;width:100%;text-align:center;}
+    /* PROGRESS */
+    .progress-wrap{background:var(--navy2);border-bottom:1px solid var(--border);padding:20px 5%;}
+    .progress-inner{max-width:780px;margin:0 auto;}
+    .progress-steps{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+    .ps-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;border:2px solid var(--green);color:var(--white);background:var(--green);transition:all 0.3s;}
+    .ps-label{font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:1px;font-weight:500;text-align:center;}
+    .ps-line{flex:1;height:1px;background:var(--green);margin:0 -6px;margin-bottom:18px;}
+    .progress-bar-wrap{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+    .progress-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;}
 
-/* SUCCESS ICON */
-.success-ring{width:96px;height:96px;border-radius:50%;border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;animation:ringPulse 2s ease infinite;}
-@keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.2);}50%{box-shadow:0 0 0 16px rgba(34,197,94,0);}}
-.success-inner{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:2rem;}
+    /* MAIN */
+    .main{flex:1;padding:60px 5% 80px;display:flex;align-items:center;justify-content:center;}
+    .complete-wrap{max-width:640px;width:100%;text-align:center;}
 
-/* HEADING */
-.complete-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
-.complete-tag::before,.complete-tag::after{content:'';width:20px;height:1px;background:var(--green);}
-.complete-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:14px;}
-.complete-title em{font-style:italic;color:var(--gold);}
-.complete-sub{color:var(--grey);font-size:0.92rem;line-height:1.8;font-weight:300;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto;}
+    /* SUCCESS ICON */
+    .success-ring{width:96px;height:96px;border-radius:50%;border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;animation:ringPulse 2s ease infinite;}
+    @keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.2);}50%{box-shadow:0 0 0 16px rgba(34,197,94,0);}}
+    .success-inner{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:2rem;}
 
-/* SUMMARY CARD */
-.summary-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;text-align:left;}
-.summary-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
-.summary-row:last-child{border-bottom:none;}
-.sr-label{font-size:0.75rem;color:var(--grey2);}
-.sr-value{font-size:0.85rem;font-weight:600;color:var(--white);}
-.sr-value.gold{color:var(--gold);}
-.sr-value.green{color:var(--green);}
+    /* HEADING */
+    .complete-tag{font-size:0.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .complete-tag::before,.complete-tag::after{content:'';width:20px;height:1px;background:var(--green);}
+    .complete-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.15;margin-bottom:14px;}
+    .complete-title em{font-style:italic;color:var(--gold);}
+    .complete-sub{color:var(--grey);font-size:0.92rem;line-height:1.8;font-weight:300;margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto;}
 
-/* STATUS BADGE */
-.status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:100px;padding:8px 20px;font-size:0.78rem;font-weight:600;color:var(--gold);margin-bottom:28px;}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+    /* SUMMARY CARD */
+    .summary-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:28px;text-align:left;}
+    .summary-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+    .summary-row:last-child{border-bottom:none;}
+    .sr-label{font-size:0.75rem;color:var(--grey2);}
+    .sr-value{font-size:0.85rem;font-weight:600;color:var(--white);}
+    .sr-value.gold{color:var(--gold);}
+    .sr-value.green{color:var(--green);}
 
-/* NEXT STEPS */
-.next-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;text-align:left;}
-.next-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.next-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;}
-.next-item:last-child{margin-bottom:0;}
-.next-num{width:26px;height:26px;border-radius:50%;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;}
-.next-body h5{font-weight:600;font-size:0.85rem;margin-bottom:3px;}
-.next-body p{color:var(--grey);font-size:0.78rem;line-height:1.6;font-weight:300;}
-.next-body p strong{color:var(--white);font-weight:600;}
+    /* STATUS BADGE */
+    .status-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:100px;padding:8px 20px;font-size:0.78rem;font-weight:600;color:var(--gold);margin-bottom:28px;}
+    .status-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
-/* ACTIONS */
-.actions{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
-.btn-dash{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent-blue);color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;border:none;cursor:pointer;width:100%;}
-.btn-dash:hover{background:#0052cc;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,0.3);}
-.btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;}
-.btn-wa:hover{background:#1da851;transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,0.3);}
-.btn-home{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--grey);padding:15px 32px;border-radius:10px;font-weight:500;font-size:0.9rem;text-decoration:none;border:1px solid rgba(255,255,255,0.1);transition:all 0.25s;}
-.btn-home:hover{border-color:rgba(255,255,255,0.25);color:var(--white);}
+    /* NEXT STEPS */
+    .next-card{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;text-align:left;}
+    .next-title{font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey2);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .next-item{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;}
+    .next-item:last-child{margin-bottom:0;}
+    .next-num{width:26px;height:26px;border-radius:50%;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;}
+    .next-body h5{font-weight:600;font-size:0.85rem;margin-bottom:3px;}
+    .next-body p{color:var(--grey);font-size:0.78rem;line-height:1.6;font-weight:300;}
+    .next-body p strong{color:var(--white);font-weight:600;}
 
-/* REMINDER */
-.reminder{background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:18px 20px;text-align:left;}
-.reminder h4{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
-.reminder p{font-size:0.78rem;color:var(--grey);line-height:1.6;}
-.reminder p strong{color:var(--white);}
+    /* ACTIONS */
+    .actions{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+    .btn-dash{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent-blue);color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;border:none;cursor:pointer;width:100%;}
+    .btn-dash:hover{background:#0052cc;transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,102,255,0.3);}
+    .btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;background:#25d366;color:var(--white);padding:15px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;text-decoration:none;transition:all 0.25s;}
+    .btn-wa:hover{background:#1da851;transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,0.3);}
+    .btn-home{display:flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:var(--grey);padding:15px 32px;border-radius:10px;font-weight:500;font-size:0.9rem;text-decoration:none;border:1px solid rgba(255,255,255,0.1);transition:all 0.25s;}
+    .btn-home:hover{border-color:rgba(255,255,255,0.25);color:var(--white);}
 
-/* FOOTER NOTE */
-.footer-note{padding:24px 5%;border-top:1px solid var(--border);text-align:center;}
-.footer-note p{color:var(--grey2);font-size:0.75rem;line-height:1.7;}
-.footer-note a{color:var(--gold);text-decoration:none;}
+    /* REMINDER */
+    .reminder{background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:18px 20px;text-align:left;}
+    .reminder h4{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+    .reminder p{font-size:0.78rem;color:var(--grey);line-height:1.6;}
+    .reminder p strong{color:var(--white);}
 
-@media(max-width:600px){
-  .main{padding:40px 5% 60px;}
-  .summary-card,.next-card{padding:20px;}
-}
-</style>
+    /* FOOTER NOTE */
+    .footer-note{padding:24px 5%;border-top:1px solid var(--border);text-align:center;}
+    .footer-note p{color:var(--grey2);font-size:0.75rem;line-height:1.7;}
+    .footer-note a{color:var(--gold);text-decoration:none;}
+
+    @media(max-width:600px){
+      .main{padding:40px 5% 60px;}
+      .summary-card,.next-card{padding:20px;}
+    }
+  </style>
 </head>
 <body>
 
-<nav class="nav">
-  <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
-    <div class="logo-text">
-      <span>PPG Trading Club</span>
-      <span>Penny Partners Group</span>
-    </div>
-  </a>
-</nav>
-
-<div class="progress-wrap">
-  <div class="progress-inner">
-    <div class="progress-steps">
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Register</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Payment</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Consent</div></div>
-      <div class="ps-line"></div>
-      <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Complete</div></div>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" style="width:100%"></div>
-    </div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="complete-wrap">
-
-    <div class="success-ring">
-      <div class="success-inner">🎉</div>
-    </div>
-
-    <div class="complete-tag">Application Submitted</div>
-    <h1 class="complete-title">You're Almost In,<br><em>Welcome to PPG.</em></h1>
-    <p class="complete-sub">Your membership application has been submitted successfully. Our team will review your payment receipt and KYC documents within 24–48 hours.</p>
-
-    <div class="status-badge">
-      <div class="status-dot"></div>
-      Pending Review — Under 48 Hours
-    </div>
-
-    <div class="summary-card">
-      <div class="summary-title">Application Summary</div>
-      <div class="summary-row"><div class="sr-label">Full Name</div><div class="sr-value" id="sum-name">—</div></div>
-      <div class="summary-row"><div class="sr-label">Email</div><div class="sr-value" id="sum-email">—</div></div>
-      <div class="summary-row"><div class="sr-label">Risk Tier Selected</div><div class="sr-value gold" id="sum-risk">—</div></div>
-      <div class="summary-row"><div class="sr-label">Referral ID Provided</div><div class="sr-value" id="sum-referral">—</div></div>
-      <div class="summary-row"><div class="sr-label">Payment Method</div><div class="sr-value" id="sum-payment">—</div></div>
-      <div class="summary-row"><div class="sr-label">Registration Fee</div><div class="sr-value green">$3.99 Paid</div></div>
-      <div class="summary-row"><div class="sr-label">Risk Consent</div><div class="sr-value green">✓ Signed & Confirmed</div></div>
-      <div class="summary-row"><div class="sr-label">Status</div><div class="sr-value gold">Pending KYC Review</div></div>
-    </div>
-
-    <div class="next-card">
-      <div class="next-title">What Happens Next</div>
-      <div class="next-item">
-        <div class="next-num">1</div>
-        <div class="next-body">
-          <h5>Access Member Dashboard</h5>
-          <p>You can now log straight into your partner room. Copy your referral trace links immediately to start tracking downline metrics while verification undergoes administration clearance.</p>
-        </div>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">
+      <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span>PPG Trading Club</span>
+        <span>Penny Partners Group</span>
       </div>
-      <div class="next-item">
-        <div class="next-num">2</div>
-        <div class="next-body">
-          <h5>Payment & KYC Review</h5>
-          <p>Our team verifies your <strong>payment receipt</strong> and reviews your ID documents. This takes <strong>24–48 business hours</strong>.</p>
-        </div>
+    </a>
+  </nav>
+
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="progress-steps">
+        <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Register</div></div>
+        <div class="ps-line"></div>
+        <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Payment</div></div>
+        <div class="ps-line"></div>
+        <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Consent</div></div>
+        <div class="ps-line"></div>
+        <div class="ps"><div class="ps-circle">✓</div><div class="ps-label">Complete</div></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" style="width:100%"></div>
       </div>
     </div>
-
-    <div class="actions">
-      <button onclick="commitToStateAndRoute()" class="btn-dash">
-        🚀 Open Member Dashboard
-      </button>
-      <a href="https://wa.me/2348130500659" target="_blank" class="btn-wa">
-        💬 Open WhatsApp Support
-      </a>
-      <a href="index.html" class="btn-home">← Return to Home</a>
-    </div>
-
-    <div class="reminder">
-      <h4>📌 Don't Forget</h4>
-      <p>You must <strong>refer at least one person</strong> before your KYC is fully approved. Share your referral ID (received after approval) with friends and family to complete this requirement and unlock your 15% referral earnings.</p>
-    </div>
-
   </div>
-</div>
 
-<div class="footer-note">
-  <p>Questions? Contact us on <a href="https://wa.me/2348130500659" target="_blank">WhatsApp</a> or email <a href="mailto:contact.ppgsolutions@gmail.com">contact.ppgsolutions@gmail.com</a><br>
-  © 2026 Penny Partners Group (PPG Solutions). CAC Registered.</p>
-</div>
+  <div class="main">
+    <div class="complete-wrap">
 
-<script>
-window.addEventListener('load',function(){
-  try{
-    const d=JSON.parse(sessionStorage.getItem('ppg_reg'));
-    if(d){
-      if(d.name) document.getElementById('sum-name').textContent=d.name;
-      if(d.email) document.getElementById('sum-email').textContent=d.email;
-      if(d.risk) document.getElementById('sum-risk').textContent=d.risk;
-      if(d.referral) document.getElementById('sum-referral').textContent=d.referral;
-      if(d.payMethod) document.getElementById('sum-payment').textContent=d.payMethod;
+      <div class="success-ring">
+        <div class="success-inner">🎉</div>
+      </div>
+
+      <div class="complete-tag">Application Submitted</div>
+      <h1 class="complete-title">You're Almost In,<br><em>Welcome to PPG.</em></h1>
+      <p class="complete-sub">Your membership application has been submitted successfully. Our team will review your payment receipt and KYC documents within 24–48 hours.</p>
+
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Pending Review — Under 48 Hours
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-title">Application Summary</div>
+        <div class="summary-row"><div class="sr-label">Full Name</div><div class="sr-value" id="sum-name">—</div></div>
+        <div class="summary-row"><div class="sr-label">Email</div><div class="sr-value" id="sum-email">—</div></div>
+        <div class="summary-row"><div class="sr-label">Risk Tier Selected</div><div class="sr-value gold" id="sum-risk">—</div></div>
+        <div class="summary-row"><div class="sr-label">Referral ID Provided</div><div class="sr-value" id="sum-referral">—</div></div>
+        <div class="summary-row"><div class="sr-label">Payment Method</div><div class="sr-value" id="sum-payment">—</div></div>
+        <div class="summary-row"><div class="sr-label">Registration Fee</div><div class="sr-value green">$3.99 Paid</div></div>
+        <div class="summary-row"><div class="sr-label">Risk Consent</div><div class="sr-value green">✓ Signed & Confirmed</div></div>
+        <div class="summary-row"><div class="sr-label">Status</div><div class="sr-value gold">Pending KYC Review</div></div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-title">What Happens Next</div>
+        <div class="next-item">
+          <div class="next-num">1</div>
+          <div class="next-body">
+            <h5>Access Member Dashboard</h5>
+            <p>You can now log straight into your partner room. Copy your referral trace links immediately to start tracking downline metrics while verification undergoes administration clearance.</p>
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">2</div>
+          <div class="next-body">
+            <h5>Payment & KYC Review</h5>
+            <p>Our team verifies your <strong>payment receipt</strong> and reviews your ID documents. This takes <strong>24–48 business hours</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button onclick="commitToStateAndRoute()" class="btn-dash">
+          🚀 Open Member Dashboard
+        </button>
+        <a href="https://wa.me/2348130500659" target="_blank" class="btn-wa">
+          💬 Open WhatsApp Support
+        </a>
+        <a href="index.html" class="btn-home">← Return to Home</a>
+      </div>
+
+      <div class="reminder">
+        <h4>📌 Don't Forget</h4>
+        <p>You must <strong>refer at least one person</strong> before your KYC is fully approved. Share your referral ID (received after approval) with friends and family to complete this requirement and unlock your 15% referral earnings.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <p>Questions? Contact us on <a href="https://wa.me/2348130500659" target="_blank">WhatsApp</a> or email <a href="mailto:contact.ppgsolutions@gmail.com">contact.ppgsolutions@gmail.com</a><br>
+    © 2026 Penny Partners Group (PPG Solutions). CAC Registered.</p>
+  </div>
+
+  <script>
+    // Initialize Supabase Client Connection
+    const { createClient } = supabase;
+    const sb = createClient(
+      window.PPG_CONFIG.SUPABASE_URL,
+      window.PPG_CONFIG.SUPABASE_ANON_KEY
+    );
+
+    window.addEventListener('load', async function () {
+      try {
+        const d = JSON.parse(sessionStorage.getItem('ppg_reg'));
+        if (!d) return;
+
+        // Visual Layout Population Matrix
+        if (d.name) document.getElementById('sum-name').textContent = d.name;
+        if (d.email) document.getElementById('sum-email').textContent = d.email;
+        if (d.risk) document.getElementById('sum-risk').textContent = d.risk;
+        if (d.referral) document.getElementById('sum-referral').textContent = d.referral;
+        if (d.payMethod) document.getElementById('sum-payment').textContent = d.payMethod;
+
+        // Fetch Verified Identity Token Sequence
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) return;
+
+        // Commit profile parameters safely into Supabase database matching user id node
+        const { error } = await sb
+          .from('profiles')
+          .update({
+            full_name: d.name,
+            phone: d.phone || null,
+            country: d.country || null,
+            role: d.role || 'Trader',
+            risk_tier: d.risk || null,
+            referral_id: d.myReferralId || null,
+            parent_referral_id: d.referral || null,
+            payment_method: d.payMethod || null,
+            payment_reference: d.txRef || null,
+            kyc_status: 'pending',
+            registration_status: 'submitted'
+          })
+          .eq('id', user.id);
+
+        if (error) {
+          console.error("Supabase Profile Sync Failure:", error.message);
+        }
+      } catch (e) {
+        console.error("Runtime Profile Exception Failure:", e);
+      }
+    });
+
+    function commitToStateAndRoute() {
+      try {
+        const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
+        
+        // Push cache structures into local state matrices
+        localStorage.setItem('ppg_kyc_status', 'pending');
+        localStorage.setItem('ppg_user_email', d.email || '');
+        localStorage.setItem('ppg_user_name', d.name || '');
+        
+        if (!localStorage.getItem('ppg_balance_val')) {
+          localStorage.setItem('ppg_balance_val', '0.00');
+        }
+        if (!localStorage.getItem('ppg_referrals_count')) {
+          localStorage.setItem('ppg_referrals_count', '0');
+        }
+      } catch (err) {
+        console.error("State Cache Storage Exception:", err);
+      }
+      
+      window.location.href = 'dashboard.html';
     }
-  }catch(e){}
-});
-
-function commitToStateAndRoute() {
-  try {
-    const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
-    
-    // Initialize standard state values inside localStorage
-    localStorage.setItem('ppg_kyc_status', 'pending'); 
-    localStorage.setItem('ppg_user_email', d.email || 'partner@ppg.club');
-    localStorage.setItem('ppg_user_name', d.name || 'Club Partner');
-    
-    // Set fallback display parameters for a clean layout experience
-    if(!localStorage.getItem('ppg_balance_val')) {
-      localStorage.setItem('ppg_balance_val', '0.00');
-    }
-    if(!localStorage.getItem('ppg_referrals_count')) {
-      localStorage.setItem('ppg_referrals_count', '0');
-    }
-  } catch(err) {}
-
-  // Route to the dashboard file
-  window.location.href = "dashboard.html";
-}
-</script>
+  </script>
 </body>
 </html>
