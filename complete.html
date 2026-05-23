@@ -159,8 +159,8 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
       <div class="next-item">
         <div class="next-num">1</div>
         <div class="next-body">
-          <h5>Access Member Dashboard</h5>
-          <p>You can now log straight into your partner room. Copy your referral trace links immediately to start tracking downline metrics while verification undergoes administration clearance.</p>
+          <h5>Submit Application Confirmation</h5>
+          <p>Click below to verify your submitted parameters via our direct customer operations line. Once dispatched, you will move to the login phase.</p>
         </div>
       </div>
       <div class="next-item">
@@ -173,12 +173,12 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
     </div>
 
     <div class="actions">
-      <button onclick="commitToStateAndRoute()" class="btn-dash">
-        🚀 Open Member Dashboard
-      </button>
-      <a href="https://wa.me/2348130500659?text=Hello%20PPG%20Team,%20I%20have%20completed%20payment%20and%20signed%20consent.%20Please%20confirm%20my%20onboarding." target="_blank" class="btn-wa">
-        💬 Open WhatsApp Support
+      <a href="https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20submitted%20my%20Consent%20and%20KYC%20documents.%20Please%20review%20my%20application." class="btn-wa" target="_blank" style="margin-top:20px;display:inline-flex;">
+        Continue to WhatsApp Confirmation →
       </a>
+      <button onclick="commitToStateAndRoute()" class="btn-dash">
+        🚀 Move to Club Login
+      </button>
       <a href="index.html" class="btn-home">← Return to Home</a>
     </div>
 
@@ -191,7 +191,7 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--white);m
 </div>
 
 <div class="footer-note">
-  <p>Questions? Contact us on <a href="https://wa.me/2348130500659?text=Hello%20PPG%20Team,%20I%20have%20completed%20payment%20and%20signed%20consent.%20Please%20confirm%20my%20onboarding." target="_blank">WhatsApp</a> or email <a href="mailto:contact.ppgsolutions@gmail.com">contact.ppgsolutions@gmail.com</a><br>
+  <p>Questions? Contact us on <a href="https://wa.me/2348130500659?text=Hello%20PPG%20Support,%20I%20have%20completed%20payment%20and%20submitted%20my%20Consent%20and%20KYC%20documents.%20Please%20review%20my%20application." target="_blank">WhatsApp</a> or email <a href="mailto:contact.ppgsolutions@gmail.com">contact.ppgsolutions@gmail.com</a><br>
   © 2026 Penny Partners Group (PPG Solutions). CAC Registered.</p>
 </div>
 
@@ -223,7 +223,7 @@ function commitToStateAndRoute(){
       localStorage.setItem('ppg_referrals_count','0');
     }
   }catch(err){}
-  window.location.href='dashboard.html';
+  window.location.href='login.html';
 }
 </script>
 </body>
