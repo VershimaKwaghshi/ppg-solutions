@@ -328,7 +328,7 @@ Deposit
 💸<br><br>
 Withdrawal
 </a>
-<a href="consent.html" class="qbtn">
+<a href="#" id="verifyBtn" class="qbtn">
 🛡<br><br>
 Verification
 </a>
@@ -547,6 +547,7 @@ async function initializeDashboardRuntime() {
       const statusBox = document.querySelector('.status');
       const tVerify = document.getElementById('traderVerify');
       const verifyBox = document.getElementById('verifyBox');
+      const verifyBtn = document.getElementById('verifyBtn');
 
       if (data.kyc_status === 'approved') {
         statusBox.className = 'status verified';
@@ -563,6 +564,12 @@ async function initializeDashboardRuntime() {
             ✅ Account Verified
           </div>
         `;
+        if(verifyBtn){
+          verifyBtn.onclick = function(e){
+            e.preventDefault();
+            alert('Account already verified');
+          }
+        }
       } else if (data.kyc_status === 'pending') {
         statusBox.className = 'status pending';
         statusBox.innerText = 'Verification Pending';
@@ -578,6 +585,12 @@ async function initializeDashboardRuntime() {
             ⏳ Verification Pending — Documents already submitted.
           </div>
         `;
+        if(verifyBtn){
+          verifyBtn.onclick = function(e){
+            e.preventDefault();
+            alert('Verification pending — documents already submitted');
+          }
+        }
       } else {
         statusBox.className = 'status not-verified';
         statusBox.innerText = 'Not Verified';
@@ -597,6 +610,12 @@ async function initializeDashboardRuntime() {
             Verify Now
           </a>
         `;
+        if(verifyBtn){
+          verifyBtn.onclick = function(e){
+            e.preventDefault();
+            window.location.href = 'consent.html';
+          }
+        }
       }
 
       if (data.role === 'Manager') {
