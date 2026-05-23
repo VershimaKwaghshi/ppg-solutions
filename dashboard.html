@@ -456,73 +456,53 @@ async function initializeDashboardRuntime() {
       return;
     }
 
-    const { data: profile, error: dbError } = await sb
+    const { data, error: dbError } = await sb
       .from('profiles')
+      .select('*')
       .eq('id', user.id)
       .single();
 
-    if (dbError) throw dbError;
+    if (dbError && dbError.code !== 'PGRST116') throw dbError;
 
-    const regCache = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
-    const fullName = profile.full_name || regCache.name || 'Member';
-    const userEmail = user.email || regCache.email || '';
-    const userCountry = profile.country || regCache.country || 'Not Set';
-    const userRole = profile.role || regCache.role || 'Trader';
-    const kycStatus = profile.kyc_status || 'not_verified';
-    const referralId = profile.referral_id || 'PPG-' + Math.floor(1000 + Math.random() * 9000);
+    if (data) {
+      document.getElementById('pName').innerText = data.full_name || data.legal_name || '—';
+      document.getElementById('pEmail').innerText = data.email || '—';
+      document.getElementById('pCountry').innerText = data.country || '—';
+      document.getElementById('pRole').innerText = data.role || 'Member';
+      
+      document.querySelector('.member-id').innerText = 'Member ID: ' + (data.member_id || 'PPG-' + user.id.slice(0,6));
+      
+      document.getElementById('refLink').value = window.location.origin + '/register.html?ref=' + (data.referral_code || user.id.slice(0,6));
+      
+      const statusBox = document.querySelector('.status');
+      if (data.kyc_status === 'approved') {
+        statusBox.className = 'status verified';
+        statusBox.innerText = 'Verified';
+        document.getElementById('pKyc').innerText = 'Verified';
+      } else if (data.kyc_status === 'pending') {
+        statusBox.className = 'status pending';
+        statusBox.innerText = 'Verification Pending';
+        document.getElementById('pKyc').innerText = 'Pending';
+      } else {
+        statusBox.className = 'status not-verified';
+        statusBox.innerText = 'Not Verified';
+        document.getElementById('pKyc').innerText = 'Not Verified';
+      }
 
-    // Update Layout Elements
-    document.querySelector('.top-left h2').textContent = `Welcome, ${fullName}`;
-    document.querySelector('.member-id').textContent = `Member ID: ${referralId}`;
-    
-    document.getElementById('pName').textContent = fullName;
-    document.getElementById('pEmail').textContent = userEmail;
-    document.getElementById('pCountry').textContent = userCountry;
-    document.getElementById('pRole').textContent = userRole;
-    document.getElementById('refLink').value = `https://ppgsolutions.org/register?ref=${referralId}`;
-
-    // Verification Status Transformations
-    const topBadge = document.querySelector('.top-right .status');
-    const tableKyc = document.getElementById('pKyc');
-    
-    topBadge.className = 'status';
-    if (kycStatus === 'not_verified') {
-      topBadge.classList.add('not-verified');
-      topBadge.textContent = 'Verification Required';
-      tableKyc.textContent = 'Verification Required';
-      tableKyc.style.color = 'var(--red)';
-    } else if (kycStatus === 'pending') {
-      topBadge.classList.add('pending');
-      topBadge.textContent = 'Verification Pending';
-      tableKyc.textContent = 'Pending Review';
-      tableKyc.style.color = 'var(--orange)';
-    } else if (kycStatus === 'verified') {
-      topBadge.classList.add('verified');
-      topBadge.textContent = 'Verified Member';
-      tableKyc.textContent = 'Verified';
-      tableKyc.style.color = 'var(--green)';
+      if (data.role === 'Manager') {
+        document.getElementById('manager-panel').style.display = 'block';
+      }
     }
-
-    // Role Differentiation
-    if (userRole === 'Manager') {
-      document.getElementById('manager-panel').style.display = 'block';
-    }
-
   } catch (err) {
     console.error('Error handling profile loading operations:', err);
   }
 }
 
-function copyLink() {
-  const linkInput = document.getElementById('refLink');
-  linkInput.select();
-  linkInput.setSelectionRange(0, 99999);
-  try {
-    navigator.clipboard.writeText(linkInput.value);
-    alert('Affiliate link copied successfully.');
-  } catch (err) {
-    alert('Copy execution complete.');
-  }
+function copyLink(){
+  const box = document.getElementById('refLink');
+  box.select();
+  document.execCommand('copy');
+  alert('Affiliate link copied');
 }
 </script>
 </body>
