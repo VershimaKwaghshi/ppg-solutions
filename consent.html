@@ -29,7 +29,68 @@
     .logo-text span:last-child { font-size: 0.6rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
     .main { padding: 60px 5%; display: flex; justify-content: center; }
     .consent-wrap { max-width: 640px; width: 100%; }
-    .submit-btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+    
+    .consent-card {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 35px;
+    }
+    .consent-card h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .consent-text {
+      color: var(--grey);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    .risk-box {
+      background: rgba(4, 13, 28, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .risk-box label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.88rem;
+      color: var(--white);
+      cursor: pointer;
+    }
+    .risk-box input[type="checkbox"] {
+      margin-top: 4px;
+      accent-color: var(--gold);
+    }
+    .input {
+      width: 100%;
+      background: #0a1a35;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      color: white;
+      font-family: inherit;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      outline: none;
+    }
+    .input:focus {
+      border-color: var(--gold);
+    }
+    .consent-card label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--grey);
+      margin-top: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .submit-btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; border-radius: 10px; padding: 16px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 30px; transition: background 0.2s; }
     .submit-btn:hover { background: var(--gold-light); }
     .submit-btn:disabled { background: var(--grey2); cursor: not-allowed; }
   </style>
@@ -48,12 +109,55 @@
 
 <div class="main">
   <div class="consent-wrap">
-    <h2>Risk Acknowledgement & Onboarding Consent</h2>
-    <p style="color: var(--grey); margin: 15px 0 30px;">Please read and accept the terms to complete your application submission node.</p>
     
-    <button id="consentSubmit" onclick="handleConsentSubmission()" class="submit-btn">
-      Submit Agreement & Finalize Application →
-    </button>
+    <div class="consent-card">
+      <h2>Risk Acknowledgement & KYC Verification</h2>
+      <p class="consent-text">
+        Please read carefully before proceeding.
+        Forex trading carries substantial risk and may result in partial or total loss of deposited capital.
+        PPG Trading Club does not guarantee profits and does not hold member trading capital.
+        All trading occurs inside your personal broker account.
+      </p>
+      
+      <div class="risk-box">
+        <label>
+          <input type="checkbox" id="risk1">
+          I understand that forex trading carries risk and I may lose all deposited capital.
+        </label>
+        <label>
+          <input type="checkbox" id="risk2">
+          I understand PPG does not guarantee profits or returns.
+        </label>
+        <label>
+          <input type="checkbox" id="risk3">
+          I understand my capital remains inside my own broker account.
+        </label>
+        <label>
+          <input type="checkbox" id="risk4">
+          I voluntarily choose my selected risk allocation tier.
+        </label>
+      </div>
+
+      <h3 style="margin-top:30px">Digital Signature</h3>
+      <input id="legalName" placeholder="Full Legal Name" class="input" />
+      <input id="signature" placeholder="Type Full Name as Signature" class="input" />
+      <input id="signedDate" class="input" readonly />
+
+      <h3 style="margin-top:30px">KYC Upload</h3>
+      <label>Government ID</label>
+      <input type="file" id="govID" class="input">
+      
+      <label>Selfie Verification</label>
+      <input type="file" id="selfie" class="input">
+      
+      <label>Proof of Address</label>
+      <input type="file" id="addressProof" class="input">
+
+      <button id="submitConsent" onclick="handleConsentSubmission()" class="submit-btn">
+        Submit Verification
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -64,23 +168,41 @@ const sb = createClient(
   window.PPG_CONFIG.SUPABASE_ANON_KEY
 );
 
+// Auto-populate regional date parameter string
+document.getElementById('signedDate').value = new Date().toLocaleDateString();
+
 async function handleConsentSubmission() {
-  const btn = document.getElementById('consentSubmit');
+  // Validate checkboxes
+  if (!document.getElementById('risk1').checked || 
+      !document.getElementById('risk2').checked || 
+      !document.getElementById('risk3').checked || 
+      !document.getElementById('risk4').checked) {
+    alert('Please confirm your understanding by checking all legal risk fields.');
+    return;
+  }
+
+  // Validate profile metadata signatures
+  const legalName = document.getElementById('legalName').value.trim();
+  const signature = document.getElementById('signature').value.trim();
+  if (!legalName || !signature) {
+    alert('Full identity details and text signatures are required.');
+    return;
+  }
+
+  const btn = document.getElementById('submitConsent');
   btn.disabled = true;
   btn.textContent = 'Processing parameters...';
 
   try {
-    const d = JSON.parse(sessionStorage.getItem('ppg_reg'));
-    if (!d) throw new Error('Registration cache trace missing.');
-
+    const d = JSON.parse(sessionStorage.getItem('ppg_reg')) || {};
     const { data: { user } } = await sb.auth.getUser();
     if (!user) throw new Error('User context dropped.');
 
-    // Save profile to Supabase
+    // Save profile update context to Supabase backend table structure
     const { error } = await sb
       .from('profiles')
       .update({
-        full_name: d.name,
+        full_name: legalName || d.name,
         phone: d.phone || null,
         country: d.country || null,
         role: d.role || 'Trader',
@@ -96,13 +218,12 @@ async function handleConsentSubmission() {
 
     if (error) throw error;
 
-    // Transition straight to complete file layout
     window.location.href = 'complete.html';
 
   } catch (e) {
     alert(e.message || 'Error executing consent updates.');
     btn.disabled = false;
-    btn.textContent = 'Submit Agreement & Finalize Application →';
+    btn.textContent = 'Submit Verification';
   }
 }
 </script>
