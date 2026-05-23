@@ -146,10 +146,9 @@
   </main>
 
   <!-- CONTROL SCRIPT INJECTION TRAIL -->
-  <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="supabase.js"></script>
-  <script src="auth.js"></script>
   <script>
     function togglePw(id, btn) {
       const f = document.getElementById(id);
@@ -238,40 +237,70 @@
       return ok;
     }
 
+    function genId() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let code = 'PPG-';
+      for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return code;
+    }
+
     async function handleSubmit() {
       if (!validate()) {
         document.querySelector('.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
+      
       const btn = document.getElementById('sbtn');
       btn.disabled = true;
       btn.textContent = 'Creating your account...';
       
-      try {
-        const result = await registerUser({
-          firstName: document.getElementById('fn').value.trim(),
-          lastName: document.getElementById('ln').value.trim(),
-          email: document.getElementById('em').value.trim().toLowerCase(),
-          password: document.getElementById('pw').value,
-          phone: document.getElementById('ph').value.trim(),
-          country: document.getElementById('co').value,
-          referral: document.getElementById('ref').value.trim().toUpperCase(),
-          risk: document.querySelector('input[name="risk"]:checked').value,
-          role: document.getElementById('role').value
-        });
-        
-        sessionStorage.setItem('ppg_reg', JSON.stringify({
-          memberId: result.user.id,
-          email: result.user.email,
-          referralCode: result.referralCode
-        }));
-        
-        window.location.href = 'payment.html';
-      } catch (err) {
-        showErr(err.message);
+      const fn = document.getElementById('fn').value.trim();
+      const ln = document.getElementById('ln').value.trim();
+      const em = document.getElementById('em').value.trim().toLowerCase();
+      const ph = document.getElementById('ph').value.trim();
+      const co = document.getElementById('co').value;
+      const selectedRole = document.getElementById('role').value;
+      const pw = document.getElementById('pw').value;
+      const ref = document.getElementById('ref').value.trim().toUpperCase();
+      const risk = document.querySelector('input[name="risk"]:checked').value;
+      const myReferral = genId();
+      
+      const { data, error } = await sb.auth.signUp({
+        email: em,
+        password: pw,
+        options: {
+          data: {
+            first_name: fn,
+            last_name: ln,
+            full_name: fn + ' ' + ln,
+            phone: ph,
+            country: co,
+            role: selectedRole,
+            referral_code: myReferral,
+            referred_by: ref,
+            risk_tier: risk
+          }
+        }
+      });
+      
+      if (error) {
+        showErr(error.message);
         btn.disabled = false;
         btn.textContent = 'Create My Account →';
+        return;
       }
+      
+      sessionStorage.setItem('ppg_reg', JSON.stringify({
+        email: em,
+        full_name: fn + ' ' + ln,
+        referral_code: myReferral,
+        risk_tier: risk,
+        role: selectedRole
+      }));
+      
+      window.location.href = 'payment.html';
     }
 
     function showErr(msg) {
@@ -280,6 +309,7 @@
       el.style.display = 'block';
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+
     document.getElementById('ref').addEventListener('input', function() {
       this.value = this.value.toUpperCase();
     });
