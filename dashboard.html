@@ -4,165 +4,380 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — PPG Trading Club</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;500;600;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
 
   <style>
     :root {
-      --navy: #040d1c;
-      --navy2: #071428;
-      --navy3: #0a1a35;
-      --blue: #1640d6;
+      --bg-dark: #090e1a;
+      --bg-sidebar: #0f1626;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --accent: #1640d6;
+      --accent-light: rgba(22, 64, 214, 0.08);
       --gold: #c9a84c;
-      --gold-light: #e8c97a;
-      --white: #ffffff;
-      --grey: #94a3b8;
-      --grey2: #64748b;
-      --border: rgba(255, 255, 255, 0.06);
+      --border: #e2e8f0;
+      --green: #10b981;
       --red: #ef4444;
-      --green: #22c55e;
     }
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Outfit', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
 
-    /* CORE SECTIONS */
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 70px; background: var(--navy2); border-bottom: 1px solid var(--border); }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--white); }
-    .nav-logo img { height: 36px; width: 36px; }
-    .logout-btn { background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; color: var(--grey); cursor: pointer; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg-dark); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-    .main-layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 70px); }
+    /* VIEWPORT APP STRUCT */
+    .app-wrapper { display: flex; min-height: 100vh; position: relative; }
+
+    /* SIDEBAR NAVIGATION CONTROL */
+    .sidebar { width: 280px; background: var(--bg-sidebar); color: #ffffff; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; position: relative; border-right: 1px solid rgba(255, 255, 255, 0.05); }
     
-    /* SIDEBAR */
-    .sidebar { background: var(--navy2); border-right: 1px solid var(--border); padding: 30px 20px; }
-    .side-link { display: block; padding: 12px 16px; color: var(--grey); text-decoration: none; border-radius: 8px; margin-bottom: 8px; font-weight: 500; cursor: pointer; background: none; border: none; width: 100%; text-align: left; font-size: 0.95rem; }
-    .side-link.active { background: rgba(201, 168, 76, 0.1); color: var(--gold); font-weight: 600; }
+    /* IDENTITY BLOCK */
+    .profile-block { padding: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); background: rgba(0, 0, 0, 0.15); }
+    .user-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .avatar-frame { width: 44px; height: 44px; background: var(--gold); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; }
+    .identity-details h4 { font-size: 0.95rem; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
+    .identity-details p { font-size: 0.72rem; color: var(--gold); font-weight: 500; letter-spacing: 0.5px; margin-top: 2px; }
+    .verification-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; color: var(--green); font-weight: 600; }
 
-    /* PANELS */
-    .content-pane { padding: 40px; display: none; }
-    .content-pane.active { display: block; }
+    /* NAVIGATION LINKS & DROPDOWNS */
+    .nav-container { padding: 20px 12px; flex: 1; overflow-y: auto; }
+    .menu-heading { font-size: 0.68rem; font-weight: 700; color: rgba(255, 255, 255, 0.3); text-transform: uppercase; letter-spacing: 1.5px; padding-left: 14px; margin: 16px 0 8px; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 14px; color: #94a3b8; background: none; border: none; text-align: left; font-size: 0.88rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; text-decoration: none; }
+    .nav-item i:first-child { width: 20px; font-size: 1rem; margin-right: 12px; }
+    .nav-item:hover, .nav-item.active { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+    .nav-item.active { border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding-left: 11px; color: #ffffff; background: rgba(255, 255, 255, 0.02); }
+    
+    .dropdown-btn i.fa-chevron-down { font-size: 0.75rem; transition: transform 0.2s; }
+    .dropdown-btn.open i.fa-chevron-down { transform: rotate(180deg); }
+    .dropdown-container { display: none; padding-left: 20px; margin-bottom: 4px; }
+    .dropdown-container.show { display: block; }
+    .sub-item { display: block; padding: 9px 14px; font-size: 0.82rem; color: #94a3b8; text-decoration: none; border-radius: 6px; margin-bottom: 2px; cursor: pointer; transition: all 0.2s; }
+    .sub-item:hover, .sub-item.active { color: #ffffff; background: rgba(255, 255, 255, 0.03); }
+    .sub-item.active { color: var(--gold); font-weight: 600; }
 
-    /* WALLET BOXES */
-    .balance-card { background: linear-gradient(135deg, var(--navy3), var(--navy2)); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 480px; margin-bottom: 30px; }
-    .bal-label { font-size: 0.75rem; color: var(--grey2); text-transform: uppercase; letter-spacing: 2px; }
-    .bal-val { font-size: 3rem; font-family: 'Cormorant Garamond', serif; color: var(--gold); font-weight: 700; margin: 10px 0; }
+    /* STAGE MAIN CONTAINER */
+    .main-stage { flex: 1; background: #f8fafc; min-width: 0; display: flex; flex-direction: column; }
+    
+    /* TOP NAV BAR */
+    .top-bar { height: 70px; background: #ffffff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+    .menu-toggle { display: none; background: none; border: none; font-size: 1.25rem; color: var(--text-main); cursor: pointer; }
+    .brand-title { font-size: 1.1rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .logout-action { background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+    .logout-action:hover { background: #f1f5f9; color: var(--red); border-color: rgba(239, 68, 68, 0.2); }
 
-    /* FORMS */
-    .form-box { background: var(--navy2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px; }
+    /* CONTENT BLOCKS */
+    .stage-content { padding: 40px; flex: 1; display: none; }
+    .stage-content.active { display: block; }
+
+    /* METRIC SUMMARIES */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .metric-info h5 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .metric-info p { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+    .metric-icon-frame { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .icon-blue { background: var(--accent-light); color: var(--accent); }
+    .icon-gold { background: rgba(201, 168, 76, 0.1); color: var(--gold); }
+    .icon-green { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+
+    /* LAYOUT CONTROLS & FORMS */
+    .form-workspace { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; max-width: 680px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 6px; }
+    .section-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
+    
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .field { margin-bottom: 16px; }
-    .field label { display: block; font-size: 0.75rem; color: var(--grey); text-transform: uppercase; margin-bottom: 6px; }
-    .field input, .field textarea { width: 100%; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: var(--white); outline: none; }
-    .submit-btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    .field.full { grid-column: span 2; }
+    .field label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-main); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.3px; }
+    .field label span { color: var(--red); }
+    .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--border); background: #f8fafc; padding: 12px 14px; border-radius: 8px; color: var(--text-main); font-size: 0.88rem; outline: none; transition: border 0.2s; font-family: 'Outfit', sans-serif; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); background: #ffffff; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field-hint { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+    .action-btn { width: 100%; background: var(--accent); color: #ffffff; border: none; border-radius: 8px; padding: 14px; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+    .action-btn:hover { background: #1234b3; }
+    .action-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+    /* RELATIONAL DATA MATRIX TABLE */
+    .table-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    th { background: #f8fafc; padding: 14px 20px; font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+    td { padding: 16px 20px; border-bottom: 1px solid var(--border); color: var(--text-main); white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
     
-    /* OVERLAY SHIELD */
-    #lockShield { position: fixed; inset: 0; background: var(--navy); z-index: 99999; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--grey); }
+    /* STATUS PILLS */
+    .status-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; text-transform: capitalize; }
+    .status-pill.pending { background: #fffbeb; color: #b45309; }
+    .status-pill.success { background: #ecfdf5; color: #047857; }
+    .status-pill.failed { background: #fef2f2; color: #b91c1c; }
+
+    /* APP GUARD LAYER */
+    #lockShield { position: fixed; inset: 0; background: var(--bg-dark); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.95rem; color: #94a3b8; gap: 16px; }
+    .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* RESPONSIVE LAYOUT MATRIX */
+    @media (max-width: 992px) {
+      .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-280px); }
+      .sidebar.open { transform: translateX(0); }
+      .menu-toggle { display: block; }
+      .top-bar { padding: 0 20px; }
+      .stage-content { padding: 24px; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
+      .field.full { grid-column: span 1; }
+    }
   </style>
 </head>
 <body>
 
-<div id="lockShield">Validating secure security clearances...</div>
+<div id="lockShield">
+  <div class="spinner"></div>
+  <div>Establishing Secure Operational Session...</div>
+</div>
 
-<nav class="nav">
-  <a href="#" class="nav-logo">
-    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
-    <div class="logo-text"><strong>PPG Trading Club</strong></div>
-  </a>
-  <button class="logout-btn" onclick="handleLogout()">Sign Out Profile</button>
-</nav>
-
-<div class="main-layout">
-  <div class="sidebar">
-    <button class="side-link active" onclick="switchPane('overview', this)">📊 Overview Console</button>
-    <button class="side-link" onclick="switchPane('withdraw', this)">🏛 Settlement Outflow</button>
-  </div>
-
-  <div class="content-container">
-    
-    <div class="content-pane active" id="pane-overview">
-      <h2 style="font-family:'Cormorant Garamond', serif; font-size:2.5rem; margin-bottom:8px;">Performance Engine Account Overview</h2>
-      <p style="color:var(--grey); margin-bottom:32px;">Real-time asset validation monitor parameters.</p>
-      
-      <div class="balance-card">
-        <div class="bal-label">Settled Wallet Capital Value (USD)</div>
-        <div class="bal-val">$0.00</div>
-        <div style="font-size:0.8rem; color:var(--green);">● Profile Node Active Verification Engine Linked</div>
+<div class="app-wrapper">
+  
+  <aside class="sidebar">
+    <div class="profile-block">
+      <div class="user-meta">
+        <div class="avatar-frame" id="userInitials">--</div>
+        <div class="identity-details">
+          <h4 id="userEmail">Loading...</h4>
+          <p id="userClientCode">CID: --------</p>
+        </div>
+      </div>
+      <div class="verification-badge">
+        <i class="fa-solid fa-shield-check"></i> Verified Member
       </div>
     </div>
 
-    <div class="content-pane" id="pane-withdraw">
-      <h2 style="font-family:'Cormorant Garamond', serif; font-size:2.5rem; margin-bottom:8px;">Request Settlement Outflow</h2>
-      <p style="color:var(--grey); margin-bottom:32px;">Route processed equity out of system parameters into physical account frameworks.</p>
-      
-      <div class="form-box">
-        <div class="field">
-          <label>Settlement Capital Target Volume (USD) *</label>
-          <input type="number" id="withdrawAmount" placeholder="0.00" min="0.01" step="0.01">
-        </div>
-        <div class="field">
-          <label>Bank or Platform Institution Identifier Name *</label>
-          <input type="text" id="bankName" placeholder="e.g. Opay, Zenith Bank, Binance Wallet">
-        </div>
-        <div class="field">
-          <label>Destination Account / Core String ID *</label>
-          <input type="text" id="accountNumber" placeholder="Account identifier parameters">
-        </div>
-        <div class="field">
-          <label>Official Account Legal Profile Holder Name *</label>
-          <input type="text" id="accountName" placeholder="Legal destination text signature matches">
-        </div>
-        <div class="field">
-          <label>Routing Network Type / Layer System (Optional)</label>
-          <input type="text" id="routingCode" placeholder="e.g. TRC20, Sort-Code, Swift Network ID">
-        </div>
-        <div class="field">
-          <label>Core Processing Memo / Notation Strings (Optional)</label>
-          <textarea id="withdrawNotes" placeholder="Additional execution specifications..."></textarea>
-        </div>
-        <button class="submit-btn" onclick="executeWithdrawal()">Submit Capital Outflow Order</button>
+    <div class="nav-container">
+      <div class="menu-heading">Main Desk</div>
+      <button class="nav-item active" onclick="switchRoute('overview', this)">
+        <span><i class="fa-solid fa-chart-pie"></i>Overview Console</span>
+      </button>
+
+      <div class="menu-heading">Financial Control</div>
+      <button class="nav-item dropdown-btn" onclick="toggleDropdown('finDrop', this)">
+        <span><i class="fa-solid fa-wallet"></i>Capital Settlement</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-container" id="finDrop">
+        <span class="sub-item" onclick="switchRoute('withdraw', this)">Request Outflow</span>
+        <span class="sub-item" onclick="switchRoute('withdraw-ledger', this)">Settlement Ledger</span>
+      </div>
+
+      <div class="menu-heading">Partner Room</div>
+      <button class="nav-item dropdown-btn" onclick="toggleDropdown('partDrop', this)">
+        <span><i class="fa-solid fa-network-wired"></i>Affiliate Network</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="dropdown-container" id="partDrop">
+        <span class="sub-item" onclick="switchRoute('partner-matrix', this)">Performance Matrix</span>
       </div>
     </div>
+  </aside>
 
-  </div>
+  <main class="main-stage">
+    <header class="top-bar">
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="brand-title">
+        <span style="color: var(--gold); font-weight:800;">PPG</span> Trading System
+      </div>
+      <button class="logout-action" onclick="terminateSession()">Sign Out Account</button>
+    </header>
+
+    <section class="stage-content active" id="pane-overview">
+      <div style="margin-bottom: 28px;">
+        <h2 class="section-title">Performance Monitor</h2>
+        <p class="section-desc">Real-time parameters tracing structural network allocations.</p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="metric-card">
+          <div class="metric-info"><h5>Settled Capital (USD)</h5><p id="mainBalance">$0.00</p></div>
+          <div class="metric-icon-frame icon-blue"><i class="fa-solid fa-vault"></i></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-info"><h5>Generated Commissions</h5><p id="affBalance">$0.00</p></div>
+          <div class="metric-icon-frame icon-gold"><i class="fa-solid fa-coins"></i></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-info"><h5>Network Size</h5><p id="networkCount">0 Nodes</p></div>
+          <div class="metric-icon-frame icon-green"><i class="fa-solid fa-users"></i></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-content" id="pane-withdraw">
+      <div class="form-workspace">
+        <h2 class="section-title">Request Settlement Outflow</h2>
+        <p class="section-desc">Transfer equity allocations completely into external clearing architectures.</p>
+        
+        <div class="field-row">
+          <div class="field">
+            <label>Settlement Volume (USD) <span>*</span></label>
+            <input type="number" id="withdrawAmount" placeholder="0.00" min="0.01" step="0.01">
+          </div>
+          <div class="field">
+            <label>Institution / Platform Identifier <span>*</span></label>
+            <input type="text" id="bankName" placeholder="e.g., Opay, Zenith Bank, Binance">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Destination Account Number / String <span>*</span></label>
+            <input type="text" id="accountNumber" placeholder="Account designation value">
+          </div>
+          <div class="field">
+            <label>Legal Profile Holder Name <span>*</span></label>
+            <input type="text" id="accountName" placeholder="Exact signature matching identifier">
+          </div>
+        </div>
+
+        <div class="field full">
+          <label>Routing Code / Network Variant</label>
+          <input type="text" id="routingCode" placeholder="e.g., TRC20 network target string, SWIFT BIC code">
+          <div class="field-hint">Specify structural transfer routing contexts where applicable.</div>
+        </div>
+
+        <div class="field full">
+          <label>Processing Memos / Instructions</label>
+          <textarea id="withdrawNotes" placeholder="Additional parameter designations..."></textarea>
+        </div>
+
+        <button class="action-btn" onclick="commitWithdrawalRequest()">Submit Settlement Order</button>
+      </div>
+    </section>
+
+    <section class="stage-content" id="pane-withdraw-ledger">
+      <div style="margin-bottom: 24px;">
+        <h2 class="section-title">Settlement Audit Log</h2>
+        <p class="section-desc">Historical index tracing outbound transfer pipeline executions.</p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Institution</th>
+                <th>Account String</th>
+                <th>Volume (USD)</th>
+                <th>Status Pipeline</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No historical data entities logged.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-content" id="pane-partner-matrix">
+      <div style="margin-bottom: 24px;">
+        <h2 class="section-title">Affiliate Tree Performance Matrix</h2>
+        <p class="section-desc">Comprehensive reporting view tracking relational node generations.</p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Node ID String</th>
+                <th>Structure Tier</th>
+                <th>Registration Date</th>
+                <th>Subscription State</th>
+              </tr>
+            </thead>
+            <tbody id="partnerTableBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 32px;">No active node connections traced.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <script>
+  // Connect explicitly to structural API targets mapped inside config.js
   const sb = supabase.createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABASE_ANON_KEY);
 
-  // Safe initialization block that fires after all HTML is ready
+  // SECURE AUTHENTICATION GATEKEEPER IMPLEMENTATION
   window.addEventListener('DOMContentLoaded', async () => {
     try {
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) { window.location.href = 'register.html'; return; }
+      const { data: { user }, error: authErr } = await sb.auth.getUser();
+      if (authErr || !user) { forceRedirect('register.html'); return; }
 
-      const { data: profile } = await sb.from('profiles').select('payment_status').eq('id', user.id).single();
-      const localCheck = localStorage.getItem('ppg_payment_confirmed');
+      // Validate corresponding database configuration profile entity status
+      const { data: profile, error: profErr } = await sb.from('profiles').select('payment_status').eq('id', user.id).single();
+      const clientCheck = localStorage.getItem('ppg_payment_confirmed');
 
-      // Lock tracking checking structure parameters
-      if (!profile && localCheck !== 'yes') {
-        alert('Access Denied: Please finalize account initialization step payments first.');
-        window.location.href = 'payment.html';
+      if (!profile && clientCheck !== 'yes') {
+        alert('Access Restrained: Membership onboarding steps incomplete.');
+        forceRedirect('payment.html');
         return;
       }
 
-      // Everything checks out safely, drop the visibility screen block shield layer
-      const shield = document.getElementById('lockShield');
-      if (shield) shield.style.display = 'none';
+      // Populate interface identity text parameters securely
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userInitials').textContent = user.email.substring(0, 2).toUpperCase();
+      document.getElementById('userClientCode').textContent = `CID: ${user.id.substring(0, 8).toUpperCase()}`;
 
-    } catch (e) {
-      window.location.href = 'payment.html';
+      // Refresh tracking matrix data
+      fetchLedgerRecords(user.id);
+      
+      // Complete initialization layout paint, dropping structural overlay shield safely
+      document.getElementById('lockShield').style.display = 'none';
+
+    } catch (err) {
+      forceRedirect('register.html');
     }
   });
 
-  function switchPane(id, btn) {
-    document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.side-link').forEach(b => b.classList.remove('active'));
-    document.getElementById('pane-' + id).classList.add('active');
-    btn.classList.add('active');
+  function forceRedirect(path) {
+    window.location.href = path;
   }
 
-  async function executeWithdrawal() {
+  /* SIDEBAR RESTRUCTURING LOGIC ENGINE */
+  function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+  }
+
+  function toggleDropdown(id, btn) {
+    btn.classList.toggle('open');
+    document.getElementById(id).classList.toggle('show');
+  }
+
+  function switchRoute(paneId, targetElement) {
+    document.querySelectorAll('.stage-content').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .sub-item').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById('pane-' + paneId).classList.add('active');
+    targetElement.classList.add('active');
+    
+    // Close responsive sidebar overlay frame upon routing action event completion
+    document.querySelector('.sidebar').classList.remove('open');
+  }
+
+  /* DATA INSERTION ARCHITECTURE PIPELINE */
+  async function commitWithdrawalRequest() {
     const amount = document.getElementById('withdrawAmount').value.trim();
     const bankName = document.getElementById('bankName').value.trim();
     const accountNumber = document.getElementById('accountNumber').value.trim();
@@ -171,17 +386,17 @@
     const notes = document.getElementById('withdrawNotes').value.trim();
 
     if (!amount || !bankName || !accountNumber || !accountName) {
-      alert('Please fill out all mandatory fields specified.');
+      alert('Please fill out all mandatory contextual form fields.');
       return;
     }
 
-    const btn = document.querySelector('.submit-btn');
-    btn.disabled = true;
-    btn.textContent = 'Processing settlement transaction record...';
+    const actionBtn = document.querySelector('.action-btn');
+    actionBtn.disabled = true;
+    actionBtn.textContent = 'Transmitting execution parameters...';
 
     try {
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) throw new Error('Session signature invalid or absent.');
+      if (!user) throw new Error('Authorization structural credentials dropped.');
 
       const { error } = await sb.from('withdrawals').insert([{
         user_id: user.id,
@@ -196,22 +411,67 @@
 
       if (error) throw error;
 
-      alert('Settlement instruction processed successfully.');
+      alert('Settlement outflow instruction logged successfully into pipeline data pools.');
+      
+      // Clear data parameters cleanly
       document.getElementById('withdrawAmount').value = '';
-      switchPane('overview', document.querySelector('.side-link'));
+      document.getElementById('bankName').value = '';
+      document.getElementById('accountNumber').value = '';
+      document.getElementById('accountName').value = '';
+      document.getElementById('routingCode').value = '';
+      document.getElementById('withdrawNotes').value = '';
+
+      // Force view refresh execution
+      await fetchLedgerRecords(user.id);
+      switchRoute('withdraw-ledger', document.querySelector('[onclick*="withdraw-ledger"]'));
 
     } catch (err) {
-      alert(err.message || 'Transmission trace failed.');
+      alert(err.message || 'Transmission runtime dropped.');
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Submit Capital Outflow Order';
+      actionBtn.disabled = false;
+      actionBtn.textContent = 'Submit Settlement Order';
     }
   }
 
-  async function handleLogout() {
+  /* LEDGER SYNCHRONIZATION DATA FETCH PIPELINE */
+  async function fetchLedgerRecords(userId) {
+    try {
+      const { data: rows, error } = await sb.from('withdrawals').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+      if (error) throw error;
+
+      const body = document.getElementById('ledgerTableBody');
+      if (!rows || rows.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 32px;">No historical data entities logged.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = rows.map(row => {
+        const date = new Date(row.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' });
+        return `
+          <tr>
+            <td>${date}</td>
+            <td><strong>${escapeHtml(row.bank_name)}</strong></td>
+            <td><code>${escapeHtml(row.account_number)}</code></td>
+            <td style="font-weight:600; color:var(--accent);">$${row.amount.toFixed(2)}</td>
+            <td><span class="status-pill ${row.status}">${row.status}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+    } catch (e) {
+      console.error('Data pull exception dropped:', e);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  async function terminateSession() {
     await sb.auth.signOut();
     localStorage.clear();
-    window.location.href = 'register.html';
+    forceRedirect('register.html');
   }
 </script>
 </body>
