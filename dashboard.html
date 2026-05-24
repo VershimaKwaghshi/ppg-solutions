@@ -2,466 +2,439 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Member Dashboard — PPG</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <style>
-    :root{
-      --bg:#040d1c;
-      --card:#071428;
-      --card2:#0a1a35;
-      --blue:#1640d6;
-      --gold:#c9a84c;
-      --white:#fff;
-      --grey:#94a3b8;
-      --border:rgba(255,255,255,.06);
-      --green:#10b981;
-      --orange:#f59e0b;
-      --red:#ef4444;
+    :root {
+      --bg: #030712;
+      --sidebar: #090d16;
+      --card: #0f172a;
+      --card-hover: #1e293b;
+      --accent: #c9a84c;
+      --accent-hover: #e8c97a;
+      --blue: #2563eb;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.05);
+      
+      --green: #10b981;
+      --orange: #f59e0b;
+      --red: #ef4444;
     }
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      letter-spacing: -0.01em;
     }
-    body{
-      font-family:'Outfit',sans-serif;
-      background:var(--bg);
-      color:var(--white);
-      display:flex;
-      min-height:100vh;
+
+    /* Professional Glass Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      padding: 40px 24px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
     }
-    .sidebar{
-      width:260px;
-      background:#020912;
-      border-right:1px solid var(--border);
-      padding:30px 20px;
-      position:fixed;
-      top:0;
-      left:0;
-      bottom:0;
-      z-index:100;
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .logo{
-      font-size:1.2rem;
-      font-weight:700;
-      margin-bottom:35px;
-      color:var(--gold);
-      letter-spacing:1px;
+    
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
     }
-    .side-link{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      padding:14px;
-      margin-bottom:10px;
-      border-radius:10px;
-      color:var(--grey);
-      text-decoration:none;
-      transition:.2s;
-      font-size:0.9rem;
-      font-weight:500;
+
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
     }
+
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
     .side-link:hover, .side-link.active {
-      background:var(--card);
-      color:white;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
     }
-    .main{
-      margin-left:260px;
-      width:calc(100% - 260px);
-      padding:40px;
+    
+    .side-link.active {
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding-left: 13px;
     }
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:35px;
-      background:var(--card);
-      padding:20px 30px;
-      border-radius:18px;
-      border:1px solid var(--border);
+
+    /* App Work Space Context */
+    .main {
+      margin-left: 280px;
+      width: calc(100% - 280px);
+      padding: 48px;
+      max-width: 1400px;
     }
-    .top-left h2{
-      font-size:1.4rem;
-      font-weight:600;
-      margin-bottom:4px;
+
+    /* Minimalist Top Utility Control Bar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
     }
-    .member-id{
-      color:var(--grey);
-      font-size:.85rem;
-      font-weight:400;
+
+    .top-left h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
-    .top-right{
-      display:flex;
-      align-items:center;
-      gap:20px;
+
+    .member-id {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-family: monospace;
     }
-    .notify{
-      position:relative;
-      font-size:1.2rem;
-      cursor:pointer;
-      background:var(--card2);
-      padding:10px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      display:flex;
-      align-items:center;
-      justify-content:center;
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
-    .notify-badge{
-      position:absolute;
-      top:-4px;
-      right:-4px;
-      width:18px;
-      height:18px;
-      border-radius:50%;
-      background:var(--red);
-      font-size:.65rem;
-      font-weight:700;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      color:white;
+
+    .notify {
+      position: relative;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.02);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
     }
-    .status{
-      padding:8px 16px;
-      border-radius:100px;
-      font-size:.75rem;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:1px;
-    }
-    .not-verified{
-      background:rgba(239,68,68,0.12);
-      color:var(--red);
-    }
-    .pending{
-      background:rgba(245,158,11,.12);
-      color:var(--orange);
-    }
-    .verified{
-      background:rgba(16,185,129,.12);
-      color:var(--green);
-    }
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:20px;
-      margin-bottom:35px;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      padding:24px;
-      border-radius:18px;
-      position:relative;
-      overflow:hidden;
-    }
-    .card h4{
-      font-size:.78rem;
-      color:var(--grey);
-      margin-bottom:10px;
-      text-transform:uppercase;
-      letter-spacing:1px;
-    }
-    .card-val{
-      font-size:1.8rem;
-      font-weight:700;
-      margin-bottom:6px;
-    }
-    .quick{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:16px;
-      margin-bottom:35px;
-    }
-    .qbtn{
-      background:var(--card);
-      border:1px solid var(--border);
-      padding:18px;
-      border-radius:14px;
-      text-align:center;
-      text-decoration:none;
-      color:white;
-      transition:.2s;
-      font-size:0.9rem;
-      font-weight:600;
-      cursor:pointer;
-    }
-    .qbtn:hover{
-      background:var(--card2);
-      border-color:var(--gold);
-    }
-    .section-card{
-      background:var(--card);
-      border:1px solid var(--border);
-      padding:28px;
-      border-radius:18px;
-      margin-bottom:30px;
-    }
-    .section-card h3{
-      font-size:1.1rem;
-      font-weight:600;
-      margin-bottom:18px;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-    }
-    th,td{
-      padding:16px;
-      border-bottom:1px solid var(--border);
-      text-align:left;
-      font-size:.85rem;
-    }
-    th{
-      color:var(--grey);
-      text-transform:uppercase;
-      letter-spacing:1px;
-      font-size:0.75rem;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    #managerSection, #manager-panel {
+
+    .notify:hover { background: rgba(255, 255, 255, 0.05); }
+
+    .notify-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 50%;
+      background: var(--red);
+      font-size: 0.65rem;
+      font-weight: 700;
       display: none;
+      align-items: center;
+      justify-content: center;
     }
-    @media(max-width:1024px){
-      .cards, .quick{
-        grid-template-columns:1fr 1fr;
-      }
+
+    .status {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
     }
-    @media(max-width:900px){
-      body{
-        display:block;
-      }
-      .sidebar{
-        width:100%;
-        height:auto;
-        position:relative;
-        border-right:none;
-        border-bottom:1px solid var(--border);
-        padding:20px;
-      }
-      .logo{
-        margin-bottom:15px;
-      }
-      .main{
-        margin-left:0;
-        width:100%;
-        padding:20px;
-      }
+    
+    .not-verified { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+    .pending { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
+    .verified { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+
+    /* Modern Minimal Metrics Grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
     }
-    @media(max-width:600px){
-      .cards, .quick{
-        grid-template-columns:1fr;
-      }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 12px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .card h4 {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .card-val {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Structured Layout Panels */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1.6fr 1.4fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 32px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .section-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-main);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    /* Minimal Native Elements Form Interaction Override */
+    .input-group {
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    .input-group input {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      outline: none;
+      font-family: monospace;
+    }
+
+    .btn-action {
+      background: var(--blue);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-action:hover { opacity: 0.9; }
+
+    #managerSection, #traderSection { display: none; }
+
+    @media (max-width: 1200px) {
+      .grid-container { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; position: relative; height: auto; padding: 24px; }
+      .main { margin-left: 0; width: 100%; padding: 24px; }
+      .cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
 <div class="sidebar">
-  <div class="logo">PPG Dashboard</div>
-  <a class="side-link active" href="#">🏠 Dashboard</a>
-  <a class="side-link" href="#">💰 Balance</a>
-  <a class="side-link" href="#">🎁 Rewards</a>
-  <a class="side-link" href="payment.html">💳 Deposit</a>
-  <a class="side-link" href="#">💸 Withdrawal</a>
-  <a class="side-link" href="#">🌐 Network</a>
-  <a class="side-link" href="#">👤 Profile</a>
-  <a class="side-link" href="#">🔔 Notifications</a>
-  <a class="side-link" href="#">⚙ Settings</a>
-  <a class="side-link" href="#" onclick="logoutUser()" style="color: var(--red);">🚪 Logout</a>
+  <div class="logo"><div class="logo-dot"></div> PPG Global</div>
+  <div class="nav-group">
+    <a class="side-link active" href="#">🏠 Dashboard</a>
+    <a class="side-link" href="payment.html">💳 Deposit Funds</a>
+    <a class="side-link" href="#">💸 Withdrawals</a>
+    <a class="side-link" href="#">👤 Account Profile</a>
+  </div>
+  <a class="side-link" href="#" onclick="logoutUser()" style="color: var(--red);"><b>🚪 End Session</b></a>
 </div>
 
 <div class="main">
   <div class="topbar">
     <div class="top-left">
-      <h2>Welcome, Member</h2>
-      <div class="member-id">Member ID: PPG-0000</div>
+      <h2 id="welcomeName">Welcome back</h2>
+      <div class="member-id" id="displayMemberId">Member ID: --</div>
     </div>
     <div class="top-right">
       <div class="notify">
-        🔔
-        <div class="notify-badge">0</div>
+        🔔<div class="notify-badge">0</div>
       </div>
-      <div class="status pending">Verification Pending</div>
+      <div class="status pending" id="topStatus">Verification Pending</div>
     </div>
   </div>
 
   <div class="cards">
     <div class="card">
-      <h4>Balance</h4>
+      <h4>Available Balance</h4>
       <div class="card-val" id="displayBalance">$0.00</div>
     </div>
     <div class="card">
-      <h4>Rewards</h4>
+      <h4>Reward Ledger</h4>
       <div class="card-val" id="displayRewards">$0.00</div>
     </div>
     <div class="card">
-      <h4>Network Earnings</h4>
+      <h4>Network Volume</h4>
       <div class="card-val" id="displayNetwork">$0.00</div>
     </div>
     <div class="card">
-      <h4>Membership</h4>
-      <div class="card-val" id="displayMembership" style="font-size:1.1rem">Active</div>
+      <h4>Account Standing</h4>
+      <div class="card-val" id="displayMembership" style="font-size: 1.2rem; color: var(--accent);">Active</div>
     </div>
   </div>
 
-  <div class="quick">
-    <a href="payment.html" class="qbtn">💳<br><br>Deposit</a>
-    <a href="#" class="qbtn">💸<br><br>Withdrawal</a>
-    <a href="#" class="qbtn" onclick="openVerification()">🛡<br><br>Verification</a>
-    <a href="#" class="qbtn">🌐<br><br>Network</a>
-  </div>
+  <div class="grid-container">
+    
+    <div class="left-col">
+      
+      <div class="section-card">
+        <h3>Identity Verification & Compliance</h3>
+        <div id="verifyBox">Loading verification state documentation...</div>
+      </div>
 
-  <div class="section-card">
-    <h3>Profile</h3>
-    <table>
-      <tr>
-        <th>Full Name</th>
-        <td id="pName">Loading...</td>
-      </tr>
-      <tr>
-        <th>Email</th>
-        <td id="pEmail">Loading...</td>
-      </tr>
-      <tr>
-        <th>Country</th>
-        <td id="pCountry">Loading...</td>
-      </tr>
-      <tr>
-        <th>Account Type</th>
-        <td id="pRole">Loading...</td>
-      </tr>
-      <tr>
-        <th>KYC Status</th>
-        <td id="pKyc">Pending</td>
-      </tr>
-    </table>
-  </div>
+      <div id="traderSection">
+        <div class="section-card">
+          <h3>Market Allocation Configuration</h3>
+          <table>
+            <tr><th>Current Matrix State</th><td>Active Managed Profile</td></tr>
+            <tr><th>Selected Risk Profile Tier</th><td id="riskTier">Loading Risk Metrics...</td></tr>
+            <tr><th>Broker Routing Verification</th><td id="brokerStatus">Awaiting Processing Array Link</td></tr>
+          </table>
+        </div>
+      </div>
 
-  <div class="section-card">
-    <h3>Verification Status</h3>
-    <div id="verifyBox">Loading verification...</div>
-  </div>
+      <div id="managerSection">
+        <div class="section-card">
+          <h3>Administrative Oversight Queue</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant Profile</th>
+                <th>Target Allocation</th>
+                <th>Documentation Matrix</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sarah Jenkins</td>
+                <td>Trader Matrix</td>
+                <td><span style="color: var(--orange); font-weight:600;">Pending Verification Review</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-  <div class="section-card">
-    <h3>Network / Affiliate</h3>
-    <p style="margin-bottom:16px">Affiliate Link</p>
-    <input
-      id="refLink"
-      style="width:100%; padding:14px; border-radius:10px; border:none; background:#0a1a35; color:white; margin-bottom:14px;"
-      readonly
-      value="Loading..."
-    >
-    <button
-      onclick="copyLink()"
-      style="background:#1640d6; color:white; border:none; padding:12px 18px; border-radius:10px; cursor:pointer;"
-    >
-      Copy Link
-    </button>
-  </div>
-
-  <div class="section-card">
-    <h3>Your Network</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Member</th>
-          <th>Status</th>
-          <th>Earnings</th>
-        </tr>
-      </thead>
-      <tbody id="networkBody">
-        <tr>
-          <td colspan="3">Loading network...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div id="traderSection">
-    <div class="section-card">
-      <h3>Trader Dashboard</h3>
-      <table>
-        <tr>
-          <th>Account Status</th>
-          <td>Active Member</td>
-        </tr>
-        <tr>
-          <th>Selected Risk Tier</th>
-          <td id="riskTier">Loading...</td>
-        </tr>
-        <tr>
-          <th>Verification</th>
-          <td id="traderVerify">Pending</td>
-        </tr>
-        <tr>
-          <th>Broker Setup</th>
-          <td id="brokerStatus">Awaiting Broker Setup</td>
-        </tr>
-      </table>
     </div>
-  </div>
 
-  <div id="managerSection">
-    <div class="section-card">
-      <h3>Manager Dashboard</h3>
-      <table>
-        <tr>
-          <th>Manager Access</th>
-          <td>Enabled</td>
-        </tr>
-        <tr>
-          <th>Member Oversight</th>
-          <td>Available</td>
-        </tr>
-        <tr>
-          <th>Verification Queue</th>
-          <td>Pending Review</td>
-        </tr>
-        <tr>
-          <th>Reports</th>
-          <td>Manager Tools Enabled</td>
-        </tr>
-      </table>
+    <div class="right-col">
+      
+      <div class="section-card">
+        <h3>Partnership Attribution</h3>
+        <p style="margin-bottom:12px; font-size:0.85rem; color: var(--text-muted);">Share your referral engine routing code:</p>
+        <div class="input-group">
+          <input id="refLink" readonly value="Loading link orchestration...">
+          <button class="btn-action" onclick="copyLink()">Copy</button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3>Downstream Attribution Network</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Partner</th>
+              <th>Status State</th>
+              <th>Accrued Yield</th>
+            </tr>
+          </thead>
+          <tbody id="networkBody">
+            <tr><td colspan="3" style="color: var(--text-muted);">Awaiting lookup query response...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-  </div>
 
-  <div class="section-card" id="manager-panel">
-    <h3>Manager Administrative Oversight</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Applicant Profile</th>
-          <th>Assigned Role</th>
-          <th>Document Queue</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Sarah Jenkins</td>
-          <td>Trader</td>
-          <td><span style="color: var(--orange)">Pending Review</span></td>
-        </tr>
-      </tbody>
-    </table>
   </div>
-
 </div>
 
 <script>
 const { createClient } = supabase;
-const sb = createClient(
-  window.PPG_CONFIG.SUPABASE_URL,
-  window.PPG_CONFIG.SUPABASE_ANON_KEY
-);
+const sb = createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABASE_ANON_KEY);
 
-window.addEventListener('load', async function() {
+window.addEventListener('load', async () => {
   await initializeDashboardRuntime();
 });
 
@@ -473,148 +446,98 @@ async function initializeDashboardRuntime() {
       return;
     }
 
-    const { data, error: dbError } = await sb
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
+    const { data, error: dbError } = await sb.from('profiles').select('*').eq('id', user.id).single();
     if (dbError && dbError.code !== 'PGRST116') throw dbError;
 
     if (data) {
-      const actualName = data.full_name || data.legal_name || 'Member';
-      document.getElementById('pName').innerText = actualName;
-      document.getElementById('pEmail').innerText = data.email || '—';
-      document.getElementById('pCountry').innerText = data.country || '—';
-      document.getElementById('pRole').innerText = data.role || 'Member';
-      
-      // Dynamic welcome statement and localized data matrix metrics
-      document.querySelector('.top-left h2').innerText = 'Welcome, ' + actualName;
+      const nameString = data.full_name || data.legal_name || 'Member';
+      document.getElementById('welcomeName').innerText = 'Welcome, ' + nameString;
       document.getElementById('displayMembership').innerText = data.membership_status || 'Active';
       
       document.getElementById('displayBalance').innerText = '$' + Number(data.balance || 0).toFixed(2);
       document.getElementById('displayRewards').innerText = '$' + Number(data.rewards || 0).toFixed(2);
       document.getElementById('displayNetwork').innerText = '$' + Number(data.network_earnings || 0).toFixed(2);
       
-      // Notification badge counter visibility thresholding logic
       const badge = document.querySelector('.notify-badge');
       const notifCount = Number(data.notifications || 0);
       badge.innerText = notifCount;
-      if (notifCount <= 0) {
-        badge.style.display = 'none';
-      } else {
-        badge.style.display = 'flex';
-      }
+      badge.style.display = notifCount <= 0 ? 'none' : 'flex';
       
-      const role = (data.role || '').toLowerCase();
-      if(role === 'manager'){
+      const targetRole = (data.role || '').toLowerCase();
+      if (targetRole === 'manager') {
         document.getElementById('managerSection').style.display = 'block';
-        document.getElementById('manager-panel').style.display = 'block';
         document.getElementById('traderSection').style.display = 'none';
       } else {
         document.getElementById('managerSection').style.display = 'none';
-        document.getElementById('manager-panel').style.display = 'none';
         document.getElementById('traderSection').style.display = 'block';
       }
       
-      const cleanRefCode = data.referral_code || user.id.slice(0,6);
-      document.querySelector('.member-id').innerText = 'Member ID: PPG-' + cleanRefCode.toUpperCase();
-      document.getElementById('refLink').value = 'https://vershimakwaghshi.github.io/ppg-solutions/register.html?ref=' + cleanRefCode;
+      const refCode = data.referral_code || user.id.slice(0,6);
+      document.getElementById('displayMemberId').innerText = 'Member ID: PPG-' + refCode.toUpperCase();
+      document.getElementById('refLink').value = 'https://vershimakwaghshi.github.io/ppg-solutions/register.html?ref=' + refCode;
       
       if (document.getElementById('riskTier')) {
-        document.getElementById('riskTier').innerText = data.risk_tier || 'Not Configured';
+        document.getElementById('riskTier').innerText = data.risk_tier || 'Balanced Core Strategy';
       }
 
-      const statusBox = document.querySelector('.status');
-      const tVerify = document.getElementById('traderVerify');
+      // Sync KYC Interface Blocks
+      const topStatus = document.getElementById('topStatus');
       const verifyBox = document.getElementById('verifyBox');
 
       if (data.kyc_status === 'approved') {
-        statusBox.className = 'status verified';
-        statusBox.innerText = 'Verified';
-        document.getElementById('pKyc').innerText = 'Verified';
-        if (tVerify) tVerify.innerText = 'Verified';
-        verifyBox.innerHTML = `
-          <div style="background:rgba(16,185,129,.12); color:#10b981; padding:14px 18px; border-radius:12px; font-weight:600;">
-            ✅ Account Verified
-          </div>
-        `;
+        topStatus.className = 'status verified';
+        topStatus.innerText = 'Verified';
+        verifyBox.innerHTML = `<div style="color: var(--green); font-weight:600; font-size:0.9rem;">✓ Security profile architecture verified and active.</div>`;
       } else if (data.kyc_status === 'pending') {
-        statusBox.className = 'status pending';
-        statusBox.innerText = 'Verification Pending';
-        document.getElementById('pKyc').innerText = 'Pending';
-        if (tVerify) tVerify.innerText = 'Pending Review';
-        verifyBox.innerHTML = `
-          <div style="background:rgba(245,158,11,.12); color:#f59e0b; padding:14px 18px; border-radius:12px; font-weight:600;">
-            ⏳ Verification Pending — Documents already submitted.
-          </div>
-        `;
+        topStatus.className = 'status pending';
+        topStatus.innerText = 'Verification Pending';
+        verifyBox.innerHTML = `<div style="color: var(--orange); font-weight:600; font-size:0.9rem;">⏳ Review cycle in progress. Security documents are pending approval.</div>`;
       } else {
-        statusBox.className = 'status not-verified';
-        statusBox.innerText = 'Not Verified';
-        document.getElementById('pKyc').innerText = 'Not Verified';
-        if (tVerify) tVerify.innerText = 'Not Verified';
+        topStatus.className = 'status not-verified';
+        topStatus.innerText = 'Action Required';
         verifyBox.innerHTML = `
-          <a href="consent.html" style="display:inline-block; background:#1640d6; color:white; text-decoration:none; padding:14px 22px; border-radius:12px; font-weight:600;">
-            Verify Now
-          </a>
-        `;
+          <p style="color: var(--text-muted); font-size:0.85rem; margin-bottom:16px;">Identity verification is required to enable secure broker channel clearings.</p>
+          <a href="consent.html" class="btn-action" style="text-decoration:none; display:inline-block;">Complete Compliance Profile</a>`;
       }
 
-      // Populate downstream referral rows dynamically via network lookups
-      if (cleanRefCode) {
-        const { data: networkMembers, error: netErr } = await sb
-          .from('profiles')
-          .select('full_name,kyc_status,rewards')
-          .eq('referred_by', cleanRefCode);
-
-        const body = document.getElementById('networkBody');
-        if (!netErr && networkMembers && networkMembers.length) {
-          body.innerHTML = '';
-          networkMembers.forEach(m => {
-            body.innerHTML += `
-              <tr>
-                <td>${m.full_name || 'Member'}</td>
-                <td>${m.kyc_status || 'Pending'}</td>
-                <td>$${Number(m.rewards || 0).toFixed(2)}</td>
-              </tr>
-            `;
-          });
-        } else {
-          body.innerHTML = `
+      // Fetch Affiliates Lookups
+      const { data: networkMembers } = await sb.from('profiles').select('full_name,kyc_status,rewards').eq('referred_by', refCode);
+      const netBody = document.getElementById('networkBody');
+      
+      if (networkMembers && networkMembers.length) {
+        netBody.innerHTML = '';
+        networkMembers.forEach(m => {
+          netBody.innerHTML += `
             <tr>
-              <td colspan="3">No network members yet</td>
-            </tr>
-          `;
-        }
+              <td>${m.full_name || 'Member'}</td>
+              <td><span style="color:${m.kyc_status === 'approved' ? 'var(--green)' : 'var(--orange)'}">${m.kyc_status || 'Pending'}</span></td>
+              <td>$${Number(m.rewards || 0).toFixed(2)}</td>
+            </tr>`;
+        });
+      } else {
+        netBody.innerHTML = `<tr><td colspan="3" style="color: var(--text-muted); font-size:0.85rem;">No downline attributions identified on record path.</td></tr>`;
       }
     }
   } catch (err) {
-    console.error('Error handling profile loading operations:', err);
+    console.error('Runtime processing anomaly:', err);
   }
 }
 
-function openVerification(){
-  const kyc = document.getElementById('pKyc').innerText.toLowerCase();
-  if (kyc === 'verified') {
-    alert('Your account is already verified.');
-    return;
-  }
-  if (kyc === 'pending') {
-    alert('Verification pending. Please wait for review.');
-    return;
-  }
+function openVerification() {
+  const status = document.getElementById('topStatus').innerText.toLowerCase();
+  if (status.includes('verified')) { alert('Account verification is complete.'); return; }
+  if (status.includes('pending')) { alert('Documents are currently being verified by data administration.'); return; }
   window.location.href = 'consent.html';
 }
 
-function copyLink(){
-  const box = document.getElementById('refLink');
-  box.select();
+function copyLink() {
+  const link = document.getElementById('refLink');
+  link.select();
   document.execCommand('copy');
-  alert('Affiliate link copied');
+  alert('Attribution link cached to clipboard.');
 }
 
-async function logoutUser(){
+async function logoutUser() {
   await sb.auth.signOut();
   localStorage.removeItem('ppg_email');
   localStorage.removeItem('ppg_payment_confirmed');
