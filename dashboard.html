@@ -1,637 +1,1412 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Member Dashboard — PPG Global</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <style>
     :root {
-      --bg:        #07090f;
-      --surface:   #0d1117;
-      --panel:     #111827;
-      --panel-alt: #0f1520;
-      --border:    rgba(255,255,255,0.06);
-      --border-hi: rgba(201,168,76,0.25);
+      --bg:        #f5f6f8;
+      --sidebar:   #0f1824;
+      --sidebar2:  #161f2e;
+      --panel:     #ffffff;
       --gold:      #c9a84c;
-      --gold-soft: rgba(201,168,76,0.08);
-      --text:      #f0f4f8;
-      --muted:     #4b5563;
-      --muted2:    #6b7280;
-      --green:     #10b981;
-      --orange:    #f59e0b;
-      --red:       #ef4444;
-      --sidebar-w: 240px;
+      --gold-lt:   rgba(201,168,76,0.12);
+      --gold-bdr:  rgba(201,168,76,0.3);
+      --text:      #111827;
+      --muted:     #6b7280;
+      --muted2:    #9ca3af;
+      --border:    #e5e7eb;
+      --sidebar-w: 260px;
+      --green:     #059669;
+      --green-bg:  rgba(5,150,105,0.08);
+      --orange:    #d97706;
+      --orange-bg: rgba(217,119,6,0.08);
+      --red:       #dc2626;
+      --red-bg:    rgba(220,38,38,0.08);
+      --s-text:    #94a3b8;
+      --s-muted:   #475569;
+      --s-active:  rgba(255,255,255,0.06);
+      --s-border:  rgba(255,255,255,0.06);
     }
 
-    *, *::before, *::after { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
+```
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      min-height: 100vh;
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
-    }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
 
-    /* ── SIDEBAR ─────────────────────────────────────── */
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 100;
-    }
+/* ══ SIDEBAR ════════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-    .logo {
-      padding: 0 24px 32px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
-    }
-    .logo-mark {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-icon {
-      width: 30px; height: 30px;
-      background: var(--gold);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-icon svg { width: 16px; height: 16px; fill: #07090f; }
-    .logo-text {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-    .logo-sub {
-      font-size: 10px;
-      color: var(--muted2);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-top: 2px;
-      padding-left: 40px;
-    }
+/* Profile block at top like Markets4you */
+.sb-profile {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--s-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+}
+.sb-profile:hover { background: var(--s-active); }
+.sb-avatar {
+  width: 40px; height: 40px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; color: #0f1824;
+  flex-shrink: 0;
+  position: relative;
+}
+.sb-avatar .verified-dot {
+  width: 12px; height: 12px;
+  background: var(--green);
+  border-radius: 50%;
+  border: 2px solid var(--sidebar);
+  position: absolute;
+  bottom: 0; right: 0;
+}
+.sb-profile-info { flex-grow: 1; min-width: 0; }
+.sb-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sb-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--s-muted);
+  margin-top: 2px;
+}
+.sb-chevron {
+  color: var(--s-muted);
+  transition: transform 0.2s;
+}
+.sb-chevron svg { width: 14px; height: 14px; }
 
-    .nav-section {
-      padding: 0 12px;
-      flex-grow: 1;
-    }
-    .nav-label {
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0 12px;
-      margin: 16px 0 6px;
-    }
+/* Logo */
+.sb-logo {
+  padding: 20px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.sb-logo-icon {
+  width: 28px; height: 28px;
+  background: var(--gold);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sb-logo-icon svg { width: 14px; height: 14px; }
+.sb-logo-text { font-size: 14px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.01em; }
+.sb-logo-sub { font-size: 9px; color: var(--s-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
-    .side-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 7px;
-      color: var(--muted2);
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 500;
-      transition: all 0.15s;
-      position: relative;
-    }
-    .side-link svg { width: 15px; height: 15px; opacity: 0.7; flex-shrink: 0; }
-    .side-link:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-    .side-link.active {
-      color: var(--text);
-      background: var(--gold-soft);
-    }
-    .side-link.active::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 20%; bottom: 20%;
-      width: 2.5px;
-      background: var(--gold);
-      border-radius: 0 2px 2px 0;
-    }
-    .side-link.active svg { opacity: 1; color: var(--gold); }
+/* Nav */
+.sb-nav { padding: 12px 0; flex-grow: 1; }
+.sb-section-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--s-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 20px 6px;
+}
 
-    .sidebar-footer {
-      padding: 0 12px;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
-      padding-top: 16px;
-    }
+.sb-item {
+  position: relative;
+}
+.sb-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 20px;
+  color: var(--s-text);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.sb-link:hover { color: #f1f5f9; background: var(--s-active); }
+.sb-link.active { color: #f1f5f9; background: var(--s-active); }
+.sb-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 15%; bottom: 15%;
+  width: 3px;
+  background: var(--gold);
+  border-radius: 0 3px 3px 0;
+}
+.sb-link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.75; }
+.sb-link.active svg, .sb-link:hover svg { opacity: 1; }
+.sb-link .chevron {
+  margin-left: auto;
+  transition: transform 0.2s;
+  opacity: 0.5;
+}
+.sb-link .chevron svg { width: 12px; height: 12px; }
+.sb-link.open .chevron { transform: rotate(180deg); }
 
-    /* ── MAIN ────────────────────────────────────────── */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex-grow: 1;
-      padding: 36px 40px;
-      min-height: 100vh;
-    }
+/* Dropdown sub-menu */
+.sb-dropdown {
+  display: none;
+  background: rgba(0,0,0,0.15);
+}
+.sb-dropdown.open { display: block; }
+.sb-sub-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px 9px 44px;
+  color: var(--s-muted);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 400;
+  transition: all 0.15s;
+  cursor: pointer;
+}
+.sb-sub-link:hover { color: #f1f5f9; background: var(--s-active); }
+.sb-sub-link svg { width: 13px; height: 13px; opacity: 0.6; }
 
-    /* ── TOPBAR ──────────────────────────────────────── */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 28px;
-    }
-    .page-title {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--text);
-    }
-    .member-id {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted2);
-      margin-top: 4px;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.sb-footer {
+  border-top: 1px solid var(--s-border);
+  padding: 12px 0;
+}
 
-    .icon-btn {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      position: relative;
-      transition: border-color 0.15s;
-    }
-    .icon-btn:hover { border-color: var(--border-hi); }
-    .icon-btn svg { width: 15px; height: 15px; color: var(--muted2); }
-    .notify-dot {
-      width: 7px; height: 7px;
-      background: var(--red);
-      border-radius: 50%;
-      position: absolute;
-      top: 6px; right: 6px;
-      border: 1.5px solid var(--panel);
-      display: none;
-    }
+/* ══ MAIN ══════════════════════════════════════════ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex-grow: 1;
+  min-height: 100vh;
+}
 
-    .status-pill {
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      border: 1px solid transparent;
-    }
-    .status-pill.verified   { background: rgba(16,185,129,0.08); color: var(--green); border-color: rgba(16,185,129,0.2); }
-    .status-pill.pending    { background: rgba(245,158,11,0.08); color: var(--orange); border-color: rgba(245,158,11,0.2); }
-    .status-pill.unverified { background: rgba(239,68,68,0.08);  color: var(--red);    border-color: rgba(239,68,68,0.2); }
+/* Top header bar */
+.topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
 
-    /* ── STAT STRIP ──────────────────────────────────── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-    .stat-cell {
-      background: var(--panel);
-      padding: 20px 22px;
-    }
-    .stat-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted2);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .stat-value {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
-    .stat-value.gold { color: var(--gold); }
+.icon-btn {
+  width: 36px; height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+.icon-btn:hover { border-color: var(--gold-bdr); background: var(--gold-lt); }
+.icon-btn svg { width: 15px; height: 15px; color: var(--muted); }
+.notify-dot {
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  position: absolute;
+  top: 7px; right: 7px;
+  border: 1.5px solid white;
+  display: none;
+}
 
-    /* ── GRID ────────────────────────────────────────── */
-    .grid {
-      display: grid;
-      grid-template-columns: 1.55fr 1.45fr;
-      gap: 20px;
-      align-items: start;
-    }
+.status-pill {
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.status-pill.verified   { background: var(--green-bg);  color: var(--green);  border-color: rgba(5,150,105,0.25); }
+.status-pill.pending    { background: var(--orange-bg); color: var(--orange); border-color: rgba(217,119,6,0.25); }
+.status-pill.unverified { background: var(--red-bg);    color: var(--red);    border-color: rgba(220,38,38,0.25); }
 
-    /* ── CARD ────────────────────────────────────────── */
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .card-head {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .card-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-    .card-body { padding: 20px; }
+/* ══ PAGE CONTENT ══════════════════════════════════ */
+.page { padding: 28px 32px; display: none; }
+.page.active { display: block; }
 
-    /* ── TABLE ───────────────────────────────────────── */
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th {
-      padding: 9px 14px;
-      text-align: left;
-      font-size: 10.5px;
-      font-weight: 500;
-      color: var(--muted2);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-    }
-    .data-table td {
-      padding: 11px 14px;
-      font-size: 13px;
-      color: var(--text);
-      border-bottom: 1px solid var(--border);
-    }
-    .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:hover td { background: rgba(255,255,255,0.015); }
+/* ══ BALANCE CARD (hero) ═══════════════════════════ */
+.balance-hero {
+  background: var(--sidebar);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.balance-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.balance-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--s-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.balance-amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 20px;
+}
+.balance-actions { display: flex; gap: 10px; }
 
-    .row-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted2);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 11px 14px;
-      border-bottom: 1px solid var(--border);
-      width: 38%;
-    }
+/* ══ QUICK STAT CARDS ══════════════════════════════ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.stat-card-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.stat-card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card-value.gold { color: var(--gold); }
 
-    /* ── KYC BOX ─────────────────────────────────────── */
-    .kyc-message {
-      font-size: 13px;
-      line-height: 1.6;
-    }
+/* ══ CARDS ═════════════════════════════════════════ */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.card-head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.card-body { padding: 20px; }
+.card-body-flush { padding: 0; }
 
-    /* ── REFERRAL INPUT ──────────────────────────────── */
-    .ref-row {
-      display: flex;
-      gap: 8px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px 4px 4px 12px;
-      align-items: center;
-    }
-    .ref-row input {
-      flex-grow: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--muted2);
-      font-family: 'DM Mono', monospace;
-      font-size: 11.5px;
-    }
+/* ══ TABLE ═════════════════════════════════════════ */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  padding: 10px 18px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  background: #fafafa;
+}
+.data-table td {
+  padding: 13px 18px;
+  font-size: 13.5px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: #fafafa; }
+.data-table .empty-row td {
+  color: var(--muted2);
+  font-size: 13px;
+  text-align: center;
+  padding: 32px;
+}
 
-    /* ── BUTTON ──────────────────────────────────────── */
-    .btn {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
-      font-family: 'DM Sans', sans-serif;
-      letter-spacing: -0.01em;
-    }
-    .btn-primary {
-      background: var(--gold);
-      color: #07090f;
-    }
-    .btn-primary:hover { background: #d4b160; }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-outline:hover { border-color: var(--border-hi); }
+/* ══ BADGE ═════════════════════════════════════════ */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 4px;
+  font-size: 11.5px; font-weight: 500;
+}
+.badge-green  { background: var(--green-bg);  color: var(--green); }
+.badge-orange { background: var(--orange-bg); color: var(--orange); }
+.badge-red    { background: var(--red-bg);    color: var(--red); }
+.badge-gold   { background: var(--gold-lt);   color: var(--gold); }
 
-    /* ── BADGE ───────────────────────────────────────── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 500;
-    }
-    .badge-green  { background: rgba(16,185,129,0.1);  color: var(--green); }
-    .badge-orange { background: rgba(245,158,11,0.1);  color: var(--orange); }
-    .badge-red    { background: rgba(239,68,68,0.1);   color: var(--red); }
+/* ══ BUTTONS ═══════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 7px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.btn svg { width: 14px; height: 14px; }
+.btn-gold { background: var(--gold); color: #0f1824; }
+.btn-gold:hover { background: #d4b15e; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { border-color: var(--gold-bdr); background: var(--gold-lt); }
+.btn-ghost { background: var(--s-active); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.08); }
+.btn-ghost:hover { background: rgba(255,255,255,0.1); }
+.btn-sm { padding: 7px 14px; font-size: 12px; }
+.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
+.btn-danger:hover { background: rgba(220,38,38,0.15); }
 
-    /* ── DIVIDER ─────────────────────────────────────── */
-    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+/* ══ FORM ELEMENTS ═════════════════════════════════ */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-size: 12px; font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+.form-input, .form-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus { border-color: var(--gold-bdr); background: white; }
+.form-input[readonly] {
+  background: #f9fafb;
+  color: var(--muted);
+  cursor: default;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-hint { font-size: 11.5px; color: var(--muted2); margin-top: 5px; }
 
-    /* ── RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 1100px) {
-      .grid { grid-template-columns: 1fr; }
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 768px) {
-      body { flex-direction: column; }
-      .sidebar { width: 100%; position: relative; height: auto; padding: 20px 0; }
-      .main { margin-left: 0; padding: 20px; }
-      .stats-row { grid-template-columns: 1fr; }
-    }
+/* Ref link row */
+.ref-input-row {
+  display: flex; gap: 8px; align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 4px 4px 4px 12px;
+  background: #f9fafb;
+}
+.ref-input-row input {
+  flex-grow: 1; border: none; outline: none;
+  background: transparent; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+}
 
-    #managerSection, #traderSection { display: none; }
+/* ══ KYC NOTICE ════════════════════════════════════ */
+.kyc-notice {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  border-radius: 9px;
+  border: 1px solid;
+}
+.kyc-notice.green  { background: var(--green-bg);  border-color: rgba(5,150,105,0.2); }
+.kyc-notice.orange { background: var(--orange-bg); border-color: rgba(217,119,6,0.2); }
+.kyc-notice.red    { background: var(--red-bg);    border-color: rgba(220,38,38,0.2); }
+.kyc-icon { flex-shrink: 0; margin-top: 1px; }
+.kyc-icon svg { width: 18px; height: 18px; }
+.kyc-notice.green  .kyc-icon svg { color: var(--green); }
+.kyc-notice.orange .kyc-icon svg { color: var(--orange); }
+.kyc-notice.red    .kyc-icon svg { color: var(--red); }
+.kyc-notice-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.kyc-notice.green  .kyc-notice-title { color: var(--green); }
+.kyc-notice.orange .kyc-notice-title { color: var(--orange); }
+.kyc-notice.red    .kyc-notice-title { color: var(--red); }
+.kyc-notice-text { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 
-    /* Fade-in */
-    .main { animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* ══ PAGE HEADER ═══════════════════════════════════ */
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.page-header p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* ══ REFERRAL STATS ════════════════════════════════ */
+.ref-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ref-stat {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  text-align: center;
+}
+.ref-stat-val { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+.ref-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ══ UTILITY ═══════════════════════════════════════ */
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.text-muted { color: var(--muted); font-size: 13px; }
+.text-sm { font-size: 12.5px; }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+/* ══ ALERT BANNER ══════════════════════════════════ */
+.alert {
+  padding: 14px 18px; border-radius: 8px;
+  font-size: 13px; margin-bottom: 20px;
+  border: 1px solid;
+}
+.alert-gold { background: var(--gold-lt); border-color: var(--gold-bdr); color: #7a5e1a; }
+.alert-success { background: var(--green-bg); border-color: rgba(5,150,105,0.25); color: var(--green); }
+
+/* ══ TRANSACTION TYPE ══════════════════════════════ */
+.tx-type {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 500;
+}
+.tx-type.deposit { color: var(--green); }
+.tx-type.withdrawal { color: var(--orange); }
+.tx-type svg { width: 13px; height: 13px; }
+
+/* Page fade-in */
+.page.active { animation: fadeUp 0.2s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ══ RESPONSIVE ════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+  .ref-stats { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar {
+    transform: translateX(-260px);
+    width: 260px;
+    transition: transform 0.25s ease;
+  }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.4); }
+  .main { margin-left: 0; }
+  .topbar { padding: 0 16px; }
+  /* All page inner divs get mobile padding */
+  .page > div { padding: 20px 16px !important; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ref-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .balance-amount { font-size: 30px; }
+  .balance-hero { padding: 22px 20px; }
+  .mobile-menu-btn { display: flex !important; }
+  .form-row { grid-template-columns: 1fr; }
+  /* Sidebar overlay */
+  .sb-overlay { display: block !important; }
+}
+@media (max-width: 400px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .ref-stats { grid-template-columns: 1fr; }
+  .balance-actions { flex-direction: column; }
+  .balance-actions .btn { justify-content: center; }
+}
+.mobile-menu-btn { display: none; }
+
+/* Sidebar overlay (mobile) */
+.sb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+
+/* Manager only */
+#managerSection { display: none; }
+#traderSection  { display: none; }
+```
+
   </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo">
-    <div class="logo-mark">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <div>
-        <div class="logo-text">PPG Global</div>
-      </div>
+<!-- Mobile overlay -->
+
+<div class="sb-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+
+<div class="sidebar" id="sidebar">
+
+  <!-- Logo -->
+
+  <div class="sb-logo" style="padding-bottom:16px; border-bottom:1px solid var(--s-border); margin-bottom:4px;">
+    <div class="sb-logo-icon">
+      <svg viewBox="0 0 24 24" fill="#0f1824"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
     </div>
-    <div class="logo-sub">Member Portal</div>
+    <div>
+      <div class="sb-logo-text">PPG Global</div>
+      <div class="sb-logo-sub">Member Portal</div>
+    </div>
   </div>
 
-  <div class="nav-section">
-    <div class="nav-label">Main</div>
-    <a class="side-link active" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </a>
-    <a class="side-link" href="payment.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      Deposit Funds
-    </a>
-    <a class="side-link" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-      Withdrawals
-    </a>
-    <a class="side-link" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Account Profile
-    </a>
+  <!-- Profile block -->
+
+  <div class="sb-profile" onclick="navigate('profile')">
+    <div class="sb-avatar" id="sbAvatar">
+      —
+      <div class="sb-verified-dot" id="sbVerifiedDot" style="display:none; width:12px;height:12px;background:var(--green);border-radius:50%;border:2px solid var(--sidebar);position:absolute;bottom:0;right:0;"></div>
+    </div>
+    <div class="sb-profile-info">
+      <div class="sb-name" id="sbName">Loading…</div>
+      <div class="sb-id" id="sbMemberId">PPG-———</div>
+    </div>
+    <div class="sb-chevron">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
   </div>
 
-  <div class="sidebar-footer">
-    <a class="side-link" href="#" onclick="logoutUser()" style="color: var(--red);">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Sign Out
-    </a>
+  <!-- Nav -->
+
+  <div class="sb-nav">
+    <div class="sb-section-label">Menu</div>
+
+```
+<!-- Dashboard -->
+<div class="sb-item">
+  <div class="sb-link active" id="nav-dashboard" onclick="navigate('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
   </div>
 </div>
 
+<!-- Financial Operations (dropdown) -->
+<div class="sb-item">
+  <div class="sb-link" id="nav-financial" onclick="toggleDropdown('dd-financial', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    Financial Operations
+    <span class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+  </div>
+  <div class="sb-dropdown" id="dd-financial">
+    <div class="sb-sub-link" onclick="navigate('deposit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Deposit Funds
+    </div>
+    <div class="sb-sub-link" onclick="navigate('withdrawal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      Withdraw Funds
+    </div>
+    <div class="sb-sub-link" onclick="navigate('transactions')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      Transaction History
+    </div>
+  </div>
+</div>
+
+<!-- Partner Room (dropdown) -->
+<div class="sb-item">
+  <div class="sb-link" id="nav-partner" onclick="toggleDropdown('dd-partner', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Partner Room
+    <span class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+  </div>
+  <div class="sb-dropdown" id="dd-partner">
+    <div class="sb-sub-link" onclick="navigate('affiliate')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      My Referrals
+    </div>
+  </div>
+</div>
+
+<!-- Market Allocation (traders) -->
+<div id="traderSection">
+  <div class="sb-item">
+    <div class="sb-link" id="nav-market" onclick="navigate('market')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Market Allocation
+    </div>
+  </div>
+</div>
+
+<!-- Admin (managers) -->
+<div id="managerSection">
+  <div class="sb-item">
+    <div class="sb-link" id="nav-admin" onclick="navigate('admin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admin Oversight
+    </div>
+  </div>
+</div>
+
+<!-- Account Profile -->
+<div class="sb-item">
+  <div class="sb-link" id="nav-profile" onclick="navigate('profile')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Account Profile
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Footer -->
+
+  <div class="sb-footer">
+    <div class="sb-link" style="color:#ef4444;" onclick="logoutUser()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ═════════════════════════════════════════════ -->
+
 <div class="main">
 
+  <!-- Topbar -->
+
   <div class="topbar">
-    <div>
-      <div class="page-title" id="welcomeName">Welcome back</div>
-      <div class="member-id" id="displayMemberId">Member ID: —</div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="icon-btn mobile-menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <div class="icon-btn" title="Notifications">
+      <div class="icon-btn" title="Notifications" onclick="navigate('notifications')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <div class="notify-dot" id="notifyDot"></div>
       </div>
-      <div class="status-pill pending" id="topStatus">Verification Pending</div>
+      <div class="status-pill pending" id="topStatus">Pending</div>
     </div>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-cell">
-      <div class="stat-label">Available Balance</div>
-      <div class="stat-value" id="displayBalance">$0.00</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Reward Earnings</div>
-      <div class="stat-value" id="displayRewards">$0.00</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Network Volume</div>
-      <div class="stat-value" id="displayNetwork">$0.00</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-label">Account Standing</div>
-      <div class="stat-value gold" id="displayMembership">Active</div>
+  <!-- ══ DASHBOARD PAGE ════════════════════════════════ -->
+
+  <div class="page active" id="page-dashboard">
+    <div style="padding:28px 32px;">
+
+```
+  <!-- Balance hero -->
+  <div class="balance-hero">
+    <div class="balance-label">Available Balance</div>
+    <div class="balance-amount" id="displayBalance">$0.00</div>
+    <div class="balance-actions">
+      <button class="btn btn-gold" onclick="navigate('deposit')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        Deposit
+      </button>
+      <button class="btn btn-ghost" onclick="navigate('withdrawal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        Withdraw
+      </button>
     </div>
   </div>
 
-  <div class="grid">
-    <div>
+  <!-- KYC Notice -->
+  <div id="kycNotice" class="mb-24"></div>
+
+  <!-- Stat cards -->
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-card-label">Reward Earnings</div>
+      <div class="stat-card-value" id="displayRewards">$0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Network Volume</div>
+      <div class="stat-card-value" id="displayNetwork">$0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-label">Account Standing</div>
+      <div class="stat-card-value gold" id="displayMembership">Active</div>
+    </div>
+  </div>
+
+  <!-- Market allocation summary for trader -->
+  <div id="traderCard" style="display:none;">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Market Allocation</div>
+        <button class="btn btn-outline btn-sm" onclick="navigate('market')">View Details</button>
+      </div>
+      <table class="data-table">
+        <tr>
+          <td style="color:var(--muted); font-size:12.5px; width:40%;">Risk Profile</td>
+          <td id="riskTierDash">—</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted); font-size:12.5px;">Broker Routing</td>
+          <td id="brokerStatusDash">Awaiting Link</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <!-- ══ DEPOSIT PAGE ══════════════════════════════════ -->
+
+  <div class="page" id="page-deposit">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Deposit Funds</h1>
+        <p>Add funds to your PPG account</p>
+      </div>
+      <a href="payment.html" class="card" style="display:block; text-decoration:none; cursor:pointer; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-bdr)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:15px; font-weight:600; margin-bottom:4px;">Make a Deposit</div>
+            <div class="text-muted">Proceed to the payment page to fund your account</div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══ WITHDRAWAL PAGE ═══════════════════════════════ -->
+
+  <div class="page" id="page-withdrawal">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Withdraw Funds</h1>
+        <p>Submit a withdrawal request — our team processes requests within 1–3 business days.</p>
+      </div>
+      <div class="alert alert-gold">
+        <strong>Note:</strong> All withdrawals are processed manually by our team. Ensure your banking details are accurate before submitting.
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Withdrawal Request</div></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Amount to Withdraw (USD)</label>
+            <input type="number" class="form-input" id="wdAmount" placeholder="e.g. 500.00" min="1">
+            <div class="form-hint">Available: <span id="wdAvailable">$0.00</span></div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:13px; font-weight:600; margin-bottom:16px; color:var(--text);">Banking Information</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Account Holder Name</label>
+              <input type="text" class="form-input" id="wdName" placeholder="Full name on account">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bank Name</label>
+              <input type="text" class="form-input" id="wdBank" placeholder="e.g. First Bank Nigeria">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Account Number</label>
+              <input type="text" class="form-input" id="wdAcct" placeholder="10-digit account number">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Routing / Sort Code</label>
+              <input type="text" class="form-input" id="wdRouting" placeholder="Optional">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Additional Notes</label>
+            <input type="text" class="form-input" id="wdNotes" placeholder="Any instructions for our team (optional)">
+          </div>
+          <button class="btn btn-gold" onclick="submitWithdrawal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            Submit Withdrawal Request
+          </button>
+          <div id="wdMsg" style="margin-top:14px; font-size:13px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TRANSACTION HISTORY PAGE ═════════════════════ -->
+
+  <div class="page" id="page-transactions">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Transaction History</h1>
+        <p>All your deposits and withdrawals</p>
+      </div>
       <div class="card">
         <div class="card-head">
-          <div class="card-title">Identity Verification</div>
+          <div class="card-title">All Transactions</div>
         </div>
-        <div class="card-body">
-          <div class="kyc-message" id="verifyBox">Loading…</div>
-        </div>
-      </div>
-
-      <div id="traderSection">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">Market Allocation</div>
-          </div>
-          <table class="data-table">
-            <tr>
-              <td class="row-label">Profile State</td>
-              <td>Active Managed Profile</td>
-            </tr>
-            <tr>
-              <td class="row-label">Risk Profile</td>
-              <td id="riskTier">—</td>
-            </tr>
-            <tr>
-              <td class="row-label">Broker Routing</td>
-              <td id="brokerStatus">Awaiting Link</td>
-            </tr>
-          </table>
-        </div>
-      </div>
-
-      <div id="managerSection">
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">Oversight Queue</div>
-          </div>
+        <div class="card-body-flush">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Applicant</th>
-                <th>Role</th>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
                 <th>Status</th>
+                <th>Reference</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Sarah Jenkins</td>
-                <td>Trader</td>
-                <td><span class="badge badge-orange">Pending Review</span></td>
-              </tr>
+            <tbody id="txBody">
+              <tr class="empty-row"><td colspan="5">Loading transactions…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+  </div>
 
-    <div>
-      <div class="card">
+  <!-- ══ AFFILIATE / PARTNER PAGE ══════════════════════ -->
+
+  <div class="page" id="page-affiliate">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Partner Room</h1>
+        <p>Track your referrals and partnership earnings</p>
+      </div>
+
+```
+  <!-- Referral stats -->
+  <div class="ref-stats" id="refStats">
+    <div class="ref-stat">
+      <div class="ref-stat-val" id="refCount">0</div>
+      <div class="ref-stat-lbl">Total Referrals</div>
+    </div>
+    <div class="ref-stat">
+      <div class="ref-stat-val" id="refVerified">0</div>
+      <div class="ref-stat-lbl">Verified Members</div>
+    </div>
+    <div class="ref-stat">
+      <div class="ref-stat-val" id="refEarnings">$0.00</div>
+      <div class="ref-stat-lbl">Referral Earnings</div>
+    </div>
+  </div>
+
+  <!-- Referral link -->
+  <div class="card mb-24">
+    <div class="card-head"><div class="card-title">Your Referral Link</div></div>
+    <div class="card-body">
+      <div class="form-label" style="margin-bottom:8px;">Referral ID</div>
+      <div style="font-size:18px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--gold); margin-bottom:16px;" id="refCodeDisplay">—</div>
+      <div class="form-label" style="margin-bottom:8px;">Share Link</div>
+      <div class="ref-input-row">
+        <input id="refLink" readonly value="">
+        <button class="btn btn-gold btn-sm" onclick="copyLink()">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Referral table -->
+  <div class="card">
+    <div class="card-head"><div class="card-title">Referred Members</div></div>
+    <div class="card-body-flush">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Member ID</th>
+            <th>Joined</th>
+            <th>Status</th>
+            <th>Earnings</th>
+          </tr>
+        </thead>
+        <tbody id="networkBody">
+          <tr class="empty-row"><td colspan="5">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ══ PROFILE PAGE ══════════════════════════════════ -->
+
+  <div class="page" id="page-profile">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Account Profile</h1>
+        <p>Your personal and account information</p>
+      </div>
+      <div class="card mb-24">
         <div class="card-head">
-          <div class="card-title">Referral Link</div>
+          <div class="card-title">Personal Information</div>
+          <div class="status-pill pending" id="profileKycBadge">Pending</div>
         </div>
         <div class="card-body">
-          <p style="font-size:12.5px; color: var(--muted2); margin-bottom: 12px;">Share your link to earn partnership rewards.</p>
-          <div class="ref-row">
-            <input id="refLink" readonly value="Loading…">
-            <button class="btn btn-primary" onclick="copyLink()">Copy</button>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-input" id="profileName" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="text" class="form-input" id="profileEmail" readonly>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Member ID</label>
+              <input type="text" class="form-input" id="profileMemberId" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Account Standing</label>
+              <input type="text" class="form-input" id="profileStanding" readonly>
+            </div>
           </div>
         </div>
       </div>
-
       <div class="card">
-        <div class="card-head">
-          <div class="card-title">My Network</div>
+        <div class="card-head"><div class="card-title">Verification Status</div></div>
+        <div class="card-body">
+          <div id="profileKycNotice"></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MARKET ALLOCATION PAGE (traders) ══════════════ -->
+
+  <div class="page" id="page-market">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Market Allocation</h1>
+        <p>Your trading profile configuration</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Profile Details</div></div>
         <table class="data-table">
-          <thead>
-            <tr>
-              <th>Member</th>
-              <th>Status</th>
-              <th>Earnings</th>
-            </tr>
-          </thead>
-          <tbody id="networkBody">
-            <tr><td colspan="3" style="color: var(--muted2); font-size: 12.5px;">No members linked yet.</td></tr>
-          </tbody>
+          <tr>
+            <td style="color:var(--muted); font-size:12.5px; width:40%;">Profile State</td>
+            <td><span class="badge badge-green">Active Managed Profile</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--muted); font-size:12.5px;">Risk Profile</td>
+            <td id="riskTierPage">—</td>
+          </tr>
+          <tr>
+            <td style="color:var(--muted); font-size:12.5px;">Broker Routing</td>
+            <td id="brokerStatusPage">Awaiting Link</td>
+          </tr>
         </table>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- ══ ADMIN PAGE (managers) ═════════════════════════ -->
+
+  <div class="page" id="page-admin">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Admin Oversight</h1>
+        <p>Pending member applications</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Verification Queue</div></div>
+        <div class="card-body-flush">
+          <table class="data-table">
+            <thead>
+              <tr><th>Applicant</th><th>Role</th><th>Submitted</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody id="adminBody">
+              <tr class="empty-row"><td colspan="5">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .main -->
 
 <script>
 const { createClient } = supabase;
 const sb = createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABASE_ANON_KEY);
 
+let currentUser = null;
+let profileData = null;
+
+// ── NAVIGATION ──────────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard:    'Dashboard',
+  deposit:      'Deposit Funds',
+  withdrawal:   'Withdraw Funds',
+  transactions: 'Transaction History',
+  affiliate:    'Partner Room',
+  profile:      'Account Profile',
+  market:       'Market Allocation',
+  admin:        'Admin Oversight',
+};
+
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+
+  const nav = document.getElementById('nav-' + page);
+  if (nav) nav.classList.add('active');
+
+  document.getElementById('topbarTitle').textContent = PAGE_TITLES[page] || 'Dashboard';
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+
+  // Lazy load page data
+  if (page === 'affiliate') loadAffiliate();
+  if (page === 'transactions') loadTransactions();
+  if (page === 'profile') loadProfile();
+  if (page === 'admin') loadAdmin();
+}
+
+function toggleDropdown(id, el) {
+  const dd = document.getElementById(id);
+  const isOpen = dd.classList.toggle('open');
+  el.classList.toggle('open', isOpen);
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sbOverlay');
+  const isOpen = sidebar.classList.toggle('open');
+  overlay.style.display = isOpen ? 'block' : 'none';
+}
+
+// ── INIT ────────────────────────────────────────────────
 window.addEventListener('load', async () => {
   try {
-    const { data: { user }, error: authError } = await sb.auth.getUser();
-    if (authError || !user) { window.location.href = 'login.html'; return; }
+    const { data: { user }, error } = await sb.auth.getUser();
+    if (error || !user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
 
-    const { data, error: dbError } = await sb.from('profiles').select('*').eq('id', user.id).single();
-    if (dbError && dbError.code !== 'PGRST116') throw dbError;
+    const { data, error: dbErr } = await sb.from('profiles').select('*').eq('id', user.id).single();
+    if (dbErr && dbErr.code !== 'PGRST116') throw dbErr;
+    profileData = data || {};
 
-    if (!data) return;
-
-    const name = data.full_name || data.legal_name || 'Member';
-    document.getElementById('welcomeName').textContent = 'Welcome back, ' + name;
-    document.getElementById('displayMembership').textContent = data.membership_status || 'Active';
-    document.getElementById('displayBalance').textContent = '$' + Number(data.balance || 0).toFixed(2);
-    document.getElementById('displayRewards').textContent = '$' + Number(data.rewards || 0).toFixed(2);
-    document.getElementById('displayNetwork').textContent = '$' + Number(data.network_earnings || 0).toFixed(2);
-
-    const notifCount = Number(data.notifications || 0);
-    if (notifCount > 0) document.getElementById('notifyDot').style.display = 'block';
-
-    const role = (data.role || '').toLowerCase();
-    document.getElementById(role === 'manager' ? 'managerSection' : 'traderSection').style.display = 'block';
-
-    const refCode = data.referral_code || user.id.slice(0, 6);
-    document.getElementById('displayMemberId').textContent = 'Member ID: PPG-' + refCode.toUpperCase();
-    document.getElementById('refLink').value = 'https://vershimakwaghshi.github.io/ppg-solutions/register.html?ref=' + refCode;
-
-    if (document.getElementById('riskTier')) {
-      document.getElementById('riskTier').textContent = data.risk_tier || 'Balanced Core Strategy';
-    }
-
-    const topStatus = document.getElementById('topStatus');
-    const verifyBox = document.getElementById('verifyBox');
-
-    if (data.kyc_status === 'approved') {
-      topStatus.className = 'status-pill verified';
-      topStatus.textContent = 'Verified';
-      verifyBox.innerHTML = `<span style="color:var(--green); font-weight:600; font-size:13px;">✓ Identity verified and compliance active.</span>`;
-    } else if (data.kyc_status === 'pending') {
-      topStatus.className = 'status-pill pending';
-      topStatus.textContent = 'Pending Review';
-      verifyBox.innerHTML = `<span style="color:var(--orange); font-weight:500; font-size:13px;">⏳ Your documents are under review. We'll notify you once complete.</span>`;
-    } else {
-      topStatus.className = 'status-pill unverified';
-      topStatus.textContent = 'Action Required';
-      verifyBox.innerHTML = `
-        <p style="color:var(--muted2); font-size:13px; margin-bottom:14px; line-height:1.6;">You need to complete identity verification before accessing broker services.</p>
-        <a href="consent.html" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Complete Verification</a>`;
-    }
-
-    const { data: networkMembers } = await sb.from('profiles').select('full_name,kyc_status,rewards').eq('referred_by', refCode);
-    const netBody = document.getElementById('networkBody');
-    if (networkMembers && networkMembers.length) {
-      netBody.innerHTML = networkMembers.map(m => `
-        <tr>
-          <td>${m.full_name || 'Member'}</td>
-          <td><span class="badge ${m.kyc_status === 'approved' ? 'badge-green' : 'badge-orange'}">${m.kyc_status === 'approved' ? 'Verified' : 'Pending'}</span></td>
-          <td>$${Number(m.rewards || 0).toFixed(2)}</td>
-        </tr>`).join('');
-    } else {
-      netBody.innerHTML = `<tr><td colspan="3" style="color:var(--muted2); font-size:12.5px; padding:14px;">No members linked to your referral yet.</td></tr>`;
-    }
-
+    renderDashboard();
   } catch (err) {
     console.error(err);
   }
 });
 
+function renderDashboard() {
+  const d = profileData;
+  const name = d.full_name || d.legal_name || 'Member';
+  const firstName = name.split(' ')[0];
+
+  // Sidebar profile
+  document.getElementById('sbName').textContent = name;
+  const refCode = d.referral_code || currentUser.id.slice(0,6);
+  document.getElementById('sbMemberId').textContent = 'PPG-' + refCode.toUpperCase();
+  document.getElementById('sbAvatar').childNodes[0].textContent = name.charAt(0).toUpperCase();
+
+  // Topbar
+  const notifCount = Number(d.notifications || 0);
+  if (notifCount > 0) document.getElementById('notifyDot').style.display = 'block';
+
+  // Balance
+  document.getElementById('displayBalance').textContent = '$' + Number(d.balance || 0).toFixed(2);
+  document.getElementById('displayRewards').textContent  = '$' + Number(d.rewards || 0).toFixed(2);
+  document.getElementById('displayNetwork').textContent  = '$' + Number(d.network_earnings || 0).toFixed(2);
+  document.getElementById('displayMembership').textContent = d.membership_status || 'Active';
+  document.getElementById('wdAvailable').textContent = '$' + Number(d.balance || 0).toFixed(2);
+
+  // KYC
+  const kycStatus = (d.kyc_status || '').toLowerCase();
+  const topStatus = document.getElementById('topStatus');
+  const kycNotice = document.getElementById('kycNotice');
+
+  if (kycStatus === 'approved') {
+    topStatus.className = 'status-pill verified';
+    topStatus.textContent = 'Verified';
+    document.getElementById('sbVerifiedDot').style.display = 'block';
+    kycNotice.innerHTML = '';
+  } else if (kycStatus === 'pending') {
+    topStatus.className = 'status-pill pending';
+    topStatus.textContent = 'Pending Review';
+    kycNotice.innerHTML = kycHTML('orange',
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      'Verification In Progress',
+      'Your documents are under review. We will notify you once the process is complete.'
+    );
+  } else {
+    topStatus.className = 'status-pill unverified';
+    topStatus.textContent = 'Action Required';
+    kycNotice.innerHTML = kycHTML('red',
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      'Verification Required',
+      'Complete your identity verification to unlock all features and broker access.',
+      `<a href="consent.html" class="btn btn-gold btn-sm" style="margin-top:12px; display:inline-flex;">Complete Verification</a>`
+    );
+  }
+
+  // Role-specific
+  const role = (d.role || '').toLowerCase();
+  if (role === 'manager') {
+    document.getElementById('managerSection').style.display = 'block';
+  } else {
+    document.getElementById('traderSection').style.display = 'block';
+    document.getElementById('traderCard').style.display = 'block';
+    const rt = d.risk_tier || 'Balanced Core Strategy';
+    document.getElementById('riskTierDash').textContent  = rt;
+    document.getElementById('riskTierPage').textContent  = rt;
+    document.getElementById('brokerStatusDash').textContent = d.broker_status || 'Awaiting Link';
+    document.getElementById('brokerStatusPage').textContent = d.broker_status || 'Awaiting Link';
+  }
+
+  // Referral link
+  document.getElementById('refLink').value = 'https://vershimakwaghshi.github.io/ppg-solutions/register.html?ref=' + refCode;
+  document.getElementById('refCodeDisplay').textContent = refCode.toUpperCase();
+}
+
+function kycHTML(type, icon, title, text, extra = '') {
+  return `<div class="kyc-notice ${type}">
+    <div class="kyc-icon">${icon}</div>
+    <div>
+      <div class="kyc-notice-title">${title}</div>
+      <div class="kyc-notice-text">${text}</div>
+      ${extra}
+    </div>
+  </div>`;
+}
+
+// ── AFFILIATE ───────────────────────────────────────────
+async function loadAffiliate() {
+  const d = profileData;
+  const refCode = d.referral_code || currentUser.id.slice(0,6);
+  const { data: members } = await sb.from('profiles')
+    .select('full_name, referral_code, kyc_status, rewards, created_at')
+    .eq('referred_by', refCode);
+
+  const body = document.getElementById('networkBody');
+  const total = members ? members.length : 0;
+  const verified = members ? members.filter(m => m.kyc_status === 'approved').length : 0;
+  const earnings = members ? members.reduce((s,m) => s + Number(m.rewards || 0), 0) : 0;
+
+  document.getElementById('refCount').textContent    = total;
+  document.getElementById('refVerified').textContent = verified;
+  document.getElementById('refEarnings').textContent = '$' + earnings.toFixed(2);
+
+  if (members && members.length) {
+    body.innerHTML = members.map(m => {
+      const joined = m.created_at ? new Date(m.created_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const badgeClass = m.kyc_status === 'approved' ? 'badge-green' : 'badge-orange';
+      const badgeText  = m.kyc_status === 'approved' ? 'Verified' : (m.kyc_status === 'pending' ? 'Pending' : 'Unverified');
+      return `<tr>
+        <td>${m.full_name || 'Member'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;">PPG-${(m.referral_code||'—').toUpperCase()}</td>
+        <td>${joined}</td>
+        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+        <td>$${Number(m.rewards||0).toFixed(2)}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">No referrals yet. Share your link to start earning.</td></tr>';
+  }
+}
+
+// ── TRANSACTIONS ────────────────────────────────────────
+async function loadTransactions() {
+  const body = document.getElementById('txBody');
+  try {
+    const { data: txs } = await sb.from('transactions')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    if (txs && txs.length) {
+      body.innerHTML = txs.map(tx => {
+        const date = new Date(tx.created_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+        const isDeposit = (tx.type || '').toLowerCase() === 'deposit';
+        const typeHTML = isDeposit
+          ? `<span class="tx-type deposit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>Deposit</span>`
+          : `<span class="tx-type withdrawal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>Withdrawal</span>`;
+        const statusClass = tx.status === 'completed' ? 'badge-green' : tx.status === 'pending' ? 'badge-orange' : 'badge-red';
+        const ref = tx.reference || tx.id?.slice(0,8).toUpperCase() || '—';
+        return `<tr>
+          <td>${date}</td>
+          <td>${typeHTML}</td>
+          <td style="font-weight:600;">$${Number(tx.amount||0).toFixed(2)}</td>
+          <td><span class="badge ${statusClass}">${tx.status||'—'}</span></td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);">${ref}</td>
+        </tr>`;
+      }).join('');
+    } else {
+      body.innerHTML = '<tr class="empty-row"><td colspan="5">No transactions yet.</td></tr>';
+    }
+  } catch(e) {
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">Could not load transactions.</td></tr>';
+  }
+}
+
+// ── PROFILE ─────────────────────────────────────────────
+function loadProfile() {
+  const d = profileData;
+  const refCode = d.referral_code || currentUser.id.slice(0,6);
+  document.getElementById('profileName').value      = d.full_name || d.legal_name || '—';
+  document.getElementById('profileEmail').value     = currentUser.email || '—';
+  document.getElementById('profileMemberId').value  = 'PPG-' + refCode.toUpperCase();
+  document.getElementById('profileStanding').value  = d.membership_status || 'Active';
+
+  const kycStatus = (d.kyc_status || '').toLowerCase();
+  const badge = document.getElementById('profileKycBadge');
+  const notice = document.getElementById('profileKycNotice');
+  const profileKycNotice = document.getElementById('profileKycNotice');
+
+  if (kycStatus === 'approved') {
+    badge.className = 'status-pill verified'; badge.textContent = 'Verified';
+    notice.innerHTML = kycHTML('green',
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`,
+      'Identity Verified',
+      'Your identity has been verified. Your account has full access.'
+    );
+  } else if (kycStatus === 'pending') {
+    badge.className = 'status-pill pending'; badge.textContent = 'Pending';
+    notice.innerHTML = kycHTML('orange',
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      'Verification Pending',
+      'Your documents have been submitted and are currently under review.'
+    );
+  } else {
+    badge.className = 'status-pill unverified'; badge.textContent = 'Action Required';
+    notice.innerHTML = kycHTML('red',
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+      'Verification Required',
+      'Please complete your identity verification to access all features.',
+      `<a href="consent.html" class="btn btn-gold btn-sm" style="margin-top:12px; display:inline-flex;">Start Verification</a>`
+    );
+  }
+}
+
+// ── ADMIN ────────────────────────────────────────────────
+async function loadAdmin() {
+  const body = document.getElementById('adminBody');
+  try {
+    const { data: pending } = await sb.from('profiles')
+      .select('full_name, role, kyc_status, created_at, id')
+      .eq('kyc_status', 'pending');
+    if (pending && pending.length) {
+      body.innerHTML = pending.map(p => {
+        const date = new Date(p.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+        return `<tr>
+          <td>${p.full_name||'Member'}</td>
+          <td>${p.role||'Member'}</td>
+          <td>${date}</td>
+          <td><span class="badge badge-orange">Pending</span></td>
+          <td><button class="btn btn-outline btn-sm">Review</button></td>
+        </tr>`;
+      }).join('');
+    } else {
+      body.innerHTML = '<tr class="empty-row"><td colspan="5">No pending applications.</td></tr>';
+    }
+  } catch(e) {
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">Could not load queue.</td></tr>';
+  }
+}
+
+// ── WITHDRAWAL SUBMIT ────────────────────────────────────
+async function submitWithdrawal() {
+  const amount  = parseFloat(document.getElementById('wdAmount').value);
+  const name    = document.getElementById('wdName').value.trim();
+  const bank    = document.getElementById('wdBank').value.trim();
+  const acct    = document.getElementById('wdAcct').value.trim();
+  const routing = document.getElementById('wdRouting').value.trim();
+  const notes   = document.getElementById('wdNotes').value.trim();
+  const msg     = document.getElementById('wdMsg');
+
+  if (!amount || amount <= 0) { msg.innerHTML = '<span style="color:var(--red);">Please enter a valid amount.</span>'; return; }
+  if (!name || !bank || !acct) { msg.innerHTML = '<span style="color:var(--red);">Please fill in all banking details.</span>'; return; }
+
+  const balance = Number(profileData.balance || 0);
+  if (amount > balance) { msg.innerHTML = '<span style="color:var(--red);">Amount exceeds your available balance.</span>'; return; }
+
+  msg.innerHTML = '<span style="color:var(--muted);">Submitting…</span>';
+
+  try {
+    const { error } = await sb.from('withdrawal_requests').insert({
+      user_id:       currentUser.id,
+      amount,
+      account_name:  name,
+      bank_name:     bank,
+      account_number: acct,
+      routing_code:  routing,
+      notes,
+      status:        'pending',
+      created_at:    new Date().toISOString(),
+    });
+
+    if (error) throw error;
+    msg.innerHTML = '<span style="color:var(--green); font-weight:600;">✓ Withdrawal request submitted. Our team will process it within 1–3 business days.</span>';
+    ['wdAmount','wdName','wdBank','wdAcct','wdRouting','wdNotes'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) {
+    msg.innerHTML = '<span style="color:var(--red);">Submission failed. Please try again or contact support.</span>';
+    console.error(e);
+  }
+}
+
+// ── UTILS ────────────────────────────────────────────────
 function copyLink() {
-  const link = document.getElementById('refLink');
-  link.select();
+  const input = document.getElementById('refLink');
+  input.select();
   document.execCommand('copy');
-  alert('Link copied to clipboard.');
+  const btn = event.target;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 2000);
 }
 
 async function logoutUser() {
@@ -641,5 +1416,6 @@ async function logoutUser() {
   window.location.href = 'login.html';
 }
 </script>
+
 </body>
 </html>
