@@ -10,7 +10,7 @@
   <script src="config.js"></script>
   <style>
     :root {
-      --bg:        #f5f6f8;
+      --bg:        #eef0f4;
       --sidebar:   #0f1824;
       --sidebar2:  #161f2e;
       --panel:     #ffffff;
@@ -40,6 +40,8 @@
 body {
   font-family: 'Outfit', sans-serif;
   background: var(--bg);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
+  background-size: 24px 24px;
   color: var(--text);
   display: flex;
   min-height: 100vh;
@@ -556,8 +558,6 @@ body {
   .balance-hero { padding: 22px 20px; }
   .mobile-menu-btn { display: flex !important; }
   .form-row { grid-template-columns: 1fr; }
-  /* Sidebar overlay */
-  .sb-overlay { display: block !important; }
 }
 @media (max-width: 400px) {
   .stat-grid { grid-template-columns: 1fr; }
@@ -574,6 +574,7 @@ body {
   inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 199;
+  cursor: pointer;
 }
 
 /* Manager only */
@@ -728,7 +729,7 @@ body {
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
     </div>
     <div class="topbar-right">
-      <div class="icon-btn" title="Notifications" onclick="navigate('notifications')">
+      <div class="icon-btn" title="Notifications" onclick="navigate('notifications')" style="cursor:pointer;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <div class="notify-dot" id="notifyDot"></div>
       </div>
@@ -768,8 +769,8 @@ body {
       <div class="stat-card-value" id="displayRewards">$0.00</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-label">Network Volume</div>
-      <div class="stat-card-value" id="displayNetwork">$0.00</div>
+      <div class="stat-card-label">Network Size</div>
+      <div class="stat-card-value" id="displayNetwork">0 members</div>
     </div>
     <div class="stat-card">
       <div class="stat-card-label">Account Standing</div>
@@ -1047,6 +1048,24 @@ body {
     </div>
   </div>
 
+  <!-- ══ NOTIFICATIONS PAGE ════════════════════════════ -->
+
+  <div class="page" id="page-notifications">
+    <div style="padding:28px 32px;">
+      <div class="page-header">
+        <h1>Notifications</h1>
+        <p>System messages and announcements</p>
+      </div>
+      <div class="card" id="notifCard">
+        <div class="card-body-flush">
+          <div id="notifList" style="padding:12px 0;">
+            <div style="text-align:center; padding:40px; color:var(--muted2); font-size:13px;">Loading notifications…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ ADMIN PAGE (managers) ═════════════════════════ -->
 
   <div class="page" id="page-admin">
@@ -1082,14 +1101,15 @@ let profileData = null;
 
 // ── NAVIGATION ──────────────────────────────────────────
 const PAGE_TITLES = {
-  dashboard:    'Dashboard',
-  deposit:      'Deposit Funds',
-  withdrawal:   'Withdraw Funds',
-  transactions: 'Transaction History',
-  affiliate:    'Partner Room',
-  profile:      'Account Profile',
-  market:       'Market Allocation',
-  admin:        'Admin Oversight',
+  dashboard:     'Dashboard',
+  deposit:       'Deposit Funds',
+  withdrawal:    'Withdraw Funds',
+  transactions:  'Transaction History',
+  affiliate:     'Partner Room',
+  profile:       'Account Profile',
+  market:        'Market Allocation',
+  admin:         'Admin Oversight',
+  notifications: 'Notifications',
 };
 
 function navigate(page) {
@@ -1106,12 +1126,14 @@ function navigate(page) {
 
   // Close mobile sidebar
   document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').style.display = 'none';
 
   // Lazy load page data
   if (page === 'affiliate') loadAffiliate();
   if (page === 'transactions') loadTransactions();
   if (page === 'profile') loadProfile();
   if (page === 'admin') loadAdmin();
+  if (page === 'notifications') loadNotifications();
 }
 
 function toggleDropdown(id, el) {
@@ -1162,9 +1184,14 @@ function renderDashboard() {
   // Balance
   document.getElementById('displayBalance').textContent = '$' + Number(d.balance || 0).toFixed(2);
   document.getElementById('displayRewards').textContent  = '$' + Number(d.rewards || 0).toFixed(2);
-  document.getElementById('displayNetwork').textContent  = '$' + Number(d.network_earnings || 0).toFixed(2);
   document.getElementById('displayMembership').textContent = d.membership_status || 'Active';
   document.getElementById('wdAvailable').textContent = '$' + Number(d.balance || 0).toFixed(2);
+
+  // Network volume = count of referred members (loaded async)
+  const refCode = d.referral_code || currentUser.id.slice(0,6);
+  sb.from('profiles').select('id', { count: 'exact', head: true }).eq('referred_by', refCode).then(({ count }) => {
+    document.getElementById('displayNetwork').textContent = (count || 0) + ' member' + ((count || 0) !== 1 ? 's' : '');
+  });
 
   // KYC
   const kycStatus = (d.kyc_status || '').toLowerCase();
@@ -1359,7 +1386,57 @@ async function loadAdmin() {
   }
 }
 
-// ── WITHDRAWAL SUBMIT ────────────────────────────────────
+// ── NOTIFICATIONS ────────────────────────────────────────
+async function loadNotifications() {
+  const list = document.getElementById('notifList');
+  try {
+    const { data: notifs } = await sb.from('notifications')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    if (notifs && notifs.length) {
+      list.innerHTML = notifs.map(n => {
+        const date = new Date(n.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+        const isRead = n.read;
+        return `<div style="
+          display:flex; gap:14px; align-items:flex-start;
+          padding:16px 20px;
+          border-bottom:1px solid var(--border);
+          background:${isRead ? 'transparent' : 'rgba(201,168,76,0.04)'};
+          transition:background 0.15s;
+        ">
+          <div style="
+            width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:6px;
+            background:${isRead ? 'var(--border)' : 'var(--gold)'};
+          "></div>
+          <div style="flex-grow:1;">
+            <div style="font-size:13.5px; font-weight:${isRead ? '400' : '600'}; color:var(--text); margin-bottom:4px;">${n.title || 'Notification'}</div>
+            <div style="font-size:12.5px; color:var(--muted); line-height:1.5;">${n.message || ''}</div>
+            <div style="font-size:11px; color:var(--muted2); margin-top:6px;">${date}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Mark all as read
+      await sb.from('notifications').update({ read: true }).eq('user_id', currentUser.id).eq('read', false);
+      document.getElementById('notifyDot').style.display = 'none';
+    } else {
+      list.innerHTML = `<div style="text-align:center; padding:48px 20px;">
+        <div style="font-size:32px; margin-bottom:12px;">🔔</div>
+        <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:6px;">You're all caught up</div>
+        <div style="font-size:13px; color:var(--muted2);">No notifications at this time.</div>
+      </div>`;
+    }
+  } catch(e) {
+    // Fallback: show announcements from profile data if notifications table doesn't exist yet
+    list.innerHTML = `<div style="text-align:center; padding:48px 20px;">
+      <div style="font-size:32px; margin-bottom:12px;">🔔</div>
+      <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:6px;">You're all caught up</div>
+      <div style="font-size:13px; color:var(--muted2);">No new notifications.</div>
+    </div>`;
+  }
+}
 async function submitWithdrawal() {
   const amount  = parseFloat(document.getElementById('wdAmount').value);
   const name    = document.getElementById('wdName').value.trim();
