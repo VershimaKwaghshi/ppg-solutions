@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Member Dashboard — PPG</title>
+  <title>Compliance & Verification — PPG</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <style>
     :root {
       --bg: #030712;
-      --sidebar: #090d16;
       --panel: #0f172a;
       --accent: #c9a84c;
       --text-main: #f8fafc;
       --text-muted: #64748b;
       --border: rgba(255, 255, 255, 0.05);
+      --blue: #1e3a8a;
+      --blue-hover: #1d4ed8;
       --green: #10b981;
-      --orange: #f59e0b;
       --red: #ef4444;
     }
 
@@ -32,29 +32,34 @@
       letter-spacing: -0.01em;
     }
 
-    /* Fixed Clean Navigation Sidebar */
-    .sidebar {
-      width: 260px;
-      background: var(--sidebar);
+    /* Asymmetric Workspace Grid Layout */
+    .split-container {
+      display: grid;
+      grid-template-columns: 1.4fr 1.6fr;
+      width: 100%;
+    }
+
+    /* Left Pane: Structured Legal Disclosures */
+    .disclosure-pane {
+      background: #090d16;
       border-right: 1px solid var(--border);
-      padding: 40px 24px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      z-index: 100;
+      padding: 50px;
       display: flex;
       flex-direction: column;
+    }
+
+    .pane-header {
+      margin-bottom: 32px;
     }
 
     .logo {
       font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 40px;
       color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 24px;
     }
     
     .logo-dot {
@@ -64,136 +69,61 @@
       border-radius: 50%;
     }
 
-    .nav-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .disclosure-pane h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .disclosure-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      overflow-y: auto;
+      padding-right: 12px;
       flex-grow: 1;
     }
 
-    .side-link {
+    .disclosure-text p {
+      margin-bottom: 16px;
+    }
+
+    /* Right Pane: Verification Action Panel */
+    .action-pane {
+      padding: 50px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-size: 0.9rem;
-      font-weight: 500;
+      justify-content: center;
     }
 
-    .side-link:hover, .side-link.active {
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text-main);
-    }
-    
-    .side-link.active {
-      border-left: 3px solid var(--accent);
-      border-radius: 0 8px 8px 0;
-      padding-left: 13px;
+    .verification-card {
+      width: 100%;
+      max-width: 480px;
     }
 
-    /* Main Workspace Layout */
-    .main {
-      margin-left: 260px;
-      width: calc(100% - 260px);
-      padding: 40px 48px;
-      max-width: 1400px;
+    .panel-header {
+      margin-bottom: 28px;
     }
 
-    /* Top Utility Bar */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .top-left h2 {
-      font-size: 1.5rem;
+    .panel-header h3 {
+      font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    .member-id {
+    .panel-header p {
       color: var(--text-muted);
-      font-size: 0.8rem;
-      font-family: monospace;
+      font-size: 0.85rem;
     }
 
-    .top-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    /* Form Fields and Key-Value Styling */
+    .form-group {
+      margin-bottom: 20px;
     }
 
-    .notify {
-      position: relative;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.02);
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .notify-badge {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      min-width: 16px;
-      height: 16px;
-      padding: 0 4px;
-      border-radius: 50%;
-      background: var(--red);
-      font-size: 0.65rem;
-      font-weight: 700;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .status {
-      padding: 6px 14px;
-      border-radius: 4px;
+    .form-group label {
+      display: block;
       font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-    
-    .not-verified { background: rgba(239, 68, 68, 0.1); color: var(--red); }
-    .pending { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
-    .verified { background: rgba(16, 185, 129, 0.1); color: var(--green); }
-
-    /* Single Strip Telemetry Panel (Markets4You Style) */
-    .telemetry-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 32px;
-    }
-
-    .metric-block {
-      border-right: 1px solid var(--border);
-      padding: 0 24px;
-    }
-
-    .metric-block:last-child {
-      border-right: none;
-    }
-
-    .metric-block h4 {
-      font-size: 0.7rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -201,337 +131,242 @@
       font-weight: 600;
     }
 
-    .metric-val {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    /* Asymmetric Workspace Grid Layout */
-    .workspace-grid {
-      display: grid;
-      grid-template-columns: 1.6fr 1.4fr;
-      gap: 32px;
-      align-items: start;
-    }
-
-    .panel-card {
-      background: var(--panel);
+    .input-box {
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      margin-bottom: 30px;
+      border-radius: 6px;
+      padding: 2px;
     }
 
-    .panel-card h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: var(--text-main);
-      border-left: 3px solid var(--accent);
-      padding-left: 10px;
-    }
-
-    /* Clean Financial Tables */
-    table {
+    .input-box input, .input-box select {
       width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      font-size: 0.85rem;
-    }
-
-    th {
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-
-    tr:last-child td { border-bottom: none; }
-
-    /* Clean Link Inputs */
-    .link-wrapper {
-      display: flex;
-      gap: 12px;
-      background: rgba(0, 0, 0, 0.15);
-      border: 1px solid var(--border);
-      padding: 6px;
-      border-radius: 8px;
-    }
-
-    .link-wrapper input {
-      flex-grow: 1;
       background: transparent;
       border: none;
-      color: white;
-      padding: 8px 12px;
-      font-size: 0.85rem;
       outline: none;
-      font-family: monospace;
+      color: var(--text-main);
+      padding: 12px 14px;
+      font-size: 0.9rem;
     }
 
-    .btn-action {
-      background: #1e3a8a;
+    .input-box select option {
+      background: var(--panel);
+      color: var(--text-main);
+    }
+
+    /* Custom File Upload Container */
+    .file-upload-zone {
+      border: 1px dashed var(--border);
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 6px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .file-upload-zone:hover {
+      border-color: var(--accent);
+    }
+
+    .file-upload-zone p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .file-upload-zone span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* Clean Checkbox Text Alignment */
+    .checkbox-container {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0;
+      align-items: flex-start;
+    }
+
+    .checkbox-container input {
+      margin-top: 3px;
+    }
+
+    .checkbox-container label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--blue);
       color: white;
       border: none;
-      padding: 10px 18px;
+      padding: 14px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
     }
 
-    .btn-action:hover { background: #1d4ed8; }
-
-    #managerSection, #traderSection { display: none; }
-
-    @media (max-width: 1100px) {
-      .workspace-grid { grid-template-columns: 1fr; }
-      .telemetry-strip { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-      .metric-block { border-right: none; padding: 0; }
+    .btn-submit:hover {
+      background: var(--blue-hover);
     }
-    @media (max-width: 768px) {
-      body { flex-direction: column; }
-      .sidebar { width: 100%; position: relative; height: auto; padding: 24px; }
-      .main { margin-left: 0; width: 100%; padding: 24px; }
-      .telemetry-strip { grid-template-columns: 1fr; }
+
+    .status-msg {
+      font-size: 0.85rem;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .status-error { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-progress { background: rgba(245, 158, 11, 0.1); color: var(--orange); border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    @media (max-width: 968px) {
+      .split-container { grid-template-columns: 1fr; }
+      .disclosure-pane { display: none; }
+      .action-pane { padding: 40px 24px; }
     }
   </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo"><div class="logo-dot"></div> PPG Global</div>
-  <div class="nav-group">
-    <a class="side-link active" href="#">🏠 Dashboard</a>
-    <a class="side-link" href="payment.html">💳 Deposit Funds</a>
-    <a class="side-link" href="#">💸 Withdrawals</a>
-    <a class="side-link" href="#">👤 Account Profile</a>
-  </div>
-  <a class="side-link" href="#" onclick="logoutUser()" style="color: var(--red);"><b>🚪 End Session</b></a>
-</div>
-
-<div class="main">
-  <div class="topbar">
-    <div class="top-left">
-      <h2 id="welcomeName">Welcome back</h2>
-      <div class="member-id" id="displayMemberId">Member ID: --</div>
+<div class="split-container">
+  
+  <div class="disclosure-pane">
+    <div class="logo"><div class="logo-dot"></div> PPG Global</div>
+    <div class="pane-header">
+      <h2>Risk Acknowledgment & Disclosure</h2>
     </div>
-    <div class="top-right">
-      <div class="notify">
-        🔔<div class="notify-badge">0</div>
-      </div>
-      <div class="status pending" id="topStatus">Verification Pending</div>
+    <div class="disclosure-text">
+      <p>Operating within global financial allocation channels involves significant risk vectors. Capital allocations are subject to real-time market liquidity dynamics, structural slippage parameters, and system execution adjustments.</p>
+      <p>By executing this documentation asset, you explicitly verify that you comprehend the risk management rules of the PPG ecosystem, agree to institutional tracking allocations, and verify that all submitted verification data matches your official legal status profiles.</p>
+      <p>Furthermore, you confirm that your identity documentation remains valid and unexpired under regulatory transparency guidelines.</p>
     </div>
   </div>
 
-  <div class="telemetry-strip">
-    <div class="metric-block">
-      <h4>Available Balance</h4>
-      <div class="metric-val" id="displayBalance">$0.00</div>
-    </div>
-    <div class="metric-block">
-      <h4>Reward Ledger</h4>
-      <div class="metric-val" id="displayRewards">$0.00</div>
-    </div>
-    <div class="metric-block">
-      <h4>Network Volume</h4>
-      <div class="metric-val" id="displayNetwork">$0.00</div>
-    </div>
-    <div class="metric-block">
-      <h4>Account Standing</h4>
-      <div class="metric-val" id="displayMembership" style="color: var(--accent);">Active</div>
-    </div>
-  </div>
-
-  <div class="workspace-grid">
-    
-    <div class="left-pane">
-      
-      <div class="panel-card">
-        <h3>Identity Verification & Compliance</h3>
-        <div id="verifyBox">Loading compliance profiles...</div>
+  <div class="action-pane">
+    <div class="verification-card">
+      <div class="panel-header">
+        <h3>Compliance Authentication</h3>
+        <p>Complete your identity profiling paths to initialize secure broker routing access links.</p>
       </div>
 
-      <div id="traderSection">
-        <div class="panel-card">
-          <h3>Market Allocation Configuration</h3>
-          <table>
-            <tr><th>Current Profile State</th><td>Active Managed Profile</td></tr>
-            <tr><th>Selected Risk Profile Tier</th><td id="riskTier">Loading Risk Metrics...</td></tr>
-            <tr><th>Broker Routing Verification</th><td id="brokerStatus">Awaiting Processing Link</td></tr>
-          </table>
+      <div class="status-msg status-error" id="errorBox">An error occurred during submission.</div>
+      <div class="status-msg status-progress" id="progressBox">Uploading identification assets to network...</div>
+
+      <form id="complianceForm" onsubmit="executeCompliancePipeline(event)">
+        <div class="form-group">
+          <label>Identification Asset Type</label>
+          <div class="input-box">
+            <select id="idType" required>
+              <option value="passport">International Passport</option>
+              <option value="national_id">National Identity Document</option>
+              <option value="drivers_license">Driver's License Matrix</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div id="managerSection">
-        <div class="panel-card">
-          <h3>Administrative Oversight Queue</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Applicant Profile</th>
-                <th>Target Allocation</th>
-                <th>Documentation Matrix</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Sarah Jenkins</td>
-                <td>Trader Matrix</td>
-                <td><span style="color: var(--orange); font-weight:600;">Pending Verification Review</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="form-group">
+          <label>Document Serial Number</label>
+          <div class="input-box">
+            <input type="text" id="idNumber" required placeholder="Ex: A0029311">
+          </div>
         </div>
-      </div>
 
-    </div>
-
-    <div class="right-pane">
-      
-      <div class="panel-card">
-        <h3>Partnership Attribution</h3>
-        <p style="margin-bottom:12px; font-size:0.85rem; color: var(--text-muted);">Share your referral link configuration:</p>
-        <div class="link-wrapper">
-          <input id="refLink" readonly value="Loading orchestration link...">
-          <button class="btn-action" onclick="copyLink()">Copy</button>
+        <div class="form-group">
+          <label>Upload Document Image Asset</label>
+          <div class="file-upload-zone" onclick="document.getElementById('fileInput').click()">
+            <p id="uploadPrompt">Drag and drop file here or <span>Browse Files</span></p>
+            <input type="file" id="fileInput" accept="image/*" required style="display:none;" onchange="handleFileSelection(this)">
+          </div>
         </div>
-      </div>
 
-      <div class="panel-card">
-        <h3>Downstream Attribution Network</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Partner</th>
-              <th>Status State</th>
-              <th>Accrued Yield</th>
-            </tr>
-          </thead>
-          <tbody id="networkBody">
-            <tr><td colspan="3" style="color: var(--text-muted);">Awaiting query response...</td></tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="form-group" style="margin-top: 24px;">
+          <label>Digital Signature Verification</label>
+          <div class="input-box">
+            <input type="text" id="signature" required placeholder="Type Full Legal Name to Sign">
+          </div>
+        </div>
 
+        <div class="checkbox-container">
+          <input type="checkbox" id="consentCheck" required>
+          <label for="consentCheck">I explicitly agree to the risk disclosure documentation requirements, system tracking protocols, and data allocation profiles outlined by PPG Global.</label>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Compliance Profile</button>
+      </form>
     </div>
-
   </div>
+
 </div>
 
 <script>
 const { createClient } = supabase;
 const sb = createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABASE_ANON_KEY);
 
-window.addEventListener('load', async () => {
-  await initializeDashboardRuntime();
-});
+let selectedFileAsset = null;
 
-async function initializeDashboardRuntime() {
-  try {
-    const { data: { user }, error: authError } = await sb.auth.getUser();
-    if (authError || !user) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    const { data, error: dbError } = await sb.from('profiles').select('*').eq('id', user.id).single();
-    if (dbError && dbError.code !== 'PGRST116') throw dbError;
-
-    if (data) {
-      const nameString = data.full_name || data.legal_name || 'Member';
-      document.getElementById('welcomeName').innerText = 'Welcome, ' + nameString;
-      document.getElementById('displayMembership').innerText = data.membership_status || 'Active';
-      
-      document.getElementById('displayBalance').innerText = '$' + Number(data.balance || 0).toFixed(2);
-      document.getElementById('displayRewards').innerText = '$' + Number(data.rewards || 0).toFixed(2);
-      document.getElementById('displayNetwork').innerText = '$' + Number(data.network_earnings || 0).toFixed(2);
-      
-      const badge = document.querySelector('.notify-badge');
-      const notifCount = Number(data.notifications || 0);
-      badge.innerText = notifCount;
-      badge.style.display = notifCount <= 0 ? 'none' : 'flex';
-      
-      const targetRole = (data.role || '').toLowerCase();
-      if (targetRole === 'manager') {
-        document.getElementById('managerSection').style.display = 'block';
-        document.getElementById('traderSection').style.display = 'none';
-      } else {
-        document.getElementById('managerSection').style.display = 'none';
-        document.getElementById('traderSection').style.display = 'block';
-      }
-      
-      const refCode = data.referral_code || user.id.slice(0,6);
-      document.getElementById('displayMemberId').innerText = 'Member ID: PPG-' + refCode.toUpperCase();
-      document.getElementById('refLink').value = 'https://vershimakwaghshi.github.io/ppg-solutions/register.html?ref=' + refCode;
-      
-      if (document.getElementById('riskTier')) {
-        document.getElementById('riskTier').innerText = data.risk_tier || 'Balanced Core Strategy';
-      }
-
-      // Sync KYC View Blocks
-      const topStatus = document.getElementById('topStatus');
-      const verifyBox = document.getElementById('verifyBox');
-
-      if (data.kyc_status === 'approved') {
-        topStatus.className = 'status verified';
-        topStatus.innerText = 'Verified';
-        verifyBox.innerHTML = `<div style="color: var(--green); font-weight:600; font-size:0.85rem;">✓ Compliance profile architecture verified and active.</div>`;
-      } else if (data.kyc_status === 'pending') {
-        topStatus.className = 'status pending';
-        topStatus.innerText = 'Verification Pending';
-        verifyBox.innerHTML = `<div style="color: var(--orange); font-weight:600; font-size:0.85rem;">⏳ Document verification processing queue is active. Awaiting review.</div>`;
-      } else {
-        topStatus.className = 'status not-verified';
-        topStatus.innerText = 'Action Required';
-        verifyBox.innerHTML = `
-          <p style="color: var(--text-muted); font-size:0.85rem; margin-bottom:16px;">Identity authentication tracking must be processed to finalize broker clearings.</p>
-          <a href="consent.html" class="btn-action" style="text-decoration:none; display:inline-block;">Complete Compliance Profile</a>`;
-      }
-
-      // Fetch Referral Downlines
-      const { data: networkMembers } = await sb.from('profiles').select('full_name,kyc_status,rewards').eq('referred_by', refCode);
-      const netBody = document.getElementById('networkBody');
-      
-      if (networkMembers && networkMembers.length) {
-        netBody.innerHTML = '';
-        networkMembers.forEach(m => {
-          netBody.innerHTML += `
-            <tr>
-              <td>${m.full_name || 'Member'}</td>
-              <td><span style="color:${m.kyc_status === 'approved' ? 'var(--green)' : 'var(--orange)'}">${m.kyc_status || 'Pending'}</span></td>
-              <td>$${Number(m.rewards || 0).toFixed(2)}</td>
-            </tr>`;
-        });
-      } else {
-        netBody.innerHTML = `<tr><td colspan="3" style="color: var(--text-muted); font-size:0.85rem;">No partner registrations linked on path network.</td></tr>`;
-      }
-    }
-  } catch (err) {
-    console.error('Runtime execution variant:', err);
+function handleFileSelection(input) {
+  if (input.files && input.files[0]) {
+    selectedFileAsset = input.files[0];
+    document.getElementById('uploadPrompt').innerHTML = `Selected File: <b style="color:var(--accent);">${selectedFileAsset.name}</b>`;
   }
 }
 
-function copyLink() {
-  const link = document.getElementById('refLink');
-  link.select();
-  document.execCommand('copy');
-  alert('Attribution link cached to clipboard.');
-}
+async function executeCompliancePipeline(event) {
+  event.preventDefault();
+  const errorBox = document.getElementById('errorBox');
+  const progressBox = document.getElementById('progressBox');
+  
+  errorBox.style.display = 'none';
+  progressBox.style.display = 'block';
 
-async function logoutUser() {
-  await sb.auth.signOut();
-  localStorage.removeItem('ppg_email');
-  localStorage.removeItem('ppg_payment_confirmed');
-  window.location.href = 'login.html';
+  try {
+    const { data: { user }, error: authError } = await sb.auth.getUser();
+    if (authError || !user) throw new Error('Session path context expired. Re-authenticate.');
+
+    if (!selectedFileAsset) throw new Error('Please select an identity verification document asset.');
+
+    // 1. Route asset cleanly to standard Storage bucket
+    const fileExtension = selectedFileAsset.name.split('.').pop();
+    const storagePath = `${user.id}/${Date.now()}_kyc.${fileExtension}`;
+
+    const { data: uploadData, error: uploadError } = await sb.storage
+      .from('kyc')
+      .upload(storagePath, selectedFileAsset, { cacheControl: '3600', upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    // 2. Fetch public access path configuration
+    const { data: urlData } = sb.storage.from('kyc').getPublicUrl(storagePath);
+    const publicKycUrl = urlData.publicUrl;
+
+    // 3. Update profile row parameters
+    const idType = document.getElementById('idType').value;
+    const idNumber = document.getElementById('idNumber').value.trim();
+
+    const { error: dbError } = await sb.from('profiles').update({
+      id_type: idType,
+      id_number: idNumber,
+      kyc_url: publicKycUrl,
+      consent_signed: true,
+      kyc_status: 'pending'
+    }).eq('id', user.id);
+
+    if (dbError) throw dbError;
+
+    progressBox.style.display = 'none';
+    
+    // Direct forward to registration flow success panel
+    window.location.href = 'complete.html';
+
+  } catch (err) {
+    progressBox.style.display = 'none';
+    errorBox.innerText = err.message || 'Verification pipeline anomaly encountered.';
+    errorBox.style.display = 'block';
+  }
 }
 </script>
 </body>
