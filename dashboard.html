@@ -3,515 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Member Dashboard — PPG Global</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght=300;400;500;600;700&family=JetBrains+Mono:wght=400;500&display=swap" rel="stylesheet">
+  <title>Dashboard — PPG Trading Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght=400;500;600;700&family=Outfit:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+
   <style>
     :root {
-      --bg:        #eef0f4;
-      --sidebar:   #0f1824;
-      --sidebar2:  #161f2e;
-      --panel:     #ffffff;
-      --gold:      #c9a84c;
-      --gold-lt:   rgba(201,168,76,0.12);
-      --gold-bdr:  rgba(201,168,76,0.3);
-      --text:      #111827;
-      --muted:     #6b7280;
-      --muted2:    #9ca3af;
-      --border:    #e5e7eb;
-      --sidebar-w: 260px;
-      --green:     #059669;
-      --green-bg:  rgba(5,150,105,0.08);
-      --orange:    #d97706;
-      --orange-bg: rgba(217,119,6,0.08);
-      --red:       #dc2626;
-      --red-bg:    rgba(220,38,38,0.08);
-      --s-text:    #94a3b8;
-      --s-muted:   #475569;
-      --s-active:  rgba(255,255,255,0.06);
-      --s-border:  rgba(255,255,255,0.06);
+      --navy: #040d1c;
+      --navy2: #071428;
+      --navy3: #0a1a35;
+      --blue: #1640d6;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --white: #ffffff;
+      --grey: #94a3b8;
+      --grey2: #64748b;
+      --border: rgba(255, 255, 255, 0.06);
+      --red: #ef4444;
+      --green: #22c55e;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Outfit', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
+
+    /* CORE SECTIONS */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 70px; background: var(--navy2); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--white); }
+    .nav-logo img { height: 36px; width: 36px; }
+    .logout-btn { background: none; border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; color: var(--grey); cursor: pointer; }
+
+    .main-layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 70px); }
+    
+    /* SIDEBAR */
+    .sidebar { background: var(--navy2); border-right: 1px solid var(--border); padding: 30px 20px; }
+    .side-link { display: block; padding: 12px 16px; color: var(--grey); text-decoration: none; border-radius: 8px; margin-bottom: 8px; font-weight: 500; cursor: pointer; background: none; border: none; width: 100%; text-align: left; font-size: 0.95rem; }
+    .side-link.active { background: rgba(201, 168, 76, 0.1); color: var(--gold); font-weight: 600; }
+
+    /* PANELS */
+    .content-pane { padding: 40px; display: none; }
+    .content-pane.active { display: block; }
+
+    /* WALLET BOXES */
+    .balance-card { background: linear-gradient(135deg, var(--navy3), var(--navy2)); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 480px; margin-bottom: 30px; }
+    .bal-label { font-size: 0.75rem; color: var(--grey2); text-transform: uppercase; letter-spacing: 2px; }
+    .bal-val { font-size: 3rem; font-family: 'Cormorant Garamond', serif; color: var(--gold); font-weight: 700; margin: 10px 0; }
+
+    /* FORMS */
+    .form-box { background: var(--navy2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.75rem; color: var(--grey); text-transform: uppercase; margin-bottom: 6px; }
+    .field input, .field textarea { width: 100%; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; color: var(--white); outline: none; }
+    .submit-btn { width: 100%; background: var(--gold); color: #0a0a0a; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    
+    /* OVERLAY SHIELD */
+    #lockShield { position: fixed; inset: 0; background: var(--navy); z-index: 99999; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--grey); }
+  </style>
+</head>
+<body>
+
+<div id="lockShield">Validating secure security clearances...</div>
+
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <img src="logo.png" alt="PPG" onerror="this.style.display='none'">
+    <div class="logo-text"><strong>PPG Trading Club</strong></div>
+  </a>
+  <button class="logout-btn" onclick="handleLogout()">Sign Out Profile</button>
+</nav>
+
+<div class="main-layout">
+  <div class="sidebar">
+    <button class="side-link active" onclick="switchPane('overview', this)">📊 Overview Console</button>
+    <button class="side-link" onclick="switchPane('withdraw', this)">🏛 Settlement Outflow</button>
+  </div>
+
+  <div class="content-container">
+    
+    <div class="content-pane active" id="pane-overview">
+      <h2 style="font-family:'Cormorant Garamond', serif; font-size:2.5rem; margin-bottom:8px;">Performance Engine Account Overview</h2>
+      <p style="color:var(--grey); margin-bottom:32px;">Real-time asset validation monitor parameters.</p>
+      
+      <div class="balance-card">
+        <div class="bal-label">Settled Wallet Capital Value (USD)</div>
+        <div class="bal-val">$0.00</div>
+        <div style="font-size:0.8rem; color:var(--green);">● Profile Node Active Verification Engine Linked</div>
+      </div>
+    </div>
+
+    <div class="content-pane" id="pane-withdraw">
+      <h2 style="font-family:'Cormorant Garamond', serif; font-size:2.5rem; margin-bottom:8px;">Request Settlement Outflow</h2>
+      <p style="color:var(--grey); margin-bottom:32px;">Route processed equity out of system parameters into physical account frameworks.</p>
+      
+      <div class="form-box">
+        <div class="field">
+          <label>Settlement Capital Target Volume (USD) *</label>
+          <input type="number" id="withdrawAmount" placeholder="0.00" min="0.01" step="0.01">
+        </div>
+        <div class="field">
+          <label>Bank or Platform Institution Identifier Name *</label>
+          <input type="text" id="bankName" placeholder="e.g. Opay, Zenith Bank, Binance Wallet">
+        </div>
+        <div class="field">
+          <label>Destination Account / Core String ID *</label>
+          <input type="text" id="accountNumber" placeholder="Account identifier parameters">
+        </div>
+        <div class="field">
+          <label>Official Account Legal Profile Holder Name *</label>
+          <input type="text" id="accountName" placeholder="Legal destination text signature matches">
+        </div>
+        <div class="field">
+          <label>Routing Network Type / Layer System (Optional)</label>
+          <input type="text" id="routingCode" placeholder="e.g. TRC20, Sort-Code, Swift Network ID">
+        </div>
+        <div class="field">
+          <label>Core Processing Memo / Notation Strings (Optional)</label>
+          <textarea id="withdrawNotes" placeholder="Additional execution specifications..."></textarea>
+        </div>
+        <button class="submit-btn" onclick="executeWithdrawal()">Submit Capital Outflow Order</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const sb = supabase.createClient(window.PPG_CONFIG.SUPABASE_URL, window.PPG_CONFIG.SUPABASE_ANON_KEY);
+
+  // Safe initialization block that fires after all HTML is ready
+  window.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { window.location.href = 'register.html'; return; }
+
+      const { data: profile } = await sb.from('profiles').select('payment_status').eq('id', user.id).single();
+      const localCheck = localStorage.getItem('ppg_payment_confirmed');
+
+      // Lock tracking checking structure parameters
+      if (!profile && localCheck !== 'yes') {
+        alert('Access Denied: Please finalize account initialization step payments first.');
+        window.location.href = 'payment.html';
+        return;
+      }
+
+      // Everything checks out safely, drop the visibility screen block shield layer
+      const shield = document.getElementById('lockShield');
+      if (shield) shield.style.display = 'none';
+
+    } catch (e) {
+      window.location.href = 'payment.html';
+    }
+  });
+
+  function switchPane(id, btn) {
+    document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.side-link').forEach(b => b.classList.remove('active'));
+    document.getElementById('pane-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  async function executeWithdrawal() {
+    const amount = document.getElementById('withdrawAmount').value.trim();
+    const bankName = document.getElementById('bankName').value.trim();
+    const accountNumber = document.getElementById('accountNumber').value.trim();
+    const accountName = document.getElementById('accountName').value.trim();
+    const routingCode = document.getElementById('routingCode').value.trim();
+    const notes = document.getElementById('withdrawNotes').value.trim();
+
+    if (!amount || !bankName || !accountNumber || !accountName) {
+      alert('Please fill out all mandatory fields specified.');
+      return;
     }
 
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    const btn = document.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Processing settlement transaction record...';
 
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--bg);
-      background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
-      background-size: 24px 24px;
-      color: var(--text);
-      display: flex;
-      min-height: 100vh;
-      font-size: 14px;
-      -webkit-font-smoothing: antialiased;
-    }
+    try {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) throw new Error('Session signature invalid or absent.');
 
-    /* ══ SIDEBAR ════════════════════════════════════════ */
-    .sidebar {
-      width: var(--sidebar-w);
-      background: var(--sidebar);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      z-index: 200;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+      const { error } = await sb.from('withdrawals').insert([{
+        user_id: user.id,
+        amount: parseFloat(amount),
+        bank_name: bankName,
+        account_number: accountNumber,
+        account_name: accountName,
+        routing_code: routingCode || null,
+        notes: notes || null,
+        status: 'pending'
+      }]);
 
-    .sb-profile {
-      padding: 24px 20px 20px;
-      border-bottom: 1px solid var(--s-border);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: background 0.15s;
-    }
-    .sb-profile:hover { background: var(--s-active); }
-    .sb-avatar {
-      width: 40px; height: 40px;
-      background: var(--gold);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 15px; color: #0f1824;
-      flex-shrink: 0;
-      position: relative;
-    }
-    .sb-profile-info { flex-grow: 1; min-width: 0; }
-    .sb-name {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #f1f5f9;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sb-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--s-muted);
-      margin-top: 2px;
-    }
-    .sb-chevron {
-      color: var(--s-muted);
-      transition: transform 0.2s;
-    }
-    .sb-chevron svg { width: 14px; height: 14px; }
+      if (error) throw error;
 
-    .sb-logo {
-      padding: 20px 20px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid var(--s-border);
-      margin-bottom: 4px;
-    }
-    .sb-logo-icon {
-      width: 28px; height: 28px;
-      background: var(--gold);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .sb-logo-icon svg { width: 14px; height: 14px; }
-    .sb-logo-text { font-size: 14px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.01em; }
-    .sb-logo-sub { font-size: 9px; color: var(--s-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+      alert('Settlement instruction processed successfully.');
+      document.getElementById('withdrawAmount').value = '';
+      switchPane('overview', document.querySelector('.side-link'));
 
-    .sb-nav { padding: 12px 0; flex-grow: 1; }
-    .sb-section-label {
-      font-size: 9.5px;
-      font-weight: 600;
-      color: var(--s-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 12px 20px 6px;
+    } catch (err) {
+      alert(err.message || 'Transmission trace failed.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Submit Capital Outflow Order';
     }
+  }
 
-    .sb-item { position: relative; }
-    .sb-link {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 10px 20px;
-      color: var(--s-text);
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .sb-link:hover { color: #f1f5f9; background: var(--s-active); }
-    .sb-link.active { color: #f1f5f9; background: var(--s-active); }
-    .sb-link.active::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 15%; bottom: 15%;
-      width: 3px;
-      background: var(--gold);
-      border-radius: 0 3px 3px 0;
-    }
-    .sb-link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.75; }
-    .sb-link.active svg, .sb-link:hover svg { opacity: 1; }
-    .sb-link .chevron {
-      margin-left: auto;
-      transition: transform 0.2s;
-      opacity: 0.5;
-    }
-    .sb-link .chevron svg { width: 12px; height: 12px; }
-    .sb-link.open .chevron { transform: rotate(180deg); }
-
-    .sb-dropdown {
-      display: none;
-      background: rgba(0,0,0,0.15);
-    }
-    .sb-dropdown.open { display: block; }
-    .sb-sub-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 20px 9px 44px;
-      color: var(--s-muted);
-      text-decoration: none;
-      font-size: 12.5px;
-      font-weight: 400;
-      transition: all 0.15s;
-      cursor: pointer;
-    }
-    .sb-sub-link:hover { color: #f1f5f9; background: var(--s-active); }
-    .sb-sub-link svg { width: 13px; height: 13px; opacity: 0.6; }
-
-    .sb-footer {
-      border-top: 1px solid var(--s-border);
-      padding: 12px 0;
-    }
-
-    /* ══ MAIN ══════════════════════════════════════════ */
-    .main {
-      margin-left: var(--sidebar-w);
-      flex-grow: 1;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .topbar-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-
-    .icon-btn {
-      width: 36px; height: 36px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: transparent;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      position: relative;
-      transition: border-color 0.15s, background 0.15s;
-    }
-    .icon-btn:hover { border-color: var(--gold-bdr); background: var(--gold-lt); }
-    .icon-btn svg { width: 15px; height: 15px; color: var(--muted); }
-    .notify-dot {
-      width: 7px; height: 7px;
-      background: var(--red);
-      border-radius: 50%;
-      position: absolute;
-      top: 7px; right: 7px;
-      border: 1.5px solid white;
-      display: none;
-    }
-
-    .status-pill {
-      padding: 5px 13px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      border: 1px solid transparent;
-    }
-    .status-pill.verified   { background: var(--green-bg);  color: var(--green);  border-color: rgba(5,150,105,0.25); }
-    .status-pill.pending    { background: var(--orange-bg); color: var(--orange); border-color: rgba(217,119,6,0.25); }
-    .status-pill.unverified { background: var(--red-bg);    color: var(--red);    border-color: rgba(220,38,38,0.25); }
-
-    /* ══ PAGE CONTENT ══════════════════════════════════ */
-    .page { padding: 28px 32px; display: none; }
-    .page.active { display: block; }
-
-    /* ══ BALANCE CARD (hero) ═══════════════════════════ */
-    .balance-hero {
-      background: var(--sidebar);
-      border-radius: 14px;
-      padding: 28px 32px;
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    .balance-hero::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .balance-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--s-muted);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .balance-amount {
-      font-size: 36px;
-      font-weight: 700;
-      color: #f1f5f9;
-      letter-spacing: -0.03em;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 20px;
-    }
-    .balance-actions { display: flex; gap: 10px; }
-
-    /* ══ QUICK STAT CARDS ══════════════════════════════ */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-    }
-    .stat-card-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-    .stat-card-value {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-    }
-    .stat-card-value.gold { color: var(--gold); }
-
-    /* ══ CARDS ═════════════════════════════════════════ */
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .card-head {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
-    .card-body { padding: 20px; }
-    .card-body-flush { padding: 0; }
-
-    /* ══ TABLE ═════════════════════════════════════════ */
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th {
-      padding: 10px 18px;
-      text-align: left;
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-      background: #fafafa;
-    }
-    .data-table td {
-      padding: 13px 18px;
-      font-size: 13.5px;
-      color: var(--text);
-      border-bottom: 1px solid var(--border);
-    }
-    .data-table tr:last-child td { border-bottom: none; }
-    .data-table tbody tr:hover td { background: #fafafa; }
-    .data-table .empty-row td {
-      color: var(--muted2);
-      font-size: 13px;
-      text-align: center;
-      padding: 32px;
-    }
-
-    /* ══ BADGE ═════════════════════════════════════════ */
-    .badge {
-      display: inline-flex; align-items: center;
-      padding: 3px 9px; border-radius: 4px;
-      font-size: 11.5px; font-weight: 500;
-    }
-    .badge-green  { background: var(--green-bg);  color: var(--green); }
-    .badge-orange { background: var(--orange-bg); color: var(--orange); }
-    .badge-red    { background: var(--red-bg);    color: var(--red); }
-    .badge-gold   { background: var(--gold-lt);   color: var(--gold); }
-
-    /* ══ BUTTONS ═══════════════════════════════════════ */
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 18px; border-radius: 7px;
-      font-size: 13px; font-weight: 600;
-      cursor: pointer; border: none;
-      font-family: 'Outfit', sans-serif;
-      letter-spacing: -0.01em;
-      transition: all 0.15s;
-      text-decoration: none;
-    }
-    .btn svg { width: 14px; height: 14px; }
-    .btn-gold { background: var(--gold); color: #0f1824; }
-    .btn-gold:hover { background: #d4b15e; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { border-color: var(--gold-bdr); background: var(--gold-lt); }
-    .btn-ghost { background: var(--s-active); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.08); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
-    .btn-sm { padding: 7px 14px; font-size: 12px; }
-    .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
-    .btn-danger:hover { background: rgba(220,38,38,0.15); }
-
-    /* ══ FORM ELEMENTS ═════════════════════════════════ */
-    .form-group { margin-bottom: 18px; }
-    .form-label {
-      display: block;
-      font-size: 12px; font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.03em;
-      margin-bottom: 7px;
-      text-transform: uppercase;
-    }
-    .form-input, .form-select {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 13.5px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .form-input:focus, .form-select:focus { border-color: var(--gold-bdr); background: white; }
-    .form-input[readonly] {
-      background: #f9fafb;
-      color: var(--muted);
-      cursor: default;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-hint { font-size: 11.5px; color: var(--muted2); margin-top: 5px; }
-
-    /* Ref link row */
-    .ref-input-row {
-      display: flex; gap: 8px; align-items: center;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 4px 4px 4px 12px;
-      background: #f9fafb;
-    }
-    .ref-input-row input {
-      flex-grow: 1; border: none; outline: none;
-      background: transparent; color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-    }
-
-    /* ══ KYC NOTICE ════════════════════════════════════ */
-    .kyc-notice {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px 18px;
-      border-radius: 9px;
-      border: 1px solid;
-    }
-    .kyc-notice.green  { background: var(--green-bg);  border-color: rgba(5,150,105,0.2); }
-    .kyc-notice.orange { background: var(--orange-bg); border-color: rgba(217,119,6,0.2); }
-    .kyc-notice.red    { background: var(--red-bg);    border-color: rgba(220,38,38,0.2); }
-    .kyc-icon { flex-shrink: 0; margin-top: 1px; }
-    .kyc-icon svg { width: 18px; height: 18px; }
-    .kyc-notice.green  .kyc-icon svg { color: var(--green); }
-    .kyc-notice.orange .kyc-icon svg { color: var(--orange); }
-    .kyc-notice.red    .kyc-icon svg { color: var(--red); }
-    .kyc-notice-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-    .kyc-notice.green  .kyc-notice-title { color: var(--green); }
-    .kyc-notice.orange .kyc-notice-title { color: var(--orange); }
-    .kyc-notice.red    .kyc-notice-title { color: var(--red); }
-    .kyc-notice-text { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
-
-    /* ══ PAGE HEADER ═══════════════════════════════════ */
-    .page-header { margin-bottom: 24px; }
-    .page-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
-    .page-header p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-    /* ══ REFERRAL STATS ════════════════════════════════ */
-    .ref-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .ref-stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 20px;
-      text-align: center;
-    }
-    .ref-stat-val { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
-    .ref-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-    /* ══ UTILITY ═══════════════════════════════════════ */
-    .flex-between { display: flex; align-items: center; justify-content: space-between; }
-    .mb-16 { margin-bottom: 16px; }
-    .mb-24 { margin-bottom: 24px; }
-    .text-muted { color: var(--muted); font-size: 13px; }
-    .text-sm { font-size: 12.5px; }
-    .divider { height: 1px; background: var(--border); margin: 20px 0; }
-
-    /* ══ ALERT BANNER ══════════════════════════════════ */
-    .alert {
-      padding: 14px 18px; border-radius: 8px;
-      font-size: 13px; margin-bottom: 20px;
-      border: 1px solid;
-    }
-    .alert-gold { background: var(--gold-lt); border-color: var(--gold-bdr); color: #7a5e1a; }
-    .alert-success { background: var(--green-bg); border-color: rgba(5,150,105,0.25); color: var(--green); }
-
-    /* ══ TRANSACTION TYPE ══════════════════════════════ */
-    .tx-type {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 500;
-    }
-    .tx-type.deposit { color: var(--green); }
-    .tx-type.withdrawal { color: var(--orange); }
-    .tx-type svg { width: 13px; height: 13px; }
-
-    .page.active { animation: fadeUp 0.2s ease; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: none
+  async function handleLogout() {
+    await sb.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'register.html';
+  }
+</script>
+</body>
+</html>
