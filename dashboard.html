@@ -11,15 +11,11 @@
     :root {
       --bg: #030712;
       --sidebar: #090d16;
-      --card: #0f172a;
-      --card-hover: #1e293b;
+      --panel: #0f172a;
       --accent: #c9a84c;
-      --accent-hover: #e8c97a;
-      --blue: #2563eb;
       --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --text-muted: #64748b;
       --border: rgba(255, 255, 255, 0.05);
-      
       --green: #10b981;
       --orange: #f59e0b;
       --red: #ef4444;
@@ -36,9 +32,9 @@
       letter-spacing: -0.01em;
     }
 
-    /* Professional Glass Sidebar */
+    /* Fixed Clean Navigation Sidebar */
     .sidebar {
-      width: 280px;
+      width: 260px;
       background: var(--sidebar);
       border-right: 1px solid var(--border);
       padding: 40px 24px;
@@ -89,7 +85,7 @@
     }
 
     .side-link:hover, .side-link.active {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
       color: var(--text-main);
     }
     
@@ -99,33 +95,33 @@
       padding-left: 13px;
     }
 
-    /* App Work Space Context */
+    /* Main Workspace Layout */
     .main {
-      margin-left: 280px;
-      width: calc(100% - 280px);
-      padding: 48px;
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      padding: 40px 48px;
       max-width: 1400px;
     }
 
-    /* Minimalist Top Utility Control Bar */
+    /* Top Utility Bar */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 24px;
     }
 
     .top-left h2 {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .member-id {
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-family: monospace;
     }
 
@@ -139,17 +135,14 @@
       position: relative;
       cursor: pointer;
       background: rgba(255, 255, 255, 0.02);
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s;
     }
-
-    .notify:hover { background: rgba(255, 255, 255, 0.05); }
 
     .notify-badge {
       position: absolute;
@@ -169,7 +162,7 @@
 
     .status {
       padding: 6px 14px;
-      border-radius: 6px;
+      border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -179,71 +172,74 @@
     .pending { background: rgba(245, 158, 11, 0.1); color: var(--orange); }
     .verified { background: rgba(16, 185, 129, 0.1); color: var(--green); }
 
-    /* Modern Minimal Metrics Grid */
-    .cards {
+    /* Single Strip Telemetry Panel (Markets4You Style) */
+    .telemetry-strip {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-bottom: 40px;
-    }
-
-    .card {
-      background: var(--card);
+      background: var(--panel);
       border: 1px solid var(--border);
-      padding: 24px;
       border-radius: 12px;
-      transition: transform 0.2s, border-color 0.2s;
+      padding: 24px;
+      margin-bottom: 32px;
     }
 
-    .card:hover {
-      border-color: rgba(255, 255, 255, 0.1);
+    .metric-block {
+      border-right: 1px solid var(--border);
+      padding: 0 24px;
     }
 
-    .card h4 {
-      font-size: 0.75rem;
+    .metric-block:last-child {
+      border-right: none;
+    }
+
+    .metric-block h4 {
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-bottom: 12px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 8px;
       font-weight: 600;
     }
 
-    .card-val {
-      font-size: 1.5rem;
+    .metric-val {
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--text-main);
     }
 
-    /* Structured Layout Panels */
-    .grid-container {
+    /* Asymmetric Workspace Grid Layout */
+    .workspace-grid {
       display: grid;
       grid-template-columns: 1.6fr 1.4fr;
-      gap: 24px;
+      gap: 32px;
       align-items: start;
     }
 
-    .section-card {
-      background: var(--card);
+    .panel-card {
+      background: var(--panel);
       border: 1px solid var(--border);
-      padding: 32px;
-      border-radius: 16px;
-      margin-bottom: 24px;
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 30px;
     }
 
-    .section-card h3 {
-      font-size: 1.1rem;
+    .panel-card h3 {
+      font-size: 1rem;
       font-weight: 600;
       margin-bottom: 20px;
       color: var(--text-main);
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
     }
 
+    /* Clean Financial Tables */
     table {
       width: 100%;
       border-collapse: collapse;
     }
 
     th, td {
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border);
       text-align: left;
       font-size: 0.85rem;
@@ -259,17 +255,17 @@
 
     tr:last-child td { border-bottom: none; }
 
-    /* Minimal Native Elements Form Interaction Override */
-    .input-group {
+    /* Clean Link Inputs */
+    .link-wrapper {
       display: flex;
       gap: 12px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.15);
       border: 1px solid var(--border);
       padding: 6px;
-      border-radius: 10px;
+      border-radius: 8px;
     }
 
-    .input-group input {
+    .link-wrapper input {
       flex-grow: 1;
       background: transparent;
       border: none;
@@ -281,30 +277,31 @@
     }
 
     .btn-action {
-      background: var(--blue);
+      background: #1e3a8a;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 0.85rem;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: background 0.2s;
     }
 
-    .btn-action:hover { opacity: 0.9; }
+    .btn-action:hover { background: #1d4ed8; }
 
     #managerSection, #traderSection { display: none; }
 
-    @media (max-width: 1200px) {
-      .grid-container { grid-template-columns: 1fr; }
-      .cards { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1100px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+      .telemetry-strip { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+      .metric-block { border-right: none; padding: 0; }
     }
     @media (max-width: 768px) {
       body { flex-direction: column; }
       .sidebar { width: 100%; position: relative; height: auto; padding: 24px; }
       .main { margin-left: 0; width: 100%; padding: 24px; }
-      .cards { grid-template-columns: 1fr; }
+      .telemetry-strip { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -335,47 +332,47 @@
     </div>
   </div>
 
-  <div class="cards">
-    <div class="card">
+  <div class="telemetry-strip">
+    <div class="metric-block">
       <h4>Available Balance</h4>
-      <div class="card-val" id="displayBalance">$0.00</div>
+      <div class="metric-val" id="displayBalance">$0.00</div>
     </div>
-    <div class="card">
+    <div class="metric-block">
       <h4>Reward Ledger</h4>
-      <div class="card-val" id="displayRewards">$0.00</div>
+      <div class="metric-val" id="displayRewards">$0.00</div>
     </div>
-    <div class="card">
+    <div class="metric-block">
       <h4>Network Volume</h4>
-      <div class="card-val" id="displayNetwork">$0.00</div>
+      <div class="metric-val" id="displayNetwork">$0.00</div>
     </div>
-    <div class="card">
+    <div class="metric-block">
       <h4>Account Standing</h4>
-      <div class="card-val" id="displayMembership" style="font-size: 1.2rem; color: var(--accent);">Active</div>
+      <div class="metric-val" id="displayMembership" style="color: var(--accent);">Active</div>
     </div>
   </div>
 
-  <div class="grid-container">
+  <div class="workspace-grid">
     
-    <div class="left-col">
+    <div class="left-pane">
       
-      <div class="section-card">
+      <div class="panel-card">
         <h3>Identity Verification & Compliance</h3>
-        <div id="verifyBox">Loading verification state documentation...</div>
+        <div id="verifyBox">Loading compliance profiles...</div>
       </div>
 
       <div id="traderSection">
-        <div class="section-card">
+        <div class="panel-card">
           <h3>Market Allocation Configuration</h3>
           <table>
-            <tr><th>Current Matrix State</th><td>Active Managed Profile</td></tr>
+            <tr><th>Current Profile State</th><td>Active Managed Profile</td></tr>
             <tr><th>Selected Risk Profile Tier</th><td id="riskTier">Loading Risk Metrics...</td></tr>
-            <tr><th>Broker Routing Verification</th><td id="brokerStatus">Awaiting Processing Array Link</td></tr>
+            <tr><th>Broker Routing Verification</th><td id="brokerStatus">Awaiting Processing Link</td></tr>
           </table>
         </div>
       </div>
 
       <div id="managerSection">
-        <div class="section-card">
+        <div class="panel-card">
           <h3>Administrative Oversight Queue</h3>
           <table>
             <thead>
@@ -398,18 +395,18 @@
 
     </div>
 
-    <div class="right-col">
+    <div class="right-pane">
       
-      <div class="section-card">
+      <div class="panel-card">
         <h3>Partnership Attribution</h3>
-        <p style="margin-bottom:12px; font-size:0.85rem; color: var(--text-muted);">Share your referral engine routing code:</p>
-        <div class="input-group">
-          <input id="refLink" readonly value="Loading link orchestration...">
+        <p style="margin-bottom:12px; font-size:0.85rem; color: var(--text-muted);">Share your referral link configuration:</p>
+        <div class="link-wrapper">
+          <input id="refLink" readonly value="Loading orchestration link...">
           <button class="btn-action" onclick="copyLink()">Copy</button>
         </div>
       </div>
 
-      <div class="section-card">
+      <div class="panel-card">
         <h3>Downstream Attribution Network</h3>
         <table>
           <thead>
@@ -420,7 +417,7 @@
             </tr>
           </thead>
           <tbody id="networkBody">
-            <tr><td colspan="3" style="color: var(--text-muted);">Awaiting lookup query response...</td></tr>
+            <tr><td colspan="3" style="color: var(--text-muted);">Awaiting query response...</td></tr>
           </tbody>
         </table>
       </div>
@@ -480,27 +477,27 @@ async function initializeDashboardRuntime() {
         document.getElementById('riskTier').innerText = data.risk_tier || 'Balanced Core Strategy';
       }
 
-      // Sync KYC Interface Blocks
+      // Sync KYC View Blocks
       const topStatus = document.getElementById('topStatus');
       const verifyBox = document.getElementById('verifyBox');
 
       if (data.kyc_status === 'approved') {
         topStatus.className = 'status verified';
         topStatus.innerText = 'Verified';
-        verifyBox.innerHTML = `<div style="color: var(--green); font-weight:600; font-size:0.9rem;">✓ Security profile architecture verified and active.</div>`;
+        verifyBox.innerHTML = `<div style="color: var(--green); font-weight:600; font-size:0.85rem;">✓ Compliance profile architecture verified and active.</div>`;
       } else if (data.kyc_status === 'pending') {
         topStatus.className = 'status pending';
         topStatus.innerText = 'Verification Pending';
-        verifyBox.innerHTML = `<div style="color: var(--orange); font-weight:600; font-size:0.9rem;">⏳ Review cycle in progress. Security documents are pending approval.</div>`;
+        verifyBox.innerHTML = `<div style="color: var(--orange); font-weight:600; font-size:0.85rem;">⏳ Document verification processing queue is active. Awaiting review.</div>`;
       } else {
         topStatus.className = 'status not-verified';
         topStatus.innerText = 'Action Required';
         verifyBox.innerHTML = `
-          <p style="color: var(--text-muted); font-size:0.85rem; margin-bottom:16px;">Identity verification is required to enable secure broker channel clearings.</p>
+          <p style="color: var(--text-muted); font-size:0.85rem; margin-bottom:16px;">Identity authentication tracking must be processed to finalize broker clearings.</p>
           <a href="consent.html" class="btn-action" style="text-decoration:none; display:inline-block;">Complete Compliance Profile</a>`;
       }
 
-      // Fetch Affiliates Lookups
+      // Fetch Referral Downlines
       const { data: networkMembers } = await sb.from('profiles').select('full_name,kyc_status,rewards').eq('referred_by', refCode);
       const netBody = document.getElementById('networkBody');
       
@@ -515,19 +512,12 @@ async function initializeDashboardRuntime() {
             </tr>`;
         });
       } else {
-        netBody.innerHTML = `<tr><td colspan="3" style="color: var(--text-muted); font-size:0.85rem;">No downline attributions identified on record path.</td></tr>`;
+        netBody.innerHTML = `<tr><td colspan="3" style="color: var(--text-muted); font-size:0.85rem;">No partner registrations linked on path network.</td></tr>`;
       }
     }
   } catch (err) {
-    console.error('Runtime processing anomaly:', err);
+    console.error('Runtime execution variant:', err);
   }
-}
-
-function openVerification() {
-  const status = document.getElementById('topStatus').innerText.toLowerCase();
-  if (status.includes('verified')) { alert('Account verification is complete.'); return; }
-  if (status.includes('pending')) { alert('Documents are currently being verified by data administration.'); return; }
-  window.location.href = 'consent.html';
 }
 
 function copyLink() {
